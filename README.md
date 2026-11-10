@@ -13,6 +13,9 @@ real NFL results sit beside his grade, so you can check the model yourself.
 
 How the models work, in plain English: [GUIDE.md](GUIDE.md).
 
+Prospect Actuary is free to use. If it helped you, you can
+[buy me a coffee](https://buymeacoffee.com/kylemschyma). A dollar is plenty.
+
 ## Data files
 
 Each page's `data/` folder holds the CSVs behind it:
