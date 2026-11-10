@@ -30,4 +30,21 @@ Each page's `data/` folder holds the CSVs behind it:
 - Drafted players need a college stats match, so a few are missing (for example Cam Newton, 2010).
 - Draft slot is still more accurate than college stats alone. A grade is a flag, not a guarantee.
 
-College stats come from collegefootballdata.com (via the cfbfastR R package).
+## Data sources and credits
+
+These grades would not exist without free, openly shared football data. Thank you to:
+
+- **[CollegeFootballData.com](https://collegefootballdata.com)**: college player season stats,
+  team season stats and 247Sports-based recruiting ratings, pulled through the
+  **[cfbfastR](https://cfbfastr.sportsdataverse.org)** R package from the SportsDataverse.
+- **[nflverse](https://nflverse.com)**: NFL draft picks, player IDs, weekly player stats
+  (used for fantasy finishes and landing-spot opportunity) and NFL Combine results, pulled
+  through the **[nflreadr](https://nflreadr.nflverse.com)** R package. nflverse compiles its
+  draft and combine data from [Pro Football Reference](https://www.pro-football-reference.com).
+
+Each source has its own terms of use and licence, and you should follow them if you reuse
+the raw data (see the nflverse and CollegeFootballData.com sites). The grades, model scores
+and CSV tables in this repository are Prospect Actuary's own work built on that data.
+Prospect Actuary is not affiliated with the NFL, any team, or any of the sources above.
+
+Modeling used R with glmnet, ordinalNet, MASS, pROC, ranger and xgboost.
