@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prospect Actuary</title>
+<meta name="description" content="Letter grades for every drafted NFL QB, RB, WR and TE since 2010, from college-only and post-draft prediction models.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f5f6f3;--panel:#ffffff;--ink:#18201c;--muted:#5d6862;--line:#d9ddd6;--accent:#1f6b4f;--accent-soft:#e2efe8;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:880px;margin:0 auto;padding:40px 16px 64px;display:flex;flex-direction:column;gap:36px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+h1,h2{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.1}
+h1{font-size:3rem} h2{font-size:1.6rem}
+p{margin:0;max-width:66ch}
+a{color:var(--accent)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);transition:border-color .15s}
+.card:hover{border-color:var(--accent)}
+.card .go{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);margin-top:auto}
+.muted{color:var(--muted);font-size:.9rem}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:66ch}
+@media (max-width:520px){h1{font-size:2.3rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body><div class="wrap">
+<header style="display:flex;flex-direction:column;gap:12px">
+  <div class="eyebrow">NFL prospect grades · built with actuarial modeling</div>
+  <h1>Prospect Actuary</h1>
+  <p>Letter grades (A+ to F) for every drafted QB, RB, WR and TE from the 2010-2026 classes, with each player's real NFL results beside the grade so you can check the model. One board uses only college data. The other adds where the player was drafted and where he landed.</p>
+</header>
+
+<div class="cards">
+  <a class="card" href="pre-draft/">
+    <div class="eyebrow">College-only model</div>
+    <h2>Pre-Draft Player Grades</h2>
+    <p class="muted">College production, age, recruiting and conference level. No combine and no draft pick. Includes the top 2027 prospects as projections.</p>
+    <span class="go">Open the board →</span>
+  </a>
+  <a class="card" href="post-draft/">
+    <div class="eyebrow">Post-draft model</div>
+    <h2>Post-Draft Player Grades</h2>
+    <p class="muted">The same players with draft slot and landing spot added, shown next to the pre-draft grade so you can see what draft night changed.</p>
+    <span class="go">Open the board →</span>
+  </a>
+</div>
+
+<section style="display:flex;flex-direction:column;gap:12px">
+  <h2>What to take from it</h2>
+  <ul>
+    <li>A "hit" means at least one top-tier fantasy season (top 24 at QB, RB and TE; top 36 at WR) in a player's first three NFL years.</li>
+    <li>Pre-draft A-range players hit about 59% of the time, B about 31%, C and below about 14%. Post-draft A-range players hit 69%, and D/F players almost never.</li>
+    <li>Every historical grade comes from a model that never saw that draft class, so the hit rates are honest out-of-sample results.</li>
+    <li>The draft pick still knows more than college stats alone. Treat the grade as a strong flag, not a guarantee.</li>
+  </ul>
+  <p class="muted">How the models work, in plain English: <a href="https://github.com/KyleMSchyma/prospect-actuary/blob/main/GUIDE.md">the guide</a>. The data behind each page is in the <a href="https://github.com/KyleMSchyma/prospect-actuary">repository</a> as CSV files.</p>
+</section>
+</div></body></html>
