@@ -39,8 +39,12 @@ These grades would not exist without free, openly shared football data. Thank yo
   **[cfbfastR](https://cfbfastr.sportsdataverse.org)** R package from the SportsDataverse.
 - **[nflverse](https://nflverse.com)**: NFL draft picks, player IDs, weekly player stats
   (used for fantasy finishes and landing-spot opportunity) and NFL Combine results, pulled
-  through the **[nflreadr](https://nflreadr.nflverse.com)** R package. nflverse compiles its
-  draft and combine data from [Pro Football Reference](https://www.pro-football-reference.com).
+  through the **[nflreadr](https://nflreadr.nflverse.com)** R package. nflverse data is shared
+  under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); the grades here are
+  derived from it, not copies of it.
+- **[Pro Football Reference](https://www.pro-football-reference.com)** (Sports Reference LLC):
+  the original source of the NFL draft and combine data that nflverse compiles.
+- Data provided by CollegeFootballData.com.
 
 Each source has its own terms of use and licence, and you should follow them if you reuse
 the raw data (see the nflverse and CollegeFootballData.com sites). The grades, model scores
