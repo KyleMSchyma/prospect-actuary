@@ -10,7 +10,7 @@ real NFL results sit beside his grade, so you can check the model yourself.
 |---|---|---|---|
 | Pre-Draft Player Grades | College production, age, recruiting and conference level only (no combine, no draft pick). Includes top 2027 prospects as projections. | [pre-draft](https://kylemschyma.github.io/prospect-actuary/pre-draft/) | [`pre-draft/data`](pre-draft/data) |
 | Post-Draft Player Grades | The same college profile plus draft slot and landing spot. | [post-draft](https://kylemschyma.github.io/prospect-actuary/post-draft/) | [`post-draft/data`](post-draft/data) |
-| Trade Values (in development) | Redraft sheet (rest of 2026) and Dynasty sheet (rest of 2026 plus 2027-2030): points per game over replacement x expected games, with credibility-blended PPG, an injury factor, draft-slot potential and aging. One 100,000-point scale that adds up. | [trade-values](https://kylemschyma.github.io/prospect-actuary/trade-values/) | [`trade-values/data`](trade-values/data) |
+| Trade Values (in development) | Redraft sheet (rest of 2026) and Dynasty sheet (rest of 2026 plus 2027-2030): points per game over replacement x expected games, with credibility-blended PPG, an injury factor, draft-slot potential and aging. Set to your league (teams, PPR, TE premium, passing TD, superflex, starters, flex), with 2027 rookie picks on the Dynasty sheet. One 100,000-point scale that adds up. | [trade-values](https://kylemschyma.github.io/prospect-actuary/trade-values/) | [`trade-values/data`](trade-values/data) |
 
 How the models work, in plain English: the [Guide page](https://kylemschyma.github.io/prospect-actuary/guide/)
 (also in this repo as [GUIDE.md](GUIDE.md)).

@@ -116,13 +116,21 @@ A trade value for every QB, RB, WR and TE for the rest of the 2026 season, on a 
 scale where values add up, so two players together are worth the sum of their values.
 
 **Formula.** Value = (credible points per game - replacement points per game) x expected games left.
-Replacement is the QB24, RB24, WR36 or TE12 by points per game. Credible points per game blends this
+Replacement is the last starter at each position in your league. Credible points per game blends this
 season with the last three using Buhlmann credibility, Z = games / (games + k), with k fit per position
 on 2016-2025 (weeks 1-9 predicting weeks 10-18). Expected games = team games left x his chance of playing
 each game, blended from this season, his last three seasons and his position's average.
 
+**League settings.** Teams (8-14), half or full PPR, TE premium (+0, +0.5, +1), passing TD (4-6), superflex,
+starting RB (2-3), WR (2-3), TE (1-2) and FLEX (0-3). Scoring changes the points themselves, so each scoring
+setting has its own fitted model. Lineup settings set the replacement line: every team fills its position
+slots, then FLEX, then SUPERFLEX, each with the best player left; the last starter at each position is the
+line. The default (12 teams, superflex, 2 RB, 3 WR, 1 TE, no flex) gives QB24 / RB24 / WR36 / TE12.
+
 **Result.** The credible points per game beat "this season only" and "history only" at every position, and
 the value ranked weeks 10-18 better than "current pace x games left" (rank correlation 0.54-0.68 vs 0.47-0.64).
+That held for every scoring setting at every position and for five league setups from 8-team 1-QB to
+14-team superflex (0.61-0.70 vs 0.54-0.66).
 
 ## 5. Dynasty Trade Values (in development)
 
@@ -132,9 +140,21 @@ Draft slot sets a young player's potential until production takes over; aging, s
 availability are fit by position from past seasons; and a player just under replacement keeps a little value
 from his chance of beating it (the insurance stop-loss formula).
 
+**2027 rookie picks.** A pick is worth the expected value of the player taken with it. Each NFL draft class
+from 2016-2025 is projected from draft slot alone (potential PPG, expected rookie-season games, then the same
+aging and staying-in-the-league models through 2030, one season further out), ranked by value for your league,
+and pick N is the average Nth-best rookie over the ten classes. Early / mid / late = first / middle / last third
+of each round. Default league: an early 1st is worth about a top-35 player, a late 3rd about 4,000.
+
+**One star vs two good players.** No extra consolidation curve: the replacement line already handles it, since
+in a shallow league the 40th-best player barely beats the waiver wire. In the default league the values nearly
+match the site's trade anchors (#1 = #8 + #20, #8 = #20 + #40, #20 = #45 + #80): the two-player side is 0.99-1.12
+times the single player.
+
 **Result.** From week-9 snapshots of 2016-2020 with models fit only on earlier seasons, the values ranked
-the next five seasons better than "current pace continues" (rank correlation 0.70 vs 0.63). Totals ran
-about 16% high, so read them mainly as a ranking.
+the next five seasons better than "current pace continues" (rank correlation 0.70 vs 0.63), for every scoring
+setting and all five league setups tested (0.61-0.73 vs 0.55-0.68). Totals ran 13-21% high, so read them
+mainly as a ranking.
 
 ## Actuarial concepts behind it (SOA ATPA / PA exams)
 
@@ -146,3 +166,7 @@ about 16% high, so read them mainly as a ranking.
 | "What about missing college data?" | Leakage-safe imputation with missing flags (ATPA 3.7a) |
 | "Does conference strength matter?" | Credibility / mixed-model test (ATPA 3.3), no gain |
 | "Why are probabilities nested?" | Ordered (cumulative logit) models and forced monotone probabilities |
+| "How do you blend this year with past years?" | Buhlmann credibility: Z = n / (n + k), with k fit on past seasons |
+| "How do you value future seasons?" | A life annuity: discount x survival probability x expected points over replacement |
+| "Why does a backup still have some value?" | Stop-loss: the expected amount above a threshold when outcomes are uncertain |
+| "What is a draft pick worth?" | An expected order statistic: the average value of the Nth-best rookie over ten past classes |
