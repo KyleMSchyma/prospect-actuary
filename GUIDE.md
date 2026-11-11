@@ -140,11 +140,13 @@ Draft slot sets a young player's potential until production takes over; aging, s
 availability are fit by position from past seasons; and a player just under replacement keeps a little value
 from his chance of beating it (the insurance stop-loss formula).
 
-**2027 rookie picks.** A pick is worth the expected value of the player taken with it. Each NFL draft class
-from 2016-2025 is projected from draft slot alone (potential PPG, expected rookie-season games, then the same
-aging and staying-in-the-league models through 2030, one season further out), ranked by value for your league,
-and pick N is the average Nth-best rookie over the ten classes. Early / mid / late = first / middle / last third
-of each round. Default league: an early 1st is worth about a top-35 player, a late 3rd about 4,000.
+**2027 rookie picks.** Until the class is drafted, priced from the pre-draft model alone (no NFL draft capital).
+Value = sum over tiers of P(tier) x what past drafted players in that tier did in seasons 1-4 (2010-2022 classes:
+games, PPG, PPG spread), valued against your league's replacement line with the stop-loss upside and discounted from
+2027. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
+about 18.6 + years out of high school). Prospects are ranked for your league: 1.01 = the best value, 1.02 the second,
+and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #29 asset, the rest
+of round 1 about 13,000-23,000, round 3 about 6,000-9,000.
 
 **One star vs two good players.** No extra consolidation curve: the replacement line already handles it, since
 in a shallow league the 40th-best player barely beats the waiver wire. In the default league the values nearly
@@ -169,4 +171,4 @@ mainly as a ranking.
 | "How do you blend this year with past years?" | Buhlmann credibility: Z = n / (n + k), with k fit on past seasons |
 | "How do you value future seasons?" | A life annuity: discount x survival probability x expected points over replacement |
 | "Why does a backup still have some value?" | Stop-loss: the expected amount above a threshold when outcomes are uncertain |
-| "What is a draft pick worth?" | An expected order statistic: the average value of the Nth-best rookie over ten past classes |
+| "What is a draft pick worth?" | Expected value over outcome tiers (like a claim-severity mix), with the Nth-best prospect setting pick N |
