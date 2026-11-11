@@ -32,11 +32,11 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
 </style></head>
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:12px">
-  <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../guide/" aria-current="page">Guide</a></span></nav>
+  <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../guide/" aria-current="page">Guide</a></span></nav>
   <div class="eyebrow">How the grades work</div>
   <h1>Plain-English Guide</h1>
-  <p class="lead">What each Prospect Actuary model predicts, what the final model is, what drives it, and how to explain it to someone who doesn't do statistics. It covers the <a href="../pre-draft/">Pre-Draft Player Grades</a> and the <a href="../post-draft/">Post-Draft Player Grades</a>.</p>
-  <div class="toc"><a href="#short">Short version</a><a href="#ideas">Shared ideas</a><a href="#model">Pre-draft model</a><a href="#pre">Pre-draft grades</a><a href="#post">Post-draft grades</a><a href="#actuarial">Actuarial concepts</a></div>
+  <p class="lead">What each Prospect Actuary model predicts, what the final model is, what drives it, and how to explain it to someone who doesn't do statistics. It covers the <a href="../pre-draft/">Pre-Draft Player Grades</a> , the <a href="../post-draft/">Post-Draft Player Grades</a> and the <a href="../trade-values/">Trade Values</a> (Redraft and Dynasty sheets, in development).</p>
+  <div class="toc"><a href="#short">Short version</a><a href="#ideas">Shared ideas</a><a href="#model">Pre-draft model</a><a href="#pre">Pre-draft grades</a><a href="#post">Post-draft grades</a><a href="#redraft">Redraft Trade Values</a><a href="#dynasty">Dynasty Trade Values</a><a href="#actuarial">Actuarial concepts</a></div>
 </header>
 
 <section id="short">
@@ -92,6 +92,37 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   <p><a href="../post-draft/">Open the Post-Draft Player Grades →</a></p>
 </section>
 
+<section id="redraft">
+  <div class="eyebrow">4 · In development</div>
+  <h2>Redraft Trade Values</h2>
+  <p><b>What it is.</b> A trade value for every QB, RB, WR and TE for the rest of the 2026 season only, on a 100,000-point scale where values add up: two players together are worth the sum of their values.</p>
+  <p><b>The formula.</b> Value = (credible points per game − replacement points per game) × expected games left. The best player is set to 100,000 and everyone else is scaled to match.</p>
+  <ul>
+    <li><b>Points over replacement.</b> The replacement player is the QB24, RB24, WR36 or TE12 by points per game, the player you could start instead. Working per game, not in season totals, means QBs don't rise to the top just because they score more points: the replacement QB scores a lot too.</li>
+    <li><b>Credible points per game.</b> A blend of this season and the player's last three seasons, using the actuarial credibility formula Z = games ÷ (games + k). The more games he has played this year, the more this year counts. k was fit for each position by testing on 2016-2025 (weeks 1-9 predicting weeks 10-18); a full-time player's first 4 to 6 games count as much as his history. A player with little history leans on what his draft slot usually produces.</li>
+    <li><b>Injury factor.</b> Expected games = team games left × his chance of playing each game, blending his games played this year, his last three seasons and his position's average the same way.</li>
+  </ul>
+  <p><b>The result.</b> On 2016-2025, the credible points per game beat both "this season only" and "history only" at every position, and the full value ranked weeks 10-18 better than "current pace × games left" (rank correlation 0.54-0.68 vs 0.47-0.64) with about a third less error.</p>
+  <p class="explain"><b>How to explain it:</b> "How many more points will this player give me than a waiver pickup, for the rest of the year? Add up both sides of a trade and the bigger number wins."</p>
+  <p><a href="../trade-values/#redraft">Open the Redraft Trade Values →</a></p>
+</section>
+
+<section id="dynasty">
+  <div class="eyebrow">5 · In development</div>
+  <h2>Dynasty Trade Values</h2>
+  <p><b>What it is.</b> The same idea stretched over the rest of 2026 and the next four seasons (2027-2030), on the same adding-up 100,000-point scale.</p>
+  <p><b>The formula.</b> Value = the sum over each season of: discount × chance he is still playing × expected games × expected points per game over replacement. It is built like an actuarial annuity: each season is a "payment", weighted by the chance he is still around to collect it, and each later season counts 15% less.</p>
+  <ul>
+    <li><b>Potential.</b> Draft slot and years in the league set the starting expectation for young players. As they play, real production takes over through the same credibility blend.</li>
+    <li><b>Aging.</b> Each position's development and decline is fit from past seasons: next season's points per game from this season's credible points per game, age, years in the league and draft slot. Running backs and receivers fade from their late 20s; quarterbacks hold into their 30s.</li>
+    <li><b>Staying in the league and injuries.</b> The chance he plays next season and the share of games he plays both come from logistic models with age.</li>
+    <li><b>Upside near replacement.</b> A player projected just under replacement still gets a little value from his chance of beating it, using the insurance "stop-loss" formula for the expected amount above a threshold.</li>
+  </ul>
+  <p><b>The result.</b> Starting from week 9 of each season 2016-2020, with models fit only on earlier seasons, the values ranked the next five seasons better than "his current pace continues" (rank correlation 0.70 vs 0.63), at every position and for players in their first three years. The totals ran about 16% high, so read the numbers mainly as a ranking.</p>
+  <p class="explain"><b>How to explain it:</b> "It's how an insurer values a pension. Each future season is a payment, weighted by the chance he's still producing to collect it. Young players earn value from their runway, older stars from what they're doing now."</p>
+  <p><a href="../trade-values/#dynasty">Open the Dynasty Trade Values →</a></p>
+</section>
+
 <section id="actuarial">
   <h2>Actuarial concepts behind it</h2>
   <p>The methods come from the Society of Actuaries' predictive analytics exams (ATPA and PA).</p>
@@ -104,6 +135,9 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
       <tr><td>"What about missing college data?"</td><td>Leakage-safe imputation with missing flags (ATPA 3.7a)</td></tr>
       <tr><td>"Does conference strength matter?"</td><td>Credibility / mixed-model test (ATPA 3.3), no gain</td></tr>
       <tr><td>"Why are probabilities nested?"</td><td>Ordered (cumulative logit) models and forced monotone probabilities</td></tr>
+      <tr><td>"How do you blend this year with past years?"</td><td>Bühlmann credibility: Z = n ÷ (n + k), with k fit on past seasons</td></tr>
+      <tr><td>"How do you value future seasons?"</td><td>A life annuity: discount × survival probability × expected points over replacement</td></tr>
+      <tr><td>"Why does a backup still have some value?"</td><td>Stop-loss: the expected amount above a threshold when outcomes are uncertain</td></tr>
     </tbody>
   </table></div>
 </section>

@@ -110,6 +110,32 @@ mostly late picks with strong college numbers, such as Alex Collins (A- to D).
 grade adds what the NFL said with its pick. When they disagree, history sides with the
 pick more often, which is why a pre-draft A who goes in round 6 usually fades."
 
+## 4. Redraft Trade Values (in development)
+
+A trade value for every QB, RB, WR and TE for the rest of the 2026 season, on a 100,000-point
+scale where values add up, so two players together are worth the sum of their values.
+
+**Formula.** Value = (credible points per game - replacement points per game) x expected games left.
+Replacement is the QB24, RB24, WR36 or TE12 by points per game. Credible points per game blends this
+season with the last three using Buhlmann credibility, Z = games / (games + k), with k fit per position
+on 2016-2025 (weeks 1-9 predicting weeks 10-18). Expected games = team games left x his chance of playing
+each game, blended from this season, his last three seasons and his position's average.
+
+**Result.** The credible points per game beat "this season only" and "history only" at every position, and
+the value ranked weeks 10-18 better than "current pace x games left" (rank correlation 0.54-0.68 vs 0.47-0.64).
+
+## 5. Dynasty Trade Values (in development)
+
+The same scale over the rest of 2026 plus 2027-2030, built like an actuarial annuity: each season's
+expected points over replacement x expected games x the chance he is still playing, discounted 15% a year.
+Draft slot sets a young player's potential until production takes over; aging, staying in the league and
+availability are fit by position from past seasons; and a player just under replacement keeps a little value
+from his chance of beating it (the insurance stop-loss formula).
+
+**Result.** From week-9 snapshots of 2016-2020 with models fit only on earlier seasons, the values ranked
+the next five seasons better than "current pace continues" (rank correlation 0.70 vs 0.63). Totals ran
+about 16% high, so read them mainly as a ranking.
+
 ## Actuarial concepts behind it (SOA ATPA / PA exams)
 
 | If someone asks... | Point to |
