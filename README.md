@@ -11,7 +11,8 @@ real NFL results sit beside his grade, so you can check the model yourself.
 | Pre-Draft Player Grades | College production, age, recruiting and conference level only (no combine, no draft pick). Includes top 2027 prospects as projections. | [pre-draft](https://kylemschyma.github.io/prospect-actuary/pre-draft/) | [`pre-draft/data`](pre-draft/data) |
 | Post-Draft Player Grades | The same college profile plus draft slot and landing spot. | [post-draft](https://kylemschyma.github.io/prospect-actuary/post-draft/) | [`post-draft/data`](post-draft/data) |
 
-How the models work, in plain English: [GUIDE.md](GUIDE.md).
+How the models work, in plain English: the [Guide page](https://kylemschyma.github.io/prospect-actuary/guide/)
+(also in this repo as [GUIDE.md](GUIDE.md)).
 
 Prospect Actuary is free to use. If it helped you, you can
 [buy me a coffee](https://buymeacoffee.com/kylemschyma). A dollar is plenty.

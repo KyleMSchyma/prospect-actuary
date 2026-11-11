@@ -1,20 +1,19 @@
 # Prospect Actuary: Plain-English Guide
 
-This guide explains what each Prospect Actuary model predicts, what the final model is,
-what drives it, and how to explain it to someone who doesn't do statistics. The two
-public boards are the [Pre-Draft Player Grades](https://kylemschyma.github.io/prospect-actuary/pre-draft/)
-(section 9) and the [Post-Draft Player Grades](https://kylemschyma.github.io/prospect-actuary/post-draft/)
-(section 10). The other sections describe the research models those boards grew out of.
+This guide explains the two Prospect Actuary boards: what each model predicts, what the
+final model is, what drives it, and how to explain it to someone who doesn't do
+statistics. The boards are the [Pre-Draft Player Grades](https://kylemschyma.github.io/prospect-actuary/pre-draft/)
+and the [Post-Draft Player Grades](https://kylemschyma.github.io/prospect-actuary/post-draft/).
+This guide is also on the site as a page: [Guide](https://kylemschyma.github.io/prospect-actuary/guide/).
 
 ## The one-paragraph version
 
-These models try to answer one question at three moments in a young player's career:
-"How likely is he to become a useful fantasy starter in his first three NFL seasons?"
-Before the draft we only have college stats. On draft night we also know where he was
-picked. After his rookie year and his second year we know how the NFL actually used him.
-The big lesson: **each new piece of real information beats the clever stuff that came
-before it.** Draft position beats college stats, and a player's actual NFL usage beats
-draft position.
+Both boards answer one question: "How likely is this player to become a useful fantasy
+starter in his first three NFL seasons?" The pre-draft grade answers it with college data
+only, before anyone is drafted. The post-draft grade answers it again once we know where
+he was picked and where he landed. The big lesson: **each new piece of real information
+beats the clever stuff that came before it.** Draft position beats college stats, so the
+post-draft grade is the more accurate of the two.
 
 ## Shared ideas (explain these once)
 
@@ -32,112 +31,10 @@ draft position.
   draft classes to learn from.
 - **Probabilities that make sense together.** The models are built so a player's chance
   of a top-8 season can never be higher than his chance of a top-24 season.
+- **Letter grades.** Every player's model score is placed on one fixed A+ to F scale per
+  board, so an A means the same thing in 2012 as in 2026.
 
-## 1. Rookie draft-time models (WR, QB, RB, TE)
-
-**What they predict.** For each drafted player: fantasy points over his first three
-seasons, his chance of reaching each tier, and a "finish score" (his three yearly
-position ranks added up, lower is better).
-
-**Final model in plain words.** An elastic net that starts from draft position (the log of
-the pick number, because the gap between picks 1 and 10 matters far more than between 150
-and 160) and lets college production, age, athletic testing, recruiting and the team's
-open opportunity nudge the projection up or down.
-
-**Key drivers.**
-
-- Draft pick, by a wide margin, at every position.
-- WR: younger breakout age and younger draft age, career receiving yards, recruiting.
-- QB: completion rate, low interception rate, touchdown rate.
-- RB: vacated touches on the new team, early declaring.
-- TE: best college "dominator" season (share of team receiving), a fast 40 and 3-cone.
-
-**The honest result.** Once you know the draft pick, college and combine data add
-nothing you can measure. For QB total points and the RB top-24 model, adding them made
-results slightly worse. NFL teams already bake the college film and stats into where they
-pick a player.
-
-**How to explain it.** "NFL front offices are the best scouts we have. Their draft pick
-already contains almost everything the college numbers say, so the pick is the
-projection. The college stats only help a little at the margins."
-
-## 2. Tier ladder and finish score
-
-**What they predict.** The chances of the player's best season landing in each tier
-(for example WR1, WR2, WR3), with the chances nested so they always add up sensibly.
-
-**Final model in plain words.** An ordered model: picture a ladder with rungs at top 8,
-top 16 and top 24. One score per player says how high up the ladder he's likely to
-climb. The two-step finish score first asks "will he ever be a fantasy starter?" and then
-"if so, how good?"
-
-**How to explain it.** "Instead of one number, you get a ladder: a 30% shot at elite, a
-50% shot at being a solid starter, a 70% shot at being at least a flex play."
-
-## 3. Value score and Day-3 "hidden talent"
-
-**What it measures.** How much more the college-only model likes a player than his draft
-slot does. Used to build Day-3 stash lists.
-
-**The honest result.** It's borderline at best. For WRs the most-liked third of Day-3
-picks beat their slot by about 50 points over three years, but the uncertainty range
-crosses zero. For RBs it went the wrong way. Simply taking the earliest Day-3 picks found
-more future starters than the college "hidden" score did. Tyreek Hill, Puka Nacua and
-Hunter Renfrow all ranked near the bottom of their Day-3 class on college data.
-
-**How to explain it.** "Stash lists are lottery tickets. College stats can't reliably
-find the late-round star."
-
-## 4. Year-2 model (after the rookie season)
-
-**What it predicts.** The chance of a tier season in years 2-3, using how the NFL actually
-used him as a rookie: snaps, target or touch share, late-season role, efficiency.
-
-**Final model in plain words.** An elastic net on rookie usage, compared against "draft
-pick plus rookie fantasy points."
-
-**Key drivers.** Target share and snap share (especially over the last six games), plus
-rookie points. For QBs: low interception rate, late-season starts, accuracy over expected.
-For RBs: receiving share, snap share, yards per carry.
-
-**The result.** This is the strongest signal in the whole project. For QBs the usage
-model clearly beats rookie points alone. For WRs and RBs it ties them. For TEs, rookie
-points alone are slightly better. After one season, the rookie-year Day-3 stars (Hill,
-Renfrow, Mooney, St. Brown, Nacua) all show up near the top of their class.
-
-**How to explain it.** "One NFL season tells you more than three college seasons. A
-rookie who played most snaps and drew a big target share is a buy, even if his fantasy
-points were meh."
-
-## 5. Year-3 model (after year 2)
-
-**What it predicts.** The chance of a tier season in year 3.
-
-**Final model in plain words.** The same usage approach with year-1 and year-2 data.
-
-**The result.** Year-2 fantasy points dominate at every position (QB top-24 accuracy about
-0.99 on the AUC scale). Usage ties points, but it's useful for reading the board: rising
-target share and late-season snaps flag year-3 risers (for TEs the biggest drivers are
-target share and WOPR, a blend of target and air-yards share).
-
-**How to explain it.** "By year three, what he did last year is most of the story. Usage
-trends tell you who's trending up or down inside that story."
-
-## 6. Undrafted free agents
-
-**What we found.** Undrafted hits are rare (RB and TE about 4% vs 11-12% for rounds 4-7;
-no undrafted QB reached the top 24). The college model doesn't find them; the rookie-usage
-model does once they play. Adding them to training changes no conclusions.
-
-## 7. Buy / sell lists
-
-**What they are.** Simple rules on top of the boards. A "buy" is a player the usage model
-likes more than his fantasy points suggest (big snap or target share, late-season growth).
-A "sell" is one whose points ran ahead of his usage (touchdown-heavy, falling late-season
-snaps). "Sell" doesn't mean bad; it means the market may be paying for points the role
-doesn't support.
-
-## 8. Pre-draft (college-only) model and class grades
+## 1. The pre-draft (college-only) model
 
 **What it predicts.** Before anyone is drafted, each college player's chance of a top,
 top-two and any-tier season in his first three NFL years. It's trained on every
@@ -174,7 +71,7 @@ single position's.
 rankings. It finds real signal (it ranks future hits well above average) but the NFL draft
 still knows more."
 
-## 9. All-time pre-draft player grades
+## 2. Pre-draft player grades
 
 **What it is.** A letter grade (A+ to F) for every drafted QB, RB, WR and TE from 2010-2026,
 plus the top 2027 prospects, from the college-only model. Historical grades are scored by
@@ -189,18 +86,25 @@ Allen (F), Cooper Kupp (F), Tyreek Hill (D), George Kittle (D).
 **How to explain it.** "An A means the college résumé looks like past hits. It's a
 strong flag at the top, not a guarantee, and a low grade doesn't rule a player out."
 
-## 10. All-time post-draft player grades
+## 3. Post-draft player grades
 
 **What it is.** The same A+ to F board for every drafted player from 2010-2026, but built
-from the post-draft version of each position model (college profile plus draft pick and
-landing spot). It sits next to the pre-draft grade, so you can see how much draft capital
-moved each player and each class. 2027 isn't on it because nobody has been drafted.
+from the post-draft model: the college profile plus draft pick and landing spot (how much
+target, touch or attempt share the new team has open, and how good the incumbents are).
+It sits next to the pre-draft grade, so you can see how much draft capital moved each
+player and each class. 2027 isn't on it because nobody has been drafted.
+
+**Final model in plain words.** An ordered model: picture a ladder with rungs at top 8,
+top 16 and top 24. One score per player says how high up the ladder he's likely to
+climb. It's fit as an elastic net, and the biggest single input is the draft pick (as its
+log, because the gap between picks 1 and 10 matters far more than between 150 and 160).
 
 **The result.** Post-draft A-range players hit 69% of the time, B 35%, C 9% and D/F 4%.
 Unlike the pre-draft grade, it separates the bottom too. It also ranks players within a
-class better (average rank correlation 0.49-0.61 vs 0.31-0.45). Big risers include Carson
-Wentz (F to A-), Doug Martin (D to A) and Travis Kelce (C to A-); big fallers are mostly
-late picks with strong college numbers, such as Alex Collins (A- to D).
+class better (average rank correlation 0.49-0.61 vs 0.31-0.45). For QBs it beats draft
+slot alone; for RBs, WRs and TEs it's about the same as draft slot. Big risers include
+Carson Wentz (F to A-), Doug Martin (D to A) and Travis Kelce (C to A-); big fallers are
+mostly late picks with strong college numbers, such as Alex Collins (A- to D).
 
 **How to explain it.** "The pre-draft grade is what the college stats say. The post-draft
 grade adds what the NFL said with its pick. When they disagree, history sides with the

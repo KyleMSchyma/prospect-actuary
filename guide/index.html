@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plain-English Guide | Prospect Actuary</title>
+<meta name="description" content="How the Prospect Actuary pre-draft and post-draft player grades work, in plain English.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f5f6f3;--panel:#ffffff;--ink:#18201c;--muted:#5d6862;--line:#d9ddd6;--accent:#1f6b4f;--accent-soft:#e2efe8;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:36px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.1}
+h1{font-size:2.8rem} h2{font-size:1.75rem} h3{font-size:1.15rem;font-family:var(--f-body);font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+section{display:flex;flex-direction:column;gap:12px}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.lead{font-size:1.05rem}
+.callout{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:6px}
+.explain{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 16px;font-style:italic}
+.explain b{font-style:normal}
+.toc{display:flex;flex-wrap:wrap;gap:8px 16px;font-family:var(--f-mono);font-size:.8rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+@media (max-width:520px){h1{font-size:2.2rem}}
+</style></head>
+<body><div class="wrap">
+<header style="display:flex;flex-direction:column;gap:12px">
+  <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../guide/" aria-current="page">Guide</a></span></nav>
+  <div class="eyebrow">How the grades work</div>
+  <h1>Plain-English Guide</h1>
+  <p class="lead">What each Prospect Actuary model predicts, what the final model is, what drives it, and how to explain it to someone who doesn't do statistics. It covers the <a href="../pre-draft/">Pre-Draft Player Grades</a> and the <a href="../post-draft/">Post-Draft Player Grades</a>.</p>
+  <div class="toc"><a href="#short">Short version</a><a href="#ideas">Shared ideas</a><a href="#model">Pre-draft model</a><a href="#pre">Pre-draft grades</a><a href="#post">Post-draft grades</a><a href="#actuarial">Actuarial concepts</a></div>
+</header>
+
+<section id="short">
+  <h2>The one-paragraph version</h2>
+  <p>Both boards answer one question: "How likely is this player to become a useful fantasy starter in his first three NFL seasons?" The pre-draft grade answers it with college data only, before anyone is drafted. The post-draft grade answers it again once we know where he was picked and where he landed.</p>
+  <p class="callout"><b>The big lesson: each new piece of real information beats the clever stuff that came before it.</b> Draft position beats college stats, so the post-draft grade is the more accurate of the two.</p>
+</section>
+
+<section id="ideas">
+  <h2>Shared ideas</h2>
+  <ul>
+    <li><b>Tiers.</b> "Hitting" means at least one season in years 1-3 inside a tier. For QBs, RBs and TEs the tiers are top 8, top 16 and top 24 at the position. For WRs they are top 12, top 24 and top 36 (more WRs start in fantasy lineups).</li>
+    <li><b>Fair testing.</b> Each draft class is predicted only with classes whose results were already known at the time, like a forecaster who is not allowed to peek at the future. This is called rolling-origin testing, and it's the honest score.</li>
+    <li><b>Always compare to a simple benchmark.</b> Every model is measured against "just use the draft pick." If a fancy model can't beat that, we say so.</li>
+    <li><b>Elastic net.</b> The workhorse model. Think of it as a regression that is told "use as few inputs as you can, and keep their effects modest." It keeps the model from over-reacting to quirks in a small sample, which matters when there are only about 14 draft classes to learn from.</li>
+    <li><b>Probabilities that make sense together.</b> The models are built so a player's chance of a top-8 season can never be higher than his chance of a top-24 season.</li>
+    <li><b>Letter grades.</b> Every player's model score is placed on one fixed A+ to F scale per board, so an A means the same thing in 2012 as in 2026.</li>
+  </ul>
+</section>
+
+<section id="model">
+  <div class="eyebrow">1</div>
+  <h2>The pre-draft (college-only) model</h2>
+  <p><b>What it predicts.</b> Before anyone is drafted, each college player's chance of a top, top-two and any-tier season in his first three NFL years. It's trained on every draft-eligible college player (about 900 to 2,800 per position), so "never made the NFL" counts as a miss. Uses no draft pick and no combine.</p>
+  <h3>Final model in plain words</h3>
+  <ul>
+    <li>QB, RB, TE: an elastic net on college production, age, recruiting and conference level.</li>
+    <li>WR: a plain logistic regression on five inputs (receiving yards, dominator share, years out of high school, recruiting rating, Power 5). It tied the elastic net, and the simpler model wins ties.</li>
+    <li>Random forests, gradient boosting (xgboost) and an average of models were all tested and lost. With only a few dozen hits per position, simpler models are more reliable.</li>
+  </ul>
+  <p><b>Key drivers.</b> Youth (fewer years out of high school), recruiting rating, Power 5, and the position's production: QB accuracy, TD rate and low INT rate; RB touchdown share and receiving; WR receiving yards and dominator share; TE yards per team pass attempt and receiving share.</p>
+  <p><b>FCS adjustment.</b> FCS stats are shrunk toward an FBS scale. Players who transferred from FCS to FBS saw their production share drop more than FBS-to-FBS transfers, which gives a factor of about 0.69 for receiving and rushing and 0.79 for passing. Conference labels were tested as extra inputs (including a credibility-weighted conference effect) and did not help.</p>
+  <p><b>Class grades.</b> Add up the expected tier hits of each class's top prospects (QB 12, RB 20, WR 32, TE 15) and grade against 2010-2023 (A = top 10%, F = bottom 10%). Current: 2027 projected A− overall, 2026 F, 2025 A, 2024 C−. Class grades track reality modestly (correlation about 0.5 for the overall grade), so trust the overall grade more than any single position's.</p>
+  <p class="explain"><b>How to explain it:</b> "It's a scouting report built only from the box score and recruiting rankings. It finds real signal (it ranks future hits well above average) but the NFL draft still knows more."</p>
+</section>
+
+<section id="pre">
+  <div class="eyebrow">2</div>
+  <h2>Pre-draft player grades</h2>
+  <p><b>What it is.</b> A letter grade (A+ to F) for every drafted QB, RB, WR and TE from 2010-2026, plus the top 2027 prospects, from the college-only model. Historical grades are scored by a model that never saw that class, so they're honest.</p>
+  <p><b>The result.</b> A-range players hit about 59% of the time, B about 31%, C and below about 14%. The grade separates the top well but not the bottom (C, D and F hit at similar rates). Draft slot is still more accurate, and the grade only adds to draft slot for QBs. Famous misses: Johnny Manziel (A+), N'Keal Harry (A+); famous low grades that hit: Josh Allen (F), Cooper Kupp (F), Tyreek Hill (D), George Kittle (D).</p>
+  <p class="explain"><b>How to explain it:</b> "An A means the college résumé looks like past hits. It's a strong flag at the top, not a guarantee, and a low grade doesn't rule a player out."</p>
+  <p><a href="../pre-draft/">Open the Pre-Draft Player Grades →</a></p>
+</section>
+
+<section id="post">
+  <div class="eyebrow">3</div>
+  <h2>Post-draft player grades</h2>
+  <p><b>What it is.</b> The same A+ to F board for every drafted player from 2010-2026, but built from the post-draft model: the college profile plus draft pick and landing spot (how much target, touch or attempt share the new team has open, and how good the incumbents are). It sits next to the pre-draft grade, so you can see how much draft capital moved each player and each class. 2027 isn't on it because nobody has been drafted.</p>
+  <p><b>Final model in plain words.</b> An ordered model: picture a ladder with rungs at top 8, top 16 and top 24. One score per player says how high up the ladder he's likely to climb. It's fit as an elastic net, and the biggest single input is the draft pick (as its log, because the gap between picks 1 and 10 matters far more than between 150 and 160).</p>
+  <p><b>The result.</b> Post-draft A-range players hit 69% of the time, B 35%, C 9% and D/F 4%. Unlike the pre-draft grade, it separates the bottom too. It also ranks players within a class better (average rank correlation 0.49-0.61 vs 0.31-0.45). For QBs it beats draft slot alone; for RBs, WRs and TEs it's about the same as draft slot. Big risers include Carson Wentz (F to A-), Doug Martin (D to A) and Travis Kelce (C to A-); big fallers are mostly late picks with strong college numbers, such as Alex Collins (A- to D).</p>
+  <p class="explain"><b>How to explain it:</b> "The pre-draft grade is what the college stats say. The post-draft grade adds what the NFL said with its pick. When they disagree, history sides with the pick more often, which is why a pre-draft A who goes in round 6 usually fades."</p>
+  <p><a href="../post-draft/">Open the Post-Draft Player Grades →</a></p>
+</section>
+
+<section id="actuarial">
+  <h2>Actuarial concepts behind it</h2>
+  <p>The methods come from the Society of Actuaries' predictive analytics exams (ATPA and PA).</p>
+  <div class="tbl"><table>
+    <thead><tr><th>If someone asks...</th><th>Point to</th></tr></thead>
+    <tbody>
+      <tr><td>"How do you know it isn't overfit?"</td><td>Rolling-origin validation by draft class; fixed benchmark; bootstrap confidence intervals</td></tr>
+      <tr><td>"Why not a fancier model?"</td><td>Model comparison (ATPA 4.5): random forest and xgboost lost to a penalized GLM on small samples</td></tr>
+      <tr><td>"Why does the model say what it says?"</td><td>Permutation importance, PDP/ICE and SHAP (ATPA 4.3)</td></tr>
+      <tr><td>"What about missing college data?"</td><td>Leakage-safe imputation with missing flags (ATPA 3.7a)</td></tr>
+      <tr><td>"Does conference strength matter?"</td><td>Credibility / mixed-model test (ATPA 3.3), no gain</td></tr>
+      <tr><td>"Why are probabilities nested?"</td><td>Ordered (cumulative logit) models and forced monotone probabilities</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<p class="pa-tip" style="margin:0;font-size:.9rem;color:var(--muted);max-width:72ch">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: college stats, team stats and recruiting ratings from <a href="https://collegefootballdata.com">CollegeFootballData.com</a> (via the <a href="https://cfbfastr.sportsdataverse.org">cfbfastR</a> package). NFL draft picks, player stats and combine results from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Draft and combine data originally from <a href="https://www.pro-football-reference.com">Pro Football Reference</a> (Sports Reference LLC). Grades and models by Prospect Actuary. Not affiliated with the NFL or any team.</footer>
+</div></body></html>
