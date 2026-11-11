@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Prospect Actuary</title>
-<meta name="description" content="Letter grades for every drafted NFL QB, RB, WR and TE since 2010, from college-only and post-draft prediction models.">
+<meta name="description" content="Letter grades for every drafted NFL QB, RB, WR and TE since 2010, from college-only and post-draft prediction models, plus a dynasty value board for every active player.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{--bg:#f5f6f3;--panel:#ffffff;--ink:#18201c;--muted:#5d6862;--line:#d9ddd6;--accent:#1f6b4f;--accent-soft:#e2efe8;
@@ -16,7 +16,7 @@ h1,h2{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.1}
 h1{font-size:3rem} h2{font-size:1.6rem}
 p{margin:0;max-width:66ch}
 a{color:var(--accent)}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);transition:border-color .15s}
 .card:hover{border-color:var(--accent)}
 .card .go{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);margin-top:auto}
@@ -29,7 +29,7 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-wid
 <header style="display:flex;flex-direction:column;gap:12px">
   <div class="eyebrow">NFL prospect grades · built with actuarial modeling</div>
   <h1>Prospect Actuary</h1>
-  <p>Letter grades (A+ to F) for every drafted QB, RB, WR and TE from the 2010-2026 classes, with each player's real NFL results beside the grade so you can check the model. One board uses only college data. The other adds where the player was drafted and where he landed.</p>
+  <p>Letter grades (A+ to F) for every drafted QB, RB, WR and TE from the 2010-2026 classes, with each player's real NFL results beside the grade so you can check the model. One board uses only college data. The other adds where the player was drafted and where he landed. A third values every active player for dynasty leagues, pricing production and career length together the way an actuary prices an annuity.</p>
 </header>
 
 <div class="cards">
@@ -43,6 +43,12 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-wid
     <div class="eyebrow">Post-draft model</div>
     <h2>Post-Draft Player Grades</h2>
     <p class="muted">The same players with draft slot and landing spot added, shown next to the pre-draft grade so you can see what draft night changed.</p>
+    <span class="go">Open the board →</span>
+  </a>
+  <a class="card" href="dynasty/">
+    <div class="eyebrow">Survival model · superflex</div>
+    <h2>Dynasty Value Board</h2>
+    <p class="muted">Every active QB, RB, WR and TE, drafted or undrafted. Expected points above the startable line, times the chance he stays startable, over the next ten seasons. Includes a trade value scale.</p>
     <span class="go">Open the board →</span>
   </a>
   <a class="card" href="guide/">
@@ -60,6 +66,7 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-wid
     <li>Pre-draft A-range players hit about 59% of the time, B about 31%, C and below about 14%. Post-draft A-range players hit 69%, and D/F players almost never.</li>
     <li>Every historical grade comes from a model that never saw that draft class, so the hit rates are honest out-of-sample results.</li>
     <li>The draft pick still knows more than college stats alone. Treat the grade as a strong flag, not a guarantee.</li>
+    <li>Once a player is startable, QBs stay startable a median of 5 seasons, WRs 4, and RBs and TEs 3. On held-out seasons, the dynasty value ranked startable players' next three years better than "he'll repeat this season."</li>
   </ul>
   <p class="muted">How the models work, in plain English: <a href="guide/">the guide</a>. The data behind each page is in the <a href="https://github.com/KyleMSchyma/prospect-actuary">repository</a> as CSV files.</p>
 </section>
