@@ -102,7 +102,7 @@ top 16 and top 24 (top 6, 12 and 18 for TEs; top 12, 24 and 36 for WRs). One sco
 climb. It's fit as an elastic net, and the biggest single input is the draft pick (as its
 log, because the gap between picks 1 and 10 matters far more than between 150 and 160).
 
-**The result.** Post-draft A-range players hit 69% of the time, B 35%, C 9% and D/F 4%.
+**The result.** Post-draft A-range players hit 66% of the time, B 34%, C 10% and D/F 4%.
 Unlike the pre-draft grade, it separates the bottom too. It also ranks players within a
 class better (average rank correlation 0.49-0.61 vs 0.31-0.45). For QBs it beats draft
 slot alone; for RBs, WRs and TEs it's about the same as draft slot. Big risers include
@@ -112,6 +112,31 @@ mostly late picks with strong college numbers, such as Alex Collins (A- to D).
 **How to explain it.** "The pre-draft grade is what the college stats say. The post-draft
 grade adds what the NFL said with its pick. When they disagree, history sides with the
 pick more often, which is why a pre-draft A who goes in round 6 usually fades."
+
+### Comparing across positions: the Value column
+
+**Why.** A grade is a rank *within* a position, so an A tight end and an A quarterback aren't
+worth the same. Both grade boards show **Value**: each player's expected dynasty trade value on
+the same 100,000-point scale as the Trade Values page, in the default league (12 teams,
+superflex, PPR, 2 RB / 3 WR / 1 TE, no flex). The All tab is sorted by it.
+
+**How it's built.** His chance of each fantasy tier, times what past drafted players in that
+tier actually scored over their first four seasons (games, points per game above the
+replacement starter, discounted 15% a year, adjusted for his age), added up. It's the same math
+that prices the 2027 rookie picks, so a 2027 prospect's Value equals his rookie-pick value.
+
+**Which chances.** Post-draft probabilities for drafted players and for 2027 players in the
+mock draft. For other 2027 prospects, the pre-draft probabilities after a fix: the college-only
+model is trained on every college player, so its chances include the risk of never being
+drafted, and among drafted players they ran about a third too low (expected any-tier rate 16%
+vs 25% actual, 2010-2023). A logistic recalibration per position and tier, fit on drafted
+players' out-of-class predictions, fixes the level without changing anyone's order within a
+position. The original pre-draft grades and probabilities are unchanged. For past classes,
+Value is the value at draft time in today's league, not what the player is worth now.
+
+**How to explain it.** "The grade tells you how good a prospect is for his position. Value
+tells you what he's worth on a dynasty trade market, so you can line up a running back against
+a quarterback."
 
 ## 4. Redraft Trade Values (in development)
 
