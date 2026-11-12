@@ -162,7 +162,8 @@ const pchip = p => `<span class="pos" style="color:var(--${p})">${p==="PICK"?"Pi
 $("asof").textContent = D.asof;
 
 // ---------- league settings: same options, storage key and ?league= format as /trade-values/ ----------
-const DEF = {teams:12, ppr:1, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:0};
+const DEF = {teams:12, ppr:1, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:0, fdQB:0, fdRB:0, fdWR:0, fdTE:0};
+const FDO = [[0,"0"],[0.25,".25"],[0.5,".5"],[0.75,".75"],[1,"1"]];
 const OPTS = [
   ["teams","Teams",[[8,"8"],[10,"10"],[12,"12"],[14,"14"]]],
   ["ppr","Points per catch",[[0.5,"0.5 PPR"],[1,"PPR"]]],
@@ -172,15 +173,16 @@ const OPTS = [
   ["rb","Starting RB",[[2,"2"],[3,"3"]]],
   ["wr","Starting WR",[[2,"2"],[3,"3"]]],
   ["te","Starting TE",[[1,"1"],[2,"2"]]],
-  ["flex","FLEX (RB/WR/TE)",[[0,"0"],[1,"1"],[2,"2"],[3,"3"]]]];
+  ["flex","FLEX (RB/WR/TE)",[[0,"0"],[1,"1"],[2,"2"],[3,"3"]]],
+  ["fdQB","1st-down bonus · QB",FDO], ["fdRB","1st-down bonus · RB",FDO], ["fdWR","1st-down bonus · WR",FDO], ["fdTE","1st-down bonus · TE",FDO]];
 const ORDER = OPTS.map(o=>o[0]);
 let S = Object.assign({}, DEF), MODE = "d", A = [], B = [];     // A, B: asset ids ("p:<index>" or "k:<round>.<pick>")
 const valid = (k,v) => OPTS.find(o=>o[0]===k)[2].some(([x])=>x===v);
-function readLeague(src){ if (!src) return false; const a = src.split("_").map(Number);
+function readLeague(src){ if (!src) return false; const a = src.split("_").map(Number); while (a.length < ORDER.length && a.length >= 9) a.push(0);
   if (a.length === ORDER.length && ORDER.every((k,i)=>valid(k,a[i]))) { ORDER.forEach((k,i)=>S[k]=a[i]); return true; } return false; }
 
 // ---------- the math: identical to /trade-values/ (tv_page_template.html compute()), but keeps every player ----------
-const keyOf = p => p==="QB" ? "QB_p"+S.ptd : p==="TE" ? "TE_t"+(S.ppr+S.tep) : p+"_r"+S.ppr;
+const keyOf = p => (p==="QB" ? "QB_p"+S.ptd : p==="TE" ? "TE_t"+(S.ppr+S.tep) : p+"_r"+S.ppr) + "f" + S["fd"+p];
 function erf(x){ const s = x<0?-1:1; x = Math.abs(x); const t = 1/(1+0.3275911*x);
   return s*(1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x)); }
 const pnorm = z => 0.5*(1+erf(z/Math.SQRT2)), dnorm = z => Math.exp(-z*z/2)/Math.sqrt(2*Math.PI);
@@ -291,7 +293,7 @@ function render(){
   $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===MODE));
   $("lg").querySelectorAll(".tabs").forEach(t=>t.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", Number(b.dataset.v)===S[t.dataset.k])));
   const per = ["1 QB", `${S.rb} RB`, `${S.wr} WR`, `${S.te} TE`]; if (S.flex) per.push(`${S.flex} FLEX`); if (S.sf) per.push("SF");
-  $("lgSum").innerHTML = `<b>${S.teams} teams</b> · ${per.join(", ")} · ${S.ppr===1?"PPR":"Half PPR"}${S.tep?` · TE +${S.tep}`:""} · ${S.ptd}-pt pass TD`;
+  $("lgSum").innerHTML = `<b>${S.teams} teams</b> · ${per.join(", ")} · ${S.ppr===1?"PPR":"Half PPR"}${S.tep?` · TE +${S.tep}`:""} · ${S.ptd}-pt pass TD${POS.some(p=>S["fd"+p]) ? " · 1st-down "+POS.filter(p=>S["fd"+p]).map(p=>`${p} +${S["fd"+p]}`).join(", ") : ""}`;
   $("lgRep").innerHTML = `<span class="muted">Dynasty replacement line:</span>` + POS.map(p=>`<span>${pchip(p)} ${C.RD.n[p]} · ${f1(C.RD.rep[p])} PPG</span>`).join("");
   const ta = list("A", A), tb = list("B", B);
   $("totA").textContent = fmt(ta); $("totB").textContent = fmt(tb);

@@ -121,7 +121,8 @@ season with the last three using Buhlmann credibility, Z = games / (games + k), 
 on 2016-2025 (weeks 1-9 predicting weeks 10-18). Expected games = team games left x his chance of playing
 each game, blended from this season, his last three seasons and his position's average.
 
-**League settings.** Teams (8-14), half or full PPR, TE premium (+0, +0.5, +1), passing TD (4-6), superflex,
+**League settings.** Teams (8-14), half or full PPR, TE premium (+0, +0.5, +1), passing TD (4-6), first-down bonus per
+position (0, 0.25, 0.5, 0.75 or 1 per rushing or receiving first down, never passing), superflex,
 starting RB (2-3), WR (2-3), TE (1-2) and FLEX (0-3). Scoring changes the points themselves, so each scoring
 setting has its own fitted model. Lineup settings set the replacement line: every team fills its position
 slots, then FLEX, then SUPERFLEX, each with the best player left; the last starter at each position is the
@@ -129,7 +130,7 @@ line. The default (12 teams, superflex, 2 RB, 3 WR, 1 TE, no flex) gives QB24 / 
 
 **Result.** The credible points per game beat "this season only" and "history only" at every position, and
 the value ranked weeks 10-18 better than "current pace x games left" (rank correlation 0.54-0.68 vs 0.47-0.64).
-That held for every scoring setting at every position and for five league setups from 8-team 1-QB to
+That held for every scoring setting (incl. every first-down bonus) at every position and for five league setups from 8-team 1-QB to
 14-team superflex (0.61-0.70 vs 0.54-0.66).
 
 ## 5. Dynasty Trade Values (in development)
