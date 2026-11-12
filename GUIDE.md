@@ -141,13 +141,14 @@ Draft slot sets a young player's potential until production takes over; aging, s
 availability are fit by position from past seasons; and a player just under replacement keeps a little value
 from his chance of beating it (the insurance stop-loss formula).
 
-**2027 rookie picks.** Until the class is drafted, priced from the pre-draft model alone (no NFL draft capital).
+**2027 rookie picks.** Until the class is drafted: the 30 skill players in the 2027 mock (Renner) are priced from the
+post-draft model (mock pick = draft capital, mock team = landing spot); everyone else from the pre-draft model (no capital).
 Value = sum over tiers of P(tier) x what past drafted players in that tier did in seasons 1-4 (2010-2022 classes:
 games, PPG, PPG spread), valued against your league's replacement line with the stop-loss upside and discounted from
 2027. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
 about 18.6 + years out of high school). Prospects are ranked for your league: 1.01 = the best value, 1.02 the second,
-and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #29 asset, the rest
-of round 1 about 13,000-23,000, round 3 about 6,000-9,000.
+and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #20 asset, the rest
+of round 1 about 15,000-27,000, round 3 about 8,000-10,000.
 
 **One star vs two good players.** No extra consolidation curve: the replacement line already handles it, since
 in a shallow league the 40th-best player barely beats the waiver wire. In the default league the values nearly
