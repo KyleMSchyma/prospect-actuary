@@ -12,7 +12,7 @@ real NFL results sit beside his grade, so you can check the model yourself.
 | Post-Draft Player Grades | The same college profile plus draft slot and landing spot. | [post-draft](https://kylemschyma.github.io/prospect-actuary/post-draft/) | [`post-draft/data`](post-draft/data) |
 | Trade Values (in development) | Redraft sheet (rest of 2026) and Dynasty sheet (rest of 2026 plus 2027-2030): points per game over replacement x expected games, with credibility-blended PPG, an injury factor, draft-slot potential and aging. Set to your league (teams, PPR, TE premium, passing TD, superflex, starters, flex), with 2027 rookie picks on the Dynasty sheet. One 100,000-point scale that adds up. | [trade-values](https://kylemschyma.github.io/prospect-actuary/trade-values/) | [`trade-values/data`](trade-values/data) |
 | Trade Calculator (in development) | Add players and 2027 rookie picks to each side of a trade and compare the totals, redraft or dynasty, for your league. Uses the same values as the Trade Values page (`trade-values/data/tv.js`, refreshed weekly). | [trade-calculator](https://kylemschyma.github.io/prospect-actuary/trade-calculator/) | [`trade-values/data`](trade-values/data) |
-| Value Research (in development) | Our dynasty values (12-team superflex, 0.5 PPR) ranked against the [DynastyProcess](https://github.com/dynastyprocess/data) open superflex values: overall and positional rank gaps, agreement by position, biggest disagreements. Loads the DynastyProcess file live, with a saved copy as fallback. | [value-research](https://kylemschyma.github.io/prospect-actuary/value-research/) | [`value-research/data`](value-research/data) |
+| Value Research (in development) | Our trade values (12-team superflex, 0.5 PPR) ranked against market values: [Dynasty Daddy](https://dynasty-daddy.com/help/api-documentation) (dynasty and redraft, from its public API, snapshot refreshed weekly in `value-research/data/dd.js`) and [DynastyProcess](https://github.com/dynastyprocess/data) (dynasty, loaded live with a saved copy as fallback). Overall and positional rank gaps, agreement by position, biggest disagreements. | [value-research](https://kylemschyma.github.io/prospect-actuary/value-research/) | [`value-research/data`](value-research/data) |
 
 How the models work, in plain English: the [Guide page](https://kylemschyma.github.io/prospect-actuary/guide/)
 (also in this repo as [GUIDE.md](GUIDE.md)).
@@ -51,6 +51,8 @@ These grades would not exist without free, openly shared football data. Thank yo
   derived from it, not copies of it.
 - **[Pro Football Reference](https://www.pro-football-reference.com)** (Sports Reference LLC):
   the original source of the NFL draft and combine data that nflverse compiles.
+- **[Dynasty Daddy](https://dynasty-daddy.com)** (Jeremy Timperio): superflex dynasty and redraft trade values
+  from its public values API, compared on the Value Research page. Pulled once a week and cached, as the API asks.
 - **[DynastyProcess](https://github.com/dynastyprocess/data)** (Tan Ho): the open superflex
   dynasty values (built from FantasyPros expert consensus rankings) that the Value Research
   page compares against. Only ranks derived from them are shown.
