@@ -1,0 +1,255 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Value Research | Prospect Actuary</title>
+<meta name="description" content="How Prospect Actuary's dynasty trade values compare with the market: overall and positional rank gaps against DynastyProcess superflex values, 12-team 0.5 PPR.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f5f6f3; --panel:#ffffff; --ink:#18201c; --muted:#5d6862; --line:#d9ddd6; --accent:#1f6b4f; --accent-soft:#e2efe8;
+  --warn:#8a5a00; --warn-soft:#fbf0d9; --bar:#2f6d8f; --sideA:#2f6d8f; --sideB:#c4502f;
+  --QB:#c4502f; --RB:#1d7a50; --WR:#2f6d8f; --TE:#9b4f8a; --PICK:#8a5a00;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif; --f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121815; --panel:#1a221e; --ink:#e7ece8; --muted:#9aa69f; --line:#2c3732; --accent:#5cc497; --accent-soft:#1f3229;
+  --warn:#f0c46a; --warn-soft:#3a2f17; --bar:#5b9cc0; --sideA:#5b9cc0; --sideB:#e2754f; --QB:#e2754f; --RB:#3fb07c; --WR:#5b9cc0; --TE:#c27bb3; --PICK:#f0c46a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121815; --panel:#1a221e; --ink:#e7ece8; --muted:#9aa69f; --line:#2c3732; --accent:#5cc497; --accent-soft:#1f3229;
+  --warn:#f0c46a; --warn-soft:#3a2f17; --bar:#5b9cc0; --sideA:#5b9cc0; --sideB:#e2754f; --QB:#e2754f; --RB:#3fb07c; --WR:#5b9cc0; --TE:#c27bb3; --PICK:#f0c46a; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:36px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:2.6rem} h2{font-size:1.75rem} h3{font-size:1.35rem}
+p{margin:0;max-width:70ch}
+section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+.dev b{font-family:var(--f-mono);letter-spacing:.12em;color:var(--warn);font-size:.95rem}
+.dev{background:var(--warn-soft);border:1px solid var(--warn);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.explain{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.pos{font-family:var(--f-mono);font-size:.8rem;font-weight:600}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button,.btn{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:5px 12px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.stat .lbl{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.stat .big{font-family:var(--f-mono);font-size:1.6rem;font-weight:600;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+.box ol li span.d{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.controls input{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:6px 10px;min-width:0;width:220px;max-width:100%}
+.tblwrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td:first-child{white-space:normal;min-width:150px}
+thead th{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);position:sticky;top:0;background:var(--panel)}
+thead th button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;padding:0;text-transform:inherit;letter-spacing:inherit}
+thead th button[aria-sort]{color:var(--ink)}
+tbody tr:last-child td{border-bottom:none}
+td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.up{color:var(--RB)} .down{color:var(--QB)}
+.meta{font-size:.78rem;color:var(--muted)}
+@media (max-width:720px){.two{grid-template-columns:1fr}}
+@media (max-width:520px){h1{font-size:2.1rem}}
+</style></head>
+<body><div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+  <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/" aria-current="page">Value research</a><a href="../guide/">Guide</a></span></nav>
+  <div class="dev" role="note"><b>IN DEVELOPMENT</b><span>The trade values compared here are still being built and tested. Expect the numbers and methods to change.</span></div>
+  <div class="eyebrow">Value research · dynasty · 12-team superflex · 0.5 PPR</div>
+  <h1>Value Research</h1>
+  <p>How do our dynasty trade values line up with the market? This page ranks every player by our model and by the <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> superflex values, an open dataset built from expert consensus dynasty rankings, and shows where the two disagree, overall and within each position.</p>
+  <p class="small muted" id="asof">Loading…</p>
+</header>
+
+<section>
+  <h2>How close are we?</h2>
+  <div class="cards" id="cards"></div>
+  <div class="tblwrap"><table id="posTbl" aria-label="Agreement by position"></table></div>
+  <p class="small muted">Rank correlation runs from -1 to 1; 1 means both lists put players in the same order. "Typical gap" is the median difference in rank among players in either list's top group at that position (top 24 QB, RB and TE, top 36 WR; top 150 overall).</p>
+</section>
+
+<section>
+  <h2>Where we disagree most</h2>
+  <p class="small muted">Among players in either list's top 150 overall. The number is how many spots apart the two overall ranks are.</p>
+  <div class="two">
+    <div class="box"><h3 class="up">We're higher than the market</h3><ol id="hi"></ol></div>
+    <div class="box"><h3 class="down">The market is higher than us</h3><ol id="lo"></ol></div>
+  </div>
+</section>
+
+<section>
+  <h2>Every player</h2>
+  <div class="controls">
+    <div class="tabs" id="posF" role="group" aria-label="Position">
+      <button type="button" data-v="ALL" aria-pressed="true">All</button><button type="button" data-v="QB">QB</button><button type="button" data-v="RB">RB</button><button type="button" data-v="WR">WR</button><button type="button" data-v="TE">TE</button>
+    </div>
+    <input type="search" id="q" placeholder="Find a player" aria-label="Find a player">
+    <label class="small"><input type="checkbox" id="top" checked style="width:auto"> Top 200 only</label>
+  </div>
+  <div class="tblwrap"><table id="tbl"></table></div>
+  <p class="small muted" id="missNote"></p>
+  <p class="small muted">A green gap means we rank the player higher than the market; red means lower. A dash means the player isn't ranked in that list (in ours, a value of 0: not expected to beat a replacement starter).</p>
+</section>
+
+<section>
+  <h2>How to read it</h2>
+  <ul class="notes">
+    <li><b>Our side</b> is the Dynasty sheet from the <a href="../trade-values/">Trade Values</a> page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs, and 2 RB, 3 WR, 1 TE starters, no flex. It projects fantasy points per game over replacement for the rest of 2026 through 2030.</li>
+    <li><b>The market side</b> is DynastyProcess's superflex value (<span class="num">value_2qb</span>), which turns FantasyPros expert consensus dynasty rankings into trade values. It is a consensus of experts, not a model of points, and doesn't change with scoring settings.</li>
+    <li>Rookie picks are left out, since our pick values come from the pre-draft model and theirs from a different scale.</li>
+    <li>A big gap isn't a mistake on either side. It flags a player worth a closer look: our model may see production the market hasn't priced in, or the market may know something (role change, injury news, draft pedigree) the numbers don't capture yet.</li>
+    <li>There's no redraft comparison yet, because DynastyProcess only publishes dynasty values.</li>
+  </ul>
+</section>
+
+<p class="pa-tip" style="margin:0;font-size:.9rem;color:var(--muted);max-width:72ch">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: our values use NFL stats from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Market values from the <a href="https://github.com/dynastyprocess/data">DynastyProcess open data repository</a> by Tan Ho, loaded live when available. Values and models by Prospect Actuary. Not affiliated with the NFL, any team, DynastyProcess or FantasyPros.</footer>
+</div>
+<script src="../trade-values/data/tv.js"></script>
+<script src="data/dp.js"></script>
+<script>
+(function(){
+const D = window.TV;
+const $ = id => document.getElementById(id);
+if (!D) { $("asof").textContent = "Our trade values didn't load. Refresh the page to try again."; return; }
+const POS = ["QB","RB","WR","TE"], V = D.v;
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = x => Math.round(x).toLocaleString("en-US");
+
+// ---------- our dynasty values: same math as /trade-values/ compute(), fixed to 12-team SF 0.5 PPR ----------
+const S = {teams:12, ppr:0.5, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:0};
+const keyOf = p => p==="QB" ? "QB_p"+S.ptd : p==="TE" ? "TE_t"+(S.ppr+S.tep) : p+"_r"+S.ppr;
+function erf(x){ const s = x<0?-1:1; x = Math.abs(x); const t = 1/(1+0.3275911*x);
+  return s*(1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x)); }
+const pnorm = z => 0.5*(1+erf(z/Math.SQRT2)), dnorm = z => Math.exp(-z*z/2)/Math.sqrt(2*Math.PI);
+const stoploss = (mu, r, s) => { const z = (mu-r)/s; return s*dnorm(z) + (mu-r)*pnorm(z); };
+function repLines(cp){
+  const by = {}; POS.forEach(p=>by[p]=[]);
+  D.players.forEach(pl=>{ if (pl.pool) { const c = cp(pl); if (c!=null) by[pl.p].push(c); } });
+  POS.forEach(p=>by[p].sort((a,b)=>b-a));
+  const n = {QB:S.teams, RB:S.rb*S.teams, WR:S.wr*S.teams, TE:S.te*S.teams};
+  POS.forEach(p=>n[p]=Math.min(n[p], by[p].length));
+  const take = (ps, k) => { for (let s=0; s<k; s++){ let best=null, bv=-Infinity;
+    ps.forEach(p=>{ if (n[p]<by[p].length && by[p][n[p]]>bv){ bv=by[p][n[p]]; best=p; } }); if (!best) break; n[best]++; } };
+  take(["RB","WR","TE"], S.flex*S.teams); take(POS, S.sf*S.teams);
+  const rep = {}; POS.forEach(p=>rep[p]=by[p][Math.max(n[p],1)-1]); return rep;
+}
+function ours(){
+  const rep = repLines(pl => { const a = pl.k[keyOf(pl.p)]; return a ? a[1] : null; });
+  const dyn = D.players.map(pl=>{ const key = keyOf(pl.p), x = pl.k[key]; if (!x || x.length<12) return 0;
+    const sd = D.sd[key], r = rep[pl.p];
+    let v = x[2]*stoploss(x[1], r, sd[0]);
+    for (let t=1; t<=4; t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
+    return v; });
+  const td = Math.max(...dyn);
+  return D.players.map((pl,i)=>({n:pl.n, p:pl.p, tm:pl.tm, a:pl.a, v:1e5*dyn[i]/td}));
+}
+
+// ---------- ranks ----------
+function rank(list){   // list: [{p, v}] -> sets .ro (overall) and .rp (position) for v > 0
+  const o = list.filter(x=>x.v>0).sort((a,b)=>b.v-a.v), pc = {};
+  o.forEach((x,k)=>{ x.ro = k+1; pc[x.p] = (pc[x.p]||0)+1; x.rp = pc[x.p]; });
+  return list;
+}
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+  .replace(/[.'’\-]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/g,"").replace(/[^a-z ]/g,"").replace(/\s+/g," ").trim();
+
+function parseCSV(t){
+  const lines = t.trim().split(/\r?\n/), split = l => { const out = []; let cur = "", q = false;
+    for (let i=0;i<l.length;i++){ const c = l[i]; if (q){ if (c==='"'){ if (l[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
+      else if (c==='"') q = true; else if (c===','){ out.push(cur); cur=""; } else cur+=c; } out.push(cur); return out; };
+  const h = split(lines[0]), ix = k => h.indexOf(k);
+  const iN = ix("player"), iP = ix("pos"), iT = ix("team"), iV = ix("value_2qb"), iD = ix("scrape_date");
+  if ([iN,iP,iV].some(i=>i<0)) return null;
+  let asof = null; const rows = [];
+  lines.slice(1).forEach(l=>{ const c = split(l); if (!POS.includes(c[iP])) return; const v = Number(c[iV]); if (!isFinite(v)) return;
+    rows.push([c[iN], c[iP], c[iT], v]); if (iD>=0 && c[iD]) asof = c[iD]; });
+  return rows.length > 100 ? {asof, rows} : null;
+}
+
+let ROWS = [], FILTER = "ALL", SORT = {k:"avg", dir:1};
+function build(dp, live){
+  const us = rank(ours()), them = rank(dp.rows.map(r=>({n:r[0], p:r[1], tm:r[2], v:r[3]})));
+  const idx = {}; them.forEach(t=>{ const k = norm(t.n)+"|"+t.p; if (!idx[k]) idx[k] = t; });
+  const used = new Set(), rows = [];
+  us.forEach(u=>{ const t = idx[norm(u.n)+"|"+u.p]; if (t) used.add(t);
+    if (!u.ro && !(t && t.ro)) return;
+    rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp}); });
+  them.forEach(t=>{ if (!used.has(t) && t.ro) rows.push({n:t.n, p:t.p, tm:t.tm||"FA", a:null, uo:null, up:null, to:t.ro, tp:t.rp, miss:1}); });
+  rows.forEach(r=>{ r.d = (r.uo && r.to) ? r.to - r.uo : null; r.dp = (r.up && r.tp) ? r.tp - r.up : null;
+    r.avg = r.uo && r.to ? (r.uo+r.to)/2 : (r.uo||r.to) + 400; });
+  ROWS = rows;
+  const miss = rows.filter(r=>r.miss && r.to<=150).length;
+  $("missNote").textContent = miss ? `${miss} of the market's top 150 aren't in our trade values yet (marked "not in our values"), so they count as disagreements above.` : "";
+  $("asof").textContent = `${D.asof} Market values: DynastyProcess, scraped ${dp.asof || "recently"}${live ? "" : " (saved copy)"}.`;
+  summary(); table();
+}
+
+function spearman(pairs){ const n = pairs.length; if (n<3) return null;
+  const rk = a => { const o = a.map((v,i)=>[v,i]).sort((x,y)=>x[0]-y[0]), r = []; o.forEach(([v,i],k)=>r[i]=k+1); return r; };
+  const a = rk(pairs.map(p=>p[0])), b = rk(pairs.map(p=>p[1]));
+  let d2 = 0; for (let i=0;i<n;i++) d2 += (a[i]-b[i])**2; return 1 - 6*d2/(n*(n*n-1)); }
+const median = a => { if (!a.length) return null; const s = [...a].sort((x,y)=>x-y), m = s.length>>1; return s.length%2 ? s[m] : (s[m-1]+s[m])/2; };
+const TOPN = {QB:24, RB:24, WR:36, TE:24};
+
+function summary(){
+  const top = ROWS.filter(r=>r.uo && r.to && (r.uo<=150 || r.to<=150));
+  const rho = spearman(top.map(r=>[r.uo, r.to]));
+  const gap = median(top.map(r=>Math.abs(r.d)));
+  const both100 = ROWS.filter(r=>r.uo<=100 && r.to<=100).length;
+  const within10 = top.filter(r=>Math.abs(r.d)<=10).length;
+  $("cards").innerHTML = [
+    ["Rank correlation, top 150", rho==null?"–":rho.toFixed(2)],
+    ["Typical overall gap", gap==null?"–":gap+" spots"],
+    ["In both top 100s", both100+" of 100"],
+    ["Within 10 spots", top.length ? Math.round(100*within10/top.length)+"%" : "–"]
+  ].map(([l,v])=>`<div class="stat"><span class="lbl">${l}</span><span class="big">${v}</span></div>`).join("");
+  const posRows = POS.map(p=>{ const N = TOPN[p], g = ROWS.filter(r=>r.p===p && r.up && r.tp && (r.up<=N || r.tp<=N));
+    const both = ROWS.filter(r=>r.p===p && r.up<=N && r.tp<=N).length;
+    const rh = spearman(g.map(r=>[r.up, r.tp])), md = median(g.map(r=>Math.abs(r.dp)));
+    return `<tr><td><span class="pos" style="color:var(--${p})">${p}</span> <span class="meta">top ${N}</span></td><td class="num">${rh==null?"–":rh.toFixed(2)}</td><td class="num">${md==null?"–":md}</td><td class="num">${both} of ${N}</td></tr>`; });
+  $("posTbl").innerHTML = `<thead><tr><th>Position</th><th>Rank correlation</th><th>Typical gap</th><th>In both top groups</th></tr></thead><tbody>${posRows.join("")}</tbody>`;
+  const li = r => `<li><b>${esc(r.n)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span> <span class="d">us ${r.uo}, market ${r.to} (${r.d>0?"+":""}${r.d})</span></li>`;
+  const pool = top.filter(r=>r.uo<=150 || r.to<=150);
+  $("hi").innerHTML = [...pool].sort((a,b)=>b.d-a.d).slice(0,10).filter(r=>r.d>0).map(li).join("");
+  $("lo").innerHTML = [...pool].sort((a,b)=>a.d-b.d).slice(0,10).filter(r=>r.d<0).map(li).join("");
+}
+
+const COLS = [["n","Player"],["uo","Our rank"],["to","Market rank"],["d","Gap"],["up","Our pos rank"],["tp","Market pos rank"],["dp","Pos gap"]];
+function table(){
+  const q = norm($("q").value), topOnly = $("top").checked;
+  let rows = ROWS.filter(r=>(FILTER==="ALL"||r.p===FILTER) && (!q || norm(r.n).includes(q)) && (!topOnly || r.uo<=200 || r.to<=200));
+  const k = SORT.k, dir = SORT.dir;
+  rows.sort((a,b)=>{ if (k==="n") return dir*a.n.localeCompare(b.n);
+    const x = k==="avg"?a.avg:a[k], y = k==="avg"?b.avg:b[k];
+    if (x==null && y==null) return a.avg-b.avg; if (x==null) return 1; if (y==null) return -1; return dir*(x-y) || a.avg-b.avg; });
+  const gapC = d => d==null ? "–" : `<span class="${d>0?"up":d<0?"down":""}">${d>0?"+":""}${d}</span>`;
+  const rk = (r,p) => r==null ? "–" : (p ? p+r : r);
+  $("tbl").innerHTML = `<thead><tr>${COLS.map(([c,l])=>`<th><button type="button" data-k="${c}"${SORT.k===c?` aria-sort="${dir>0?"ascending":"descending"}"`:""}>${l}${SORT.k===c?(dir>0?" ▲":" ▼"):""}</button></th>`).join("")}</tr></thead><tbody>` +
+    (rows.length ? rows.map(r=>`<tr><td><b>${esc(r.n)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span><div class="meta">${esc(r.tm)}${r.a!=null?" · age "+Number(r.a).toFixed(1):""}${r.miss?" · not in our values":""}</div></td><td class="num">${rk(r.uo)}</td><td class="num">${rk(r.to)}</td><td class="num">${gapC(r.d)}</td><td class="num">${rk(r.up,r.p)}</td><td class="num">${rk(r.tp,r.p)}</td><td class="num">${gapC(r.dp)}</td></tr>`).join("")
+      : `<tr><td colspan="7" class="muted">No players match.</td></tr>`) + `</tbody>`;
+}
+$("tbl").addEventListener("click", e=>{ const b = e.target.closest("button[data-k]"); if (!b) return; const k = b.dataset.k;
+  SORT = SORT.k===k ? {k, dir:-SORT.dir} : {k, dir: (k==="d"||k==="dp") ? -1 : 1}; table(); });
+$("posF").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; FILTER = b.dataset.v;
+  $("posF").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); table(); });
+$("q").addEventListener("input", table); $("top").addEventListener("change", table);
+
+// Try the live DynastyProcess file first (updated weekly); fall back to the copy saved with the site.
+const fallback = () => { if (window.DP) build(window.DP, false); else $("asof").textContent = "Market values didn't load. Refresh the page to try again."; };
+let done = false; const timer = setTimeout(()=>{ if (!done){ done = true; fallback(); } }, 4000);
+fetch("https://raw.githubusercontent.com/dynastyprocess/data/master/files/values-players.csv", {cache:"no-cache"})
+  .then(r=>r.ok ? r.text() : Promise.reject()).then(t=>{ const dp = parseCSV(t); if (done) return; done = true; clearTimeout(timer); dp ? build(dp, true) : fallback(); })
+  .catch(()=>{ if (!done){ done = true; clearTimeout(timer); fallback(); } });
+})();
+</script>
+</body></html>
