@@ -117,8 +117,10 @@ pick more often, which is why a pre-draft A who goes in round 6 usually fades."
 
 **Why.** A grade is a rank *within* a position, so an A tight end and an A quarterback aren't
 worth the same. Both grade boards show **Value**: each player's expected dynasty trade value on
-the same 100,000-point scale as the Trade Values page, in the default league (12 teams,
-superflex, PPR, 2 RB / 3 WR / 1 TE, no flex). The All tab is sorted by it.
+the same 100,000-point scale as the Trade Values page, for the league you set on that page
+(every setting there: teams, scoring, TE premium, superflex, starters, flex, first-down bonus;
+saved in your browser), or the default league (12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE,
+no flex) if you haven't set one. The All tab is sorted by it.
 
 **How it's built.** His chance of each fantasy tier, times what past drafted players in that
 tier actually scored over their first four seasons (games, points per game above the
