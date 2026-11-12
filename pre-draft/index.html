@@ -100,7 +100,7 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-wid
 
 <section>
   <h2>Rankings board</h2>
-  <p>Rank is within position across every class. Purple rows are projected 2027 prospects, not yet drafted. Their main grade uses stats pro-rated to a 12-game season; switch to as-is to see them on raw stats through about week 10.</p>
+  <p>Rank is within position across every class. The All tab puts every position on one board, ordered by percentile within position (each position is scored on its own scale, so raw scores aren't compared across positions). Purple rows are projected 2027 prospects, not yet drafted. Their main grade uses stats pro-rated to a 12-game season; switch to as-is to see them on raw stats through about week 10.</p>
   <div class="tabs" id="posTabs" role="group" aria-label="Position"></div>
   <div class="ctl">
     <label for="fClass">Class<select id="fClass"></select></label>
@@ -160,7 +160,7 @@ const cls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
 const chip = g => g ? `<span class="chip ${cls(g)}">${g}</span>` : "";
 const pct = x => x==null ? "" : Math.round(x*100)+"%";
 const f2 = x => x==null ? "" : Number(x).toFixed(2);
-function tabs(el, onPick, init){ el.innerHTML = POS.map(p=>`<button type="button" data-p="${p}" aria-pressed="${p===init}">${p}</button>`).join("");
+function tabs(el, onPick, init, list){ el.innerHTML = (list||POS).map(p=>`<button type="button" data-p="${p}" aria-pressed="${p===init}">${p}</button>`).join("");
   el.addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); onPick(b.dataset.p);}); }
 
 // findings tiles
@@ -209,24 +209,33 @@ document.getElementById("vpTable").innerHTML = `<thead><tr><th>Target</th><th cl
   document.getElementById("brTable").innerHTML = h+"</tbody>"; })();
 
 // rankings board
-let bPos="WR", shown=100;
+// All tab: positions are ranked on their own scales, so the All view orders players by
+// percentile within their position (share of drafted players at that position they outscore).
+const DR = {}; POS.forEach(p=>{DR[p]=D.players.filter(x=>x.pos===p&&!x.st).map(x=>x.sc).sort((a,b)=>a-b);});
+function posPct(pos, sc){ const a=DR[pos]; let lo=0,hi=a.length; while(lo<hi){const m=(lo+hi)>>1; if(a[m]<=sc) lo=m+1; else hi=m;} return a.length? lo/a.length : 0; }
+const tierHd = (k, pos) => pos==="All" ? (k===0?"P(top tier)":"P(any tier)") : `P(${pos}${TIER[pos][k===0?0:2]})`;
+const tierTip = (k, pos) => `${pos}${TIER[pos][k===0?0:2]} season in years 1-3`;
+let bPos="All", shown=100;
 const fClass=document.getElementById("fClass"), fStatus=document.getElementById("fStatus"), fGrade=document.getElementById("fGrade"), fName=document.getElementById("fName"), fMode=document.getElementById("fMode");
 fClass.innerHTML = `<option value="">All classes</option>` + Array.from({length:18},(_,i)=>2027-i).map(y=>`<option value="${y}">${y}${y===2027?" (projected)":""}</option>`).join("");
 fGrade.innerHTML += GR.map(g=>`<option>${g}</option>`).join("");
 function outCls(p){ if(p.st||p.tier==null) return ""; return p.tier===1?"out1":p.tier<=3?"out2":"out4"; }
 function drawBoard(){
   const asis = fMode.value==="as";
-  let rows = D.players.filter(p=>p.pos===bPos).map(p=>{ const q=Object.assign({},p); if(asis&&p.st){q.sc=p.sca;q.g=p.ga;} return q; });
-  rows.sort((a,b)=>b.sc-a.sc); rows.forEach((p,i)=>p.rank=i+1);
+  const isAll = bPos==="All";
+  let rows = D.players.filter(p=>isAll||p.pos===bPos).map(p=>{ const q=Object.assign({},p); if(asis&&p.st){q.sc=p.sca;q.g=p.ga;} return q; });
+  POS.forEach(pp=>rows.filter(p=>p.pos===pp).sort((a,b)=>b.sc-a.sc).forEach((p,i)=>p.prk=i+1));
+  rows.forEach(p=>p.ap=posPct(p.pos,p.sc));
+  if(isAll) rows.sort((a,b)=>b.ap-a.ap||b.sc-a.sc); else rows.sort((a,b)=>b.sc-a.sc);
+  rows.forEach((p,i)=>p.rank=i+1);
   rows = rows.filter(p=>(!fClass.value||p.cls==fClass.value)&&(fStatus.value==="all"||(fStatus.value==="d"?!p.st:p.st))&&(!fGrade.value||p.g===fGrade.value));
   const q=fName.value.trim().toLowerCase(); if(q) rows=rows.filter(p=>(p.name+" "+p.col).toLowerCase().includes(q));
-  document.getElementById("boardCount").textContent = `${rows.length} ${bPos}s match` + (rows.length>shown?`, showing the first ${shown}`:"");
-  const t=TIER[bPos];
-  document.getElementById("board").innerHTML = `<thead><tr><th class="r">Rank</th><th>Class</th><th>Player</th><th>College</th><th class="r">Pick</th><th>Grade</th><th class="r">Score</th><th class="r">Pctile</th><th class="r">P(${bPos}${t[0]})</th><th class="r">P(${bPos}${t[2]})</th><th>NFL outcome</th><th class="r">PPR pts</th></tr></thead><tbody>` +
-    rows.slice(0,shown).map(p=>`<tr class="${p.st?"proj":""}"><td class="r num">${p.rank}</td><td class="num">${p.cls}</td><td>${esc(p.name)}${p.st?'<span class="tag">2027 proj</span>':""}${p.fl?'<span class="flag" title="FCS before 2022: only games vs FBS teams are logged">thin data</span>':""}</td><td>${esc(p.col)}</td><td class="r num">${p.pk==null?(p.st?"":"UDFA"):p.pk}</td><td>${chip(p.g)}</td><td class="r num">${f2(p.sc)}</td><td class="r num">${p.st&&asis?"":pct(p.pct)}</td><td class="r num">${pct(p.pt)}</td><td class="r num">${pct(p.pa)}</td><td class="${outCls(p)}">${esc(p.out)}</td><td class="r num">${p.pts==null?"":Math.round(p.pts)}</td></tr>`).join("") + "</tbody>";
+  document.getElementById("boardCount").textContent = `${rows.length} ${isAll?"players":bPos+"s"} match` + (rows.length>shown?`, showing the first ${shown}`:"");
+  document.getElementById("board").innerHTML = `<thead><tr><th class="r">Rank</th>${isAll?'<th>Pos</th><th class="r">Pos rank</th>':""}<th>Class</th><th>Player</th><th>College</th><th class="r">Pick</th><th>Grade</th><th class="r">Score</th><th class="r">Pctile</th><th class="r">${tierHd(0,bPos)}</th><th class="r">${tierHd(2,bPos)}</th><th>NFL outcome</th><th class="r">PPR pts</th></tr></thead><tbody>` +
+    rows.slice(0,shown).map(p=>`<tr class="${p.st?"proj":""}"><td class="r num">${p.rank}</td>${isAll?`<td>${p.pos}</td><td class="r num">${p.prk}</td>`:""}<td class="num">${p.cls}</td><td>${esc(p.name)}${p.st?'<span class="tag">2027 proj</span>':""}${p.fl?'<span class="flag" title="FCS before 2022: only games vs FBS teams are logged">thin data</span>':""}</td><td>${esc(p.col)}</td><td class="r num">${p.pk==null?(p.st?"":"UDFA"):p.pk}</td><td>${chip(p.g)}</td><td class="r num">${f2(p.sc)}</td><td class="r num">${p.st&&asis?pct(p.ap):pct(p.pct)}</td><td class="r num" title="${tierTip(0,p.pos)}">${pct(p.pt)}</td><td class="r num" title="${tierTip(2,p.pos)}">${pct(p.pa)}</td><td class="${outCls(p)}">${esc(p.out)}</td><td class="r num">${p.pts==null?"":Math.round(p.pts)}</td></tr>`).join("") + "</tbody>";
   document.getElementById("more").hidden = rows.length<=shown;
 }
-tabs(document.getElementById("posTabs"), p=>{bPos=p;shown=100;drawBoard();}, "WR");
+tabs(document.getElementById("posTabs"), p=>{bPos=p;shown=100;drawBoard();}, "All", ["All",...POS]);
 [fClass,fStatus,fGrade,fMode].forEach(el=>el.addEventListener("change",()=>{shown=100;drawBoard();}));
 fName.addEventListener("input",()=>{shown=100;drawBoard();});
 document.getElementById("more").addEventListener("click",()=>{shown+=100;drawBoard();});
