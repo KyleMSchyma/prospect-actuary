@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Value Research | Prospect Actuary</title>
-<meta name="description" content="How Prospect Actuary's dynasty trade values compare with the market: overall and positional rank gaps against DynastyProcess superflex values, 12-team 0.5 PPR.">
+<meta name="description" content="How Prospect Actuary's trade values compare with the market: overall and positional rank gaps against Dynasty Daddy (dynasty and redraft) and DynastyProcess superflex values, 12-team 0.5 PPR.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
@@ -32,6 +32,7 @@ a{color:var(--accent)}
 .pos{font-family:var(--f-mono);font-size:.8rem;font-weight:600}
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
 .tabs button,.btn{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:5px 12px;cursor:pointer}
+.tabs button:disabled{opacity:.45;cursor:not-allowed}
 .tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
@@ -64,11 +65,19 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 <header style="display:flex;flex-direction:column;gap:14px">
   <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/" aria-current="page">Value research</a><a href="../guide/">Guide</a></span></nav>
   <div class="dev" role="note"><b>IN DEVELOPMENT</b><span>The trade values compared here are still being built and tested. Expect the numbers and methods to change.</span></div>
-  <div class="eyebrow">Value research · dynasty · 12-team superflex · 0.5 PPR</div>
+  <div class="eyebrow" id="eyebrow">Value research · 12-team superflex · 0.5 PPR</div>
   <h1>Value Research</h1>
-  <p>How do our dynasty trade values line up with the market? This page ranks every player by our model and by the <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> superflex values, an open dataset built from expert consensus dynasty rankings, and shows where the two disagree, overall and within each position.</p>
+  <p>How do our trade values line up with the market? This page ranks every player by our model and by a market source, all in superflex, and shows where the two disagree, overall and within each position. Pick the source: <a href="https://dynasty-daddy.com" target="_blank" rel="noopener">Dynasty Daddy</a> (dynasty and redraft trade values from its public API) or <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> (open dynasty values built from expert consensus rankings).</p>
   <p class="small muted" id="asof">Loading…</p>
 </header>
+
+<section aria-label="Comparison settings">
+  <div class="controls">
+    <div class="tabs" id="src" role="group" aria-label="Market source"><button type="button" data-v="dd">Dynasty Daddy</button><button type="button" data-v="dp">DynastyProcess</button></div>
+    <div class="tabs" id="mode" role="group" aria-label="Value type"><button type="button" data-v="d">Dynasty</button><button type="button" data-v="r">Redraft</button></div>
+  </div>
+  <p class="small muted" id="modeNote"></p>
+</section>
 
 <section>
   <h2>How close are we?</h2>
@@ -103,19 +112,21 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 <section>
   <h2>How to read it</h2>
   <ul class="notes">
-    <li><b>Our side</b> is the Dynasty sheet from the <a href="../trade-values/">Trade Values</a> page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs, and 2 RB, 3 WR, 1 TE starters, no flex. It projects fantasy points per game over replacement for the rest of 2026 through 2030.</li>
-    <li><b>The market side</b> is DynastyProcess's superflex value (<span class="num">value_2qb</span>), which turns FantasyPros expert consensus dynasty rankings into trade values. It is a consensus of experts, not a model of points, and doesn't change with scoring settings.</li>
+    <li><b>Our side</b> is the <a href="../trade-values/">Trade Values</a> page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs, and 2 RB, 3 WR, 1 TE starters, no flex. Dynasty projects fantasy points per game over replacement for the rest of 2026 through 2030; redraft covers the rest of 2026 only.</li>
+    <li><b>Dynasty Daddy</b> values come from its public values API (superflex trade values, dynasty and redraft), saved with the site and refreshed each week rather than pulled on every visit.</li>
+    <li><b>DynastyProcess</b> values are its superflex value (<span class="num">value_2qb</span>), which turns FantasyPros expert consensus dynasty rankings into trade values.</li>
+    <li>Neither market source changes with your scoring settings, so small gaps can come from scoring alone.</li>
     <li>Rookie picks are left out, since our pick values come from the pre-draft model and theirs from a different scale.</li>
     <li>A big gap isn't a mistake on either side. It flags a player worth a closer look: our model may see production the market hasn't priced in, or the market may know something (role change, injury news, draft pedigree) the numbers don't capture yet.</li>
-    <li>There's no redraft comparison yet, because DynastyProcess only publishes dynasty values.</li>
   </ul>
 </section>
 
 <p class="pa-tip" style="margin:0;font-size:.9rem;color:var(--muted);max-width:72ch">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
-<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: our values use NFL stats from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Market values from the <a href="https://github.com/dynastyprocess/data">DynastyProcess open data repository</a> by Tan Ho, loaded live when available. Values and models by Prospect Actuary. Not affiliated with the NFL, any team, DynastyProcess or FantasyPros.</footer>
+<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: our values use NFL stats from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Market values from the <a href="https://dynasty-daddy.com/help/api-documentation">Dynasty Daddy public values API</a> and the <a href="https://github.com/dynastyprocess/data">DynastyProcess open data repository</a> by Tan Ho; only ranks are shown. Values and models by Prospect Actuary. Not affiliated with the NFL, any team, Dynasty Daddy, DynastyProcess or FantasyPros.</footer>
 </div>
 <script src="../trade-values/data/tv.js"></script>
 <script src="data/dp.js"></script>
+<script src="data/dd.js"></script>
 <script>
 (function(){
 const D = window.TV;
@@ -144,14 +155,18 @@ function repLines(cp){
   const rep = {}; POS.forEach(p=>rep[p]=by[p][Math.max(n[p],1)-1]); return rep;
 }
 function ours(){
+  const rdArr = pl => (pl.r && pl.r[keyOf(pl.p)]) || pl.k[keyOf(pl.p)];
+  const RR = repLines(pl => { const a = rdArr(pl); return a ? a[1] : null; });
+  const red = D.players.map(pl=>{ const a = rdArr(pl); return a ? Math.max(0, (a[1]-RR[pl.p])*a[2]) : 0; });
   const rep = repLines(pl => { const a = pl.k[keyOf(pl.p)]; return a ? a[1] : null; });
   const dyn = D.players.map(pl=>{ const key = keyOf(pl.p), x = pl.k[key]; if (!x || x.length<12) return 0;
     const sd = D.sd[key], r = rep[pl.p];
     let v = x[2]*stoploss(x[1], r, sd[0]);
     for (let t=1; t<=4; t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
     return v; });
-  const td = Math.max(...dyn);
-  return D.players.map((pl,i)=>({n:pl.n, p:pl.p, tm:pl.tm, a:pl.a, v:1e5*dyn[i]/td}));
+  const td = Math.max(...dyn), tr = Math.max(...red);
+  return {d: D.players.map((pl,i)=>({n:pl.n, p:pl.p, tm:pl.tm, a:pl.a, v:1e5*dyn[i]/td})),
+          r: D.players.map((pl,i)=>({n:pl.n, p:pl.p, tm:pl.tm, a:pl.a, v:1e5*red[i]/tr}))};
 }
 
 // ---------- ranks ----------
@@ -176,12 +191,29 @@ function parseCSV(t){
   return rows.length > 100 ? {asof, rows} : null;
 }
 
-let ROWS = [], FILTER = "ALL", SORT = {k:"avg", dir:1};
-function build(dp, live){
-  const us = rank(ours()), them = rank(dp.rows.map(r=>({n:r[0], p:r[1], tm:r[2], v:r[3]})));
-  const idx = {}; them.forEach(t=>{ const k = norm(t.n)+"|"+t.p; if (!idx[k]) idx[k] = t; });
+let ROWS = [], FILTER = "ALL", SORT = {k:"avg", dir:1}, SRC = "dd", MODE = "d", DPDATA = null, DPLIVE = false;
+const OURS = ours();
+const SRCNAME = {dp:"DynastyProcess", dd:"Dynasty Daddy"};
+// Dynasty Daddy ids are the name in lowercase letters plus the position (e.g. "kennethwalkerrb")
+const ddKey = (n, p) => norm(n).replace(/ /g,"") + p.toLowerCase();
+const ddKeyRaw = (n, p) => String(n).toLowerCase().normalize("NFD").replace(/[^a-z]/g,"") + p.toLowerCase();
+// Same player, different first name in the two sources (nicknames). Key: Dynasty Daddy id, value: our name.
+const ALIAS = {chigoziemokonkwote:"Chig Okonkwo", zonovanknightrb:"Bam Knight", kennethgainwellrb:"Kenny Gainwell"};
+function market(){
+  if (SRC === "dp") { const d = DPDATA || window.DP; if (!d) return null;
+    return {asof: d.asof, live: DPDATA ? DPLIVE : false, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:r[2], v:r[3], k:norm(r[0])+"|"+r[1]}))}; }
+  const d = window.DD; if (!d) return null;
+  const names = {}; (DPDATA || window.DP || {rows:[]}).rows.forEach(r=>{ names[ddKey(r[0], r[1])] = r[0]; });
+  Object.keys(ALIAS).forEach(id=>{ names[id] = ALIAS[id]; });
+  return {asof: d.asof, live: false, rows: d[MODE==="r" ? "redraft" : "dynasty"].map(r=>({n: names[r[0]] || r[0].slice(0, -2), p:r[1], tm:r[2], v:r[3], k: ALIAS[r[0]] ? ddKey(ALIAS[r[0]], r[1]) : r[0]}))};
+}
+function build(){
+  const m = market(); if (!m) { $("asof").textContent = "Market values didn't load. Refresh the page to try again."; return; }
+  const us = rank(OURS[MODE].map(x=>Object.assign({}, x))), them = rank(m.rows);
+  const idx = {}; them.forEach(t=>{ if (!idx[t.k]) idx[t.k] = t; });
+  const find = u => SRC === "dp" ? idx[norm(u.n)+"|"+u.p] : (idx[ddKey(u.n, u.p)] || idx[ddKeyRaw(u.n, u.p)]);
   const used = new Set(), rows = [];
-  us.forEach(u=>{ const t = idx[norm(u.n)+"|"+u.p]; if (t) used.add(t);
+  us.forEach(u=>{ const t = find(u); if (t) used.add(t);
     if (!u.ro && !(t && t.ro)) return;
     rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp}); });
   them.forEach(t=>{ if (!used.has(t) && t.ro) rows.push({n:t.n, p:t.p, tm:t.tm||"FA", a:null, uo:null, up:null, to:t.ro, tp:t.rp, miss:1}); });
@@ -190,7 +222,12 @@ function build(dp, live){
   ROWS = rows;
   const miss = rows.filter(r=>r.miss && r.to<=150).length;
   $("missNote").textContent = miss ? `${miss} of the market's top 150 aren't in our trade values yet (marked "not in our values"), so they count as disagreements above.` : "";
-  $("asof").textContent = `${D.asof} Market values: DynastyProcess, scraped ${dp.asof || "recently"}${live ? "" : " (saved copy)"}.`;
+  $("asof").textContent = `${D.asof} Market values: ${SRCNAME[SRC]} ${MODE==="r"?"redraft":"dynasty"} superflex values, pulled ${m.asof || "recently"}${SRC==="dp" && !m.live ? " (saved copy)" : ""}.`;
+  $("eyebrow").textContent = `Value research · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · 12-team superflex · 0.5 PPR`;
+  $("src").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.v===SRC));
+  $("mode").querySelectorAll("button").forEach(x=>{ x.setAttribute("aria-pressed", x.dataset.v===MODE); if (x.dataset.v==="r") x.disabled = SRC==="dp"; });
+  $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy." : "";
+  try { localStorage.setItem("pa-vr", SRC+"|"+MODE); } catch(e){}
   summary(); table();
 }
 
@@ -244,12 +281,13 @@ $("posF").addEventListener("click", e=>{ const b = e.target.closest("button"); i
   $("posF").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); table(); });
 $("q").addEventListener("input", table); $("top").addEventListener("change", table);
 
-// Try the live DynastyProcess file first (updated weekly); fall back to the copy saved with the site.
-const fallback = () => { if (window.DP) build(window.DP, false); else $("asof").textContent = "Market values didn't load. Refresh the page to try again."; };
-let done = false; const timer = setTimeout(()=>{ if (!done){ done = true; fallback(); } }, 4000);
+$("src").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; SRC = b.dataset.v; if (SRC==="dp") MODE = "d"; build(); });
+$("mode").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b || b.disabled) return; MODE = b.dataset.v; build(); });
+try { const v = (localStorage.getItem("pa-vr")||"").split("|"); if (v[0]==="dp"||v[0]==="dd") SRC = v[0]; if (v[1]==="r"&&SRC==="dd") MODE = "r"; } catch(e){}
+build();
+// DynastyProcess: try the live file (updated weekly); the saved copy is used until it arrives or if it fails.
 fetch("https://raw.githubusercontent.com/dynastyprocess/data/master/files/values-players.csv", {cache:"no-cache"})
-  .then(r=>r.ok ? r.text() : Promise.reject()).then(t=>{ const dp = parseCSV(t); if (done) return; done = true; clearTimeout(timer); dp ? build(dp, true) : fallback(); })
-  .catch(()=>{ if (!done){ done = true; clearTimeout(timer); fallback(); } });
+  .then(r=>r.ok ? r.text() : Promise.reject()).then(t=>{ const dp = parseCSV(t); if (dp) { DPDATA = dp; DPLIVE = true; build(); } }).catch(()=>{});
 })();
 </script>
 </body></html>
