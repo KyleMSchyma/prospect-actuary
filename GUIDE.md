@@ -78,10 +78,9 @@ still knows more."
 
 **What it is.** A letter grade (A+ to F) for every drafted QB, RB, WR and TE from 2010-2026,
 plus the top 2027 prospects, from the college-only model. Historical grades are scored by
-a model that never saw that class, so they're honest.
+a model that never saw that class (it did see later classes, so the hit rates below are slightly optimistic next to the rolling-origin test).
 
-**The result.** A-range players hit about 59% of the time, B about 31%, C and below about
-14%. The grade separates the top well but not the bottom (C, D and F hit at similar
+**The result.** A-range players hit about 59% of the time, B about 28%, C and below about 13%. The grade separates the top well but not the bottom (C, D and F hit at similar
 rates). Draft slot is still more accurate, and the grade only adds to draft slot for QBs.
 Famous misses: Johnny Manziel (A+), N'Keal Harry (A+); famous low grades that hit: Josh
 Allen (F), Cooper Kupp (F), Tyreek Hill (D), George Kittle (D).
@@ -187,7 +186,7 @@ times the single player.
 
 **Result.** From week-9 snapshots of 2016-2020 with models fit only on earlier seasons, the values ranked
 the next five seasons better than "current pace continues" (rank correlation 0.70 vs 0.63), for every scoring
-setting and all five league setups tested (0.61-0.73 vs 0.55-0.68). Totals ran 13-21% high, so read them
+setting and all five league setups tested (0.61-0.73 vs 0.55-0.68). Totals ran 16-28% high, so read them
 mainly as a ranking.
 
 ## Actuarial concepts behind it (SOA ATPA / PA exams)
