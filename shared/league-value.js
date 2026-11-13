@@ -44,9 +44,9 @@
   const rep = {}; POS.forEach(p=>rep[p]=by[p][Math.max(n[p],1)-1]);
   // 100k scale: the most valuable NFL player (dynasty) in this league
   let top = 0;
-  D.players.forEach(pl=>{ const key = keyOf(pl.p), x = pl.k[key]; if (!x || x.length<12) return;
+  D.players.forEach(pl=>{ const key = keyOf(pl.p), x = pl.k[key]; if (!x || x.length<4+2*(D.nf||4)) return;
     const sd = D.sd[key], r = rep[pl.p]; let v = x[2]*stoploss(x[1], r, sd[0]);
-    for (let t=1; t<=4; t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
+    for (let t=1; t<=(D.nf||4); t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
     if (v > top) top = v; });
   // q = cumulative [P(top tier), P(top two), P(any tier)]; age on the 0.1 grid of the age table
   function value(pos, q, age){
@@ -55,7 +55,7 @@
     const i = Math.min(A.n-1, Math.max(0, Math.round((age - A.a0)/A.step)));
     const d = [0].concat(tab[i]), q2 = Math.max(q[1], q[0]), q3 = Math.max(q[2], q2);
     const P = [q[0], q2-q[0], q3-q2, 1-q3], r = rep[pos]; let v = 0;
-    for (let tr=0; tr<4; tr++) for (let k=0; k<4; k++){ const j = 4*tr+k; v += P[tr]*Math.pow(V,k+1)*c.G[j]*stoploss(c.mu[j]+d[k], r, c.sd[j]); }
+    const NK = D.picks.nk||4; for (let tr=0; tr<4; tr++) for (let k=0; k<NK; k++){ const j = NK*tr+k; v += (D.picks.f||1)*P[tr]*Math.pow(V,k+1)*c.G[j]*stoploss(c.mu[j]+d[k], r, c.sd[j]); }
     return 1e5*v/top;
   }
   const fdTxt = POS.filter(p=>S["fd"+p]>0).map(p=>`${p} ${S["fd"+p]}`).join(", ");

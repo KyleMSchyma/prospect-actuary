@@ -123,7 +123,7 @@ saved in your browser), or the default league (12 teams, superflex, PPR, 2 RB / 
 no flex) if you haven't set one. The All tab is sorted by it.
 
 **How it's built.** His chance of each fantasy tier, times what past drafted players in that
-tier actually scored over their first four seasons (games, points per game above the
+tier actually scored over their first five seasons (games, points per game above the
 replacement starter, discounted 15% a year, adjusted for his age), added up. It's the same math
 that prices the 2027 rookie picks, so a 2027 prospect's Value equals his rookie-pick value.
 
@@ -165,7 +165,7 @@ That held for every scoring setting (incl. every first-down bonus) at every posi
 
 ## 5. Dynasty Trade Values (in development)
 
-The same scale over the rest of 2026 plus 2027-2030, built like an actuarial annuity: each season's
+The same scale over the rest of 2026 plus 2027-2031, built like an actuarial annuity: each season's
 expected points over replacement x expected games x the chance he is still playing, discounted 15% a year.
 Draft slot sets a young player's potential until production takes over; aging, staying in the league and
 availability are fit by position from past seasons; and a player just under replacement keeps a little value
@@ -173,12 +173,12 @@ from his chance of beating it (the insurance stop-loss formula).
 
 **2027 rookie picks.** Until the class is drafted: the 30 skill players in the 2027 mock (Renner) are priced from the
 post-draft model (mock pick = draft capital, mock team = landing spot); everyone else from the pre-draft model (no capital).
-Value = sum over tiers of P(tier) x what past drafted players in that tier did in seasons 1-4 (2010-2022 classes:
+Value = sum over tiers of P(tier) x what past drafted players in that tier did in seasons 1-5 = 2027-2031, the same window as players (2010-2022 classes:
 games, PPG, PPG spread), valued against your league's replacement line with the stop-loss upside and discounted from
-2027. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
+2027, times one calibration multiplier (1.11) fit so past round-1 picks match what they produced. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
 about 18.6 + years out of high school). Prospects are ranked for your league: 1.01 = the best value, 1.02 the second,
-and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #20 asset, the rest
-of round 1 about 15,000-27,000, round 3 about 8,000-10,000.
+and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #12 asset (57,000), the rest
+of round 1 about 19,000-34,000, round 3 about 12,000-14,000.
 
 **One star vs two good players.** No extra consolidation curve: the replacement line already handles it, since
 in a shallow league the 40th-best player barely beats the waiver wire. In the default league the values nearly

@@ -94,7 +94,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
 <section>
   <div class="tabs mode" id="mode" role="group" aria-label="Value type">
     <button type="button" data-v="r">Redraft · rest of 2026</button>
-    <button type="button" data-v="d">Dynasty · 2026-2030</button>
+    <button type="button" data-v="d">Dynasty · 2026-2031</button>
   </div>
   <details class="lgwrap" id="lgWrap">
     <summary><span class="lbl">Your league</span><span class="small" id="lgSum"></span><span class="small muted">Change</span></summary>
@@ -139,7 +139,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
   <ul class="notes">
     <li><b>Values add.</b> Every player is on one 100,000-point scale built from fantasy points per game over replacement, so two players together are worth the sum of their values. A trade is fair when the totals are close.</li>
     <li>There is no "consolidation" bonus for the side getting the single best player. Roster spots matter in deep leagues, so if you are giving up depth you can't replace, lean a little toward the side with the best player.</li>
-    <li><b>Redraft</b> counts the rest of the 2026 season only. <b>Dynasty</b> adds 2027-2030 with draft-slot potential, aging and the chance of staying in the league. Rookie picks only count in dynasty.</li>
+    <li><b>Redraft</b> counts the rest of the 2026 season only. <b>Dynasty</b> adds 2027-2031 with draft-slot potential, aging and the chance of staying in the league. Rookie picks only count in dynasty.</li>
     <li>A value of 0 means the player is not expected to beat a replacement-level starter in your league over that window.</li>
     <li>2027 rookie picks: players in our 2027 mock draft use the <a href="../post-draft/">post-draft model</a> with the mock pick as draft capital, everyone else the <a href="../pre-draft/">pre-draft model</a>. Pick 1.01 is worth the best 2027 prospect for your league, 1.02 the second best, and so on. How every value is built is in <a href="../guide/#redraft">the guide</a>.</li>
   </ul>
@@ -206,14 +206,14 @@ function compute(){
   D.players.forEach((pl,i)=>{
     const key = keyOf(pl.p), a = rdArr(pl); info[i] = {};
     if (a) { const v = (a[1]-RR.rep[pl.p])*a[2]; red[i] = Math.max(0, v); info[i].cppg = a[1]; info[i].eg = a[2]; }
-    const x = pl.k[key]; if (!x || x.length<12) return;
+    const x = pl.k[key]; if (!x || x.length<4+2*(D.nf||4)) return;
     const sd = D.sd[key], r = RD.rep[pl.p];
     let v = x[2]*stoploss(x[1], r, sd[0]);
-    for (let t=1; t<=4; t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
+    for (let t=1; t<=(D.nf||4); t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
     dyn[i] = v;
   });
   const pv = D.picks.pros.map(pr=>{ const key = keyOf(pr.p), c = D.picks.cal[key], d = pr.d[key], r = RD.rep[pr.p]; let v = 0;
-    for (let tr=0; tr<4; tr++) for (let k=0; k<4; k++){ const i = 4*tr+k; v += pr.P[tr] * Math.pow(V,k+1) * c.G[i] * stoploss(c.mu[i]+d[k], r, c.sd[i]); }
+    const NK = D.picks.nk||4; for (let tr=0; tr<4; tr++) for (let k=0; k<NK; k++){ const i = NK*tr+k; v += (D.picks.f||1) * pr.P[tr] * Math.pow(V,k+1) * c.G[i] * stoploss(c.mu[i]+d[k], r, c.sd[i]); }
     return v; }).sort((a,b)=>b-a);
   const tr = Math.max(...red), td = Math.max(...dyn);
   const picks = [];

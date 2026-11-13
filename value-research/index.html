@@ -159,10 +159,10 @@ function ours(){
   const RR = repLines(pl => { const a = rdArr(pl); return a ? a[1] : null; });
   const red = D.players.map(pl=>{ const a = rdArr(pl); return a ? Math.max(0, (a[1]-RR[pl.p])*a[2]) : 0; });
   const rep = repLines(pl => { const a = pl.k[keyOf(pl.p)]; return a ? a[1] : null; });
-  const dyn = D.players.map(pl=>{ const key = keyOf(pl.p), x = pl.k[key]; if (!x || x.length<12) return 0;
+  const dyn = D.players.map(pl=>{ const key = keyOf(pl.p), x = pl.k[key]; if (!x || x.length<4+2*(D.nf||4)) return 0;
     const sd = D.sd[key], r = rep[pl.p];
     let v = x[2]*stoploss(x[1], r, sd[0]);
-    for (let t=1; t<=4; t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
+    for (let t=1; t<=(D.nf||4); t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
     return v; });
   const td = Math.max(...dyn), tr = Math.max(...red);
   return {d: D.players.map((pl,i)=>({n:pl.n, p:pl.p, tm:pl.tm, a:pl.a, v:1e5*dyn[i]/td})),
