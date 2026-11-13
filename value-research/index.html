@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Value Research | Prospect Actuary</title>
+<title>Market Check | Prospect Actuary</title>
 <meta name="description" content="How Prospect Actuary's trade values compare with the market: overall and positional rank gaps against Dynasty Daddy (dynasty and redraft) and DynastyProcess superflex values, 12-team 0.5 PPR.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -63,10 +63,10 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 </style></head>
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:14px">
-  <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/" aria-current="page">Value research</a><a href="../guide/">Guide</a></span></nav>
+  <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
   <div class="dev" role="note"><b>IN DEVELOPMENT</b><span>The trade values compared here are still being built and tested. Expect the numbers and methods to change.</span></div>
-  <div class="eyebrow" id="eyebrow">Value research · 12-team superflex · 0.5 PPR</div>
-  <h1>Value Research</h1>
+  <div class="eyebrow" id="eyebrow">Market check · 12-team superflex · 0.5 PPR</div>
+  <h1>Market Check</h1>
   <p>How do our trade values line up with the market? This page ranks every player by our model and by a market source, all in superflex, and shows where the two disagree, overall and within each position. Pick the source: <a href="https://dynasty-daddy.com" target="_blank" rel="noopener">Dynasty Daddy</a> (dynasty and redraft trade values from its public API) or <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> (open dynasty values built from expert consensus rankings).</p>
   <p class="small muted" id="asof">Loading…</p>
 </header>
@@ -80,19 +80,19 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 </section>
 
 <section>
-  <h2>How close are we?</h2>
-  <div class="cards" id="cards"></div>
-  <div class="tblwrap"><table id="posTbl" aria-label="Agreement by position"></table></div>
-  <p class="small muted">Rank correlation runs from -1 to 1; 1 means both lists put players in the same order. "Typical gap" is the median difference in rank among players in either list's top group at that position (top 24 QB, RB and TE, top 36 WR; top 150 overall).</p>
-</section>
-
-<section>
   <h2>Where we disagree most</h2>
   <p class="small muted">Among players in either list's top 150 overall. The number is how many spots apart the two overall ranks are.</p>
   <div class="two">
     <div class="box"><h3 class="up">We're higher than the market</h3><ol id="hi"></ol></div>
     <div class="box"><h3 class="down">The market is higher than us</h3><ol id="lo"></ol></div>
   </div>
+</section>
+
+<section>
+  <h2>How close are we?</h2>
+  <div class="cards" id="cards"></div>
+  <div class="tblwrap"><table id="posTbl" aria-label="Agreement by position"></table></div>
+  <p class="small muted">Rank correlation runs from -1 to 1; 1 means both lists put players in the same order. "Typical gap" is the median difference in rank among players in either list's top group at that position (top 24 QB, RB and TE, top 36 WR; top 150 overall).</p>
 </section>
 
 <section>
@@ -223,7 +223,7 @@ function build(){
   const miss = rows.filter(r=>r.miss && r.to<=150).length;
   $("missNote").textContent = miss ? `${miss} of the market's top 150 aren't in our trade values yet (marked "not in our values"), so they count as disagreements above.` : "";
   $("asof").textContent = `${D.asof} Market values: ${SRCNAME[SRC]} ${MODE==="r"?"redraft":"dynasty"} superflex values, pulled ${m.asof || "recently"}${SRC==="dp" && !m.live ? " (saved copy)" : ""}.`;
-  $("eyebrow").textContent = `Value research · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · 12-team superflex · 0.5 PPR`;
+  $("eyebrow").textContent = `Market check · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · 12-team superflex · 0.5 PPR`;
   $("src").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.v===SRC));
   $("mode").querySelectorAll("button").forEach(x=>{ x.setAttribute("aria-pressed", x.dataset.v===MODE); if (x.dataset.v==="r") x.disabled = SRC==="dp"; });
   $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy." : "";

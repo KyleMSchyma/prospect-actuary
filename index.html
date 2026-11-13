@@ -12,8 +12,10 @@
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
 .wrap{max-width:880px;margin:0 auto;padding:40px 16px 64px;display:flex;flex-direction:column;gap:36px}
 .eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
-h1,h2{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.1}
-h1{font-size:3rem} h2{font-size:1.6rem}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.1}
+h1{font-size:3rem} h2{font-size:1.9rem} h3{font-size:1.45rem}
+.group{display:flex;flex-direction:column;gap:14px}
+.ghead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
 p{margin:0;max-width:66ch}
 a{color:var(--accent)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
@@ -26,55 +28,66 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-wid
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head>
 <body><div class="wrap">
-<header style="display:flex;flex-direction:column;gap:12px">
-  <div class="eyebrow">NFL prospect grades · built with actuarial modeling</div>
+<header style="display:flex;flex-direction:column;gap:16px">
+  <nav class="pa-brand" data-root="" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="./" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="pre-draft/">Pre-draft</a><a href="post-draft/">Post-draft</a><a href="trade-values/">Trade values</a><a href="trade-calculator/">Trade calculator</a><a href="value-research/">Market check</a><a href="guide/">Guide</a></span></nav><script src="shared/nav.js"></script>
+  <div class="eyebrow">Fantasy football · built with actuarial modeling</div>
   <h1>Prospect Actuary</h1>
-  <p>Letter grades (A+ to F) for every drafted QB, RB, WR and TE from the 2010-2026 classes, with each player's real NFL results beside the grade so you can check the model. One board uses only college data. The other adds where the player was drafted and where he landed.</p>
+  <p>Two things, built the way an actuary prices risk: letter grades for every drafted QB, RB, WR and TE since 2010 (plus the 2027 class), each shown beside his real NFL results so you can check the model, and trade values for every NFL player and 2027 rookie pick, set to your league.</p>
 </header>
 
-<div class="cards">
-  <a class="card" href="pre-draft/">
-    <div class="eyebrow">College-only model</div>
-    <h2>Pre-Draft Player Grades</h2>
-    <p class="muted">College production, age, recruiting and conference level. No combine and no draft pick. Includes the top 2027 prospects as projections.</p>
-    <span class="go">Open the board →</span>
-  </a>
-  <a class="card" href="post-draft/">
-    <div class="eyebrow">Post-draft model</div>
-    <h2>Post-Draft Player Grades</h2>
-    <p class="muted">The same players with draft slot and landing spot added, shown next to the pre-draft grade so you can see what draft night changed.</p>
-    <span class="go">Open the board →</span>
-  </a>
-  <a class="card" href="trade-values/">
-    <div class="eyebrow">In development · redraft and dynasty</div>
-    <h2>Trade Values</h2>
-    <p class="muted">Every QB, RB, WR and TE on one 100,000-point scale that adds up, so two players together equal one. A Redraft sheet for the rest of 2026 and a Dynasty sheet for the next five seasons with 2027 rookie picks, both set to your league's scoring and lineup.</p>
-    <span class="go">Open the values →</span>
-  </a>
-  <a class="card" href="trade-calculator/">
-    <div class="eyebrow">In development · redraft and dynasty</div>
-    <h2>Trade Calculator</h2>
-    <p class="muted">Type in the players and 2027 rookie picks on each side of a trade and see which side comes out ahead, using the same trade values set to your league.</p>
-    <span class="go">Open the calculator →</span>
-  </a>
-  <a class="card" href="value-research/">
-    <div class="eyebrow">Research · dynasty superflex</div>
-    <h2>Value Research</h2>
-    <p class="muted">Our dynasty trade values next to the market's: overall and positional rank gaps against DynastyProcess superflex values, with the players we like more and less than consensus.</p>
-    <span class="go">See the comparison →</span>
-  </a>
-  <a class="card" href="guide/">
-    <div class="eyebrow">How it works</div>
-    <h2>Plain-English Guide</h2>
-    <p class="muted">What each model predicts, what drives it, how well it holds up, and how to explain it to someone who doesn't do statistics.</p>
-    <span class="go">Read the guide →</span>
-  </a>
-</div>
+<section class="group" aria-labelledby="g-rookies">
+  <div class="ghead"><h2 id="g-rookies">Rookies</h2><span class="muted">How good is this prospect, before and after the draft?</span></div>
+  <div class="cards">
+    <a class="card" href="pre-draft/">
+      <div class="eyebrow">College-only model</div>
+      <h3>Pre-Draft Player Grades</h3>
+      <p class="muted">College production, age, recruiting and conference level. No combine and no draft pick. Includes the top 2027 prospects as projections.</p>
+      <span class="go">Open the board →</span>
+    </a>
+    <a class="card" href="post-draft/">
+      <div class="eyebrow">Post-draft model</div>
+      <h3>Post-Draft Player Grades</h3>
+      <p class="muted">The same players with draft slot and landing spot added, plus the 2027 class graded from a mock draft.</p>
+      <span class="go">Open the board →</span>
+    </a>
+  </div>
+</section>
+
+<section class="group" aria-labelledby="g-trade">
+  <div class="ghead"><h2 id="g-trade">Trade</h2><span class="muted">What is every player worth in my league? In development.</span></div>
+  <div class="cards">
+    <a class="card" href="trade-values/">
+      <div class="eyebrow">Redraft and dynasty</div>
+      <h3>Trade Values</h3>
+      <p class="muted">Every QB, RB, WR and TE, plus 2027 rookie picks, on one 100,000-point scale that adds up. Switch between the rest of 2026 and dynasty (through 2031).</p>
+      <span class="go">Open the values →</span>
+    </a>
+    <a class="card" href="trade-calculator/">
+      <div class="eyebrow">Redraft and dynasty</div>
+      <h3>Trade Calculator</h3>
+      <p class="muted">Type in the players and picks on each side of a trade and see which side comes out ahead.</p>
+      <span class="go">Open the calculator →</span>
+    </a>
+    <a class="card" href="value-research/">
+      <div class="eyebrow">Superflex · vs. the market</div>
+      <h3>Market Check</h3>
+      <p class="muted">Our values ranked against Dynasty Daddy and DynastyProcess, with the players we like more and less than the market.</p>
+      <span class="go">See the comparison →</span>
+    </a>
+  </div>
+</section>
+
+<a class="card" href="guide/" style="max-width:none">
+  <div class="eyebrow">How it works</div>
+  <h3>Plain-English Guide</h3>
+  <p class="muted">What each model predicts, what drives it, how well it holds up, and how to explain it to someone who doesn't do statistics.</p>
+  <span class="go">Read the guide →</span>
+</a>
 
 <section style="display:flex;flex-direction:column;gap:12px">
-  <h2>What to take from it</h2>
+  <h2>What to take from the grades</h2>
   <ul>
-    <li>A "hit" means at least one top-tier fantasy season (top 24 at QB, RB and TE; top 36 at WR) in a player's first three NFL years.</li>
+    <li>A "hit" means at least one top-tier fantasy season (top 24 at QB and RB, top 18 at TE, top 36 at WR) in a player's first three NFL years.</li>
     <li>Pre-draft A-range players hit about 59% of the time, B about 31%, C and below about 14%. Post-draft A-range players hit 69%, and D/F players almost never.</li>
     <li>Every historical grade comes from a model that never saw that draft class, so the hit rates are honest out-of-sample results.</li>
     <li>The draft pick still knows more than college stats alone. Treat the grade as a strong flag, not a guarantee.</li>
