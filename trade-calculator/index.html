@@ -66,6 +66,7 @@ details.lgwrap summary .lbl{font-family:var(--f-mono);font-size:.72rem;text-tran
 .assets .who{min-width:0}
 .assets .who .nm{font-weight:600;overflow-wrap:anywhere}
 .assets .who .meta{font-size:.8rem;color:var(--muted)}
+.st{display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--line);border-radius:3px;font-family:var(--f-mono);font-size:.68rem;line-height:1.5;color:var(--muted);vertical-align:1px;white-space:nowrap}
 .assets .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
 .assets .x{font:inherit;border:none;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;line-height:1;padding:4px 6px;border-radius:4px}
 .assets .x:hover{color:var(--ink);background:var(--accent-soft)}
@@ -87,6 +88,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
   <div class="dev" role="note"><b>IN DEVELOPMENT</b><span>The trade values behind this calculator are still being built and tested. Expect the numbers and methods to change.</span></div>
   <div class="eyebrow">Fantasy trade calculator · your league's scoring and lineup · players and 2027 rookie picks</div>
   <h1>Trade Calculator</h1>
+  <p class="small muted st-legend">Status tags: <span class="st">IR</span> reserve list (injured reserve, PUP, suspended) · <span class="st">Out</span> / <span class="st">Doubtful</span> / <span class="st">Q</span> last game's injury report · <span class="st">Backup</span> not first on the team's depth chart. Values already account for the status.</p>
   <p>Add the players (and, in dynasty, 2027 rookie picks) each side would give up. The calculator adds up each side's <a href="../trade-values/">trade values</a> for your league and shows who comes out ahead.</p>
   <p class="small muted" id="asof"></p>
 </header>
@@ -156,6 +158,8 @@ if (!D) { document.getElementById("vBig").textContent = "The trade values didn't
 const POS = ["QB","RB","WR","TE"], V = D.v;
 const $ = id => document.getElementById(id);
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ST_T = {IR:"Reserve list (injured reserve, PUP or suspended)", Out:"Out on the last injury report", Doubtful:"Doubtful on the last injury report", Q:"Questionable on the last injury report", Backup:"Not first on the team depth chart"};
+const stTag = a => a.st ? ` <span class="st" title="${ST_T[a.st]||""}">${esc(a.st)}</span>` : "";   // status tag (optional data field st)
 const fmt = x => Math.round(x).toLocaleString("en-US");
 const f1 = x => x==null ? "" : Number(x).toFixed(1);
 const pchip = p => `<span class="pos" style="color:var(--${p})">${p==="PICK"?"Pick":p}</span>`;
@@ -209,7 +213,7 @@ function compute(){
     const x = pl.k[key]; if (!x || x.length<4+2*(D.nf||4)) return;
     const sd = D.sd[key], r = RD.rep[pl.p];
     let v = x[2]*stoploss(x[1], r, sd[0]);
-    for (let t=1; t<=(D.nf||4); t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
+    for (let t=1; t<=(D.nf||4); t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd.length>2 ? sd[1+t] : sd[1]*Math.sqrt(t));
     dyn[i] = v;
   });
   const pv = D.picks.pros.map(pr=>{ const key = keyOf(pr.p), c = D.picks.cal[key], d = pr.d[key], r = RD.rep[pr.p]; let v = 0;
@@ -235,7 +239,7 @@ function asset(id){
   const i = +id.slice(2), pl = D.players[i];
   const v = MODE==="d" ? C.d[i] : C.r[i], rk = (MODE==="d" ? C.rd : C.rr)[i];
   const bits = [pl.tm||"FA"]; if (rk) bits.push(rk); if (pl.a!=null) bits.push("age "+f1(pl.a));
-  return {id, name:pl.n, p:pl.p, meta:bits.join(" · "), v, note: v<=0 ? "Below replacement for this window" : ""};
+  return {id, name:pl.n, st:pl.st, p:pl.p, meta:bits.join(" · "), v, note: v<=0 ? "Below replacement for this window" : ""};
 }
 function allAssets(){
   const out = D.players.map((pl,i)=>asset("p:"+i));
@@ -259,7 +263,7 @@ function box(side){
       return {a, s:(starts?1e6:0)+a.v};
     }).filter(Boolean).sort((x,y)=>y.s-x.s).slice(0,8).map(x=>x.a);
     sel = 0;
-    sg.innerHTML = items.length ? items.map((a,j)=>`<li role="option" id="o${side}${j}" data-j="${j}" aria-selected="${j===0}"><span class="nm">${pchip(a.p)} ${esc(a.name)} <span class="muted small">${esc(a.meta)}</span></span><span class="num small">${fmt(a.v)}</span></li>`).join("")
+    sg.innerHTML = items.length ? items.map((a,j)=>`<li role="option" id="o${side}${j}" data-j="${j}" aria-selected="${j===0}"><span class="nm">${pchip(a.p)} ${esc(a.name)}${stTag(a)} <span class="muted small">${esc(a.meta)}</span></span><span class="num small">${fmt(a.v)}</span></li>`).join("")
       : `<li class="none">No match${MODE==="r"&&/pick|^\d/.test(t)?" (picks are dynasty only)":""}</li>`;
     sg.hidden = false; q.setAttribute("aria-expanded","true"); mark();
   }
@@ -286,7 +290,7 @@ function list(side, ids){
   if (!ids.length) { el.innerHTML = `<li class="empty" style="display:block;border:none">Nothing added yet.</li>`; return 0; }
   let tot = 0;
   el.innerHTML = ids.map(id=>{ const a = asset(id); tot += a.v;
-    return `<li><div class="who"><div class="nm">${pchip(a.p)} ${esc(a.name)}</div><div class="meta">${esc(a.meta)}${a.note?` · <span style="color:var(--warn)">${esc(a.note)}</span>`:""}</div></div><span class="v">${fmt(a.v)}</span><button type="button" class="x" data-id="${esc(id)}" aria-label="Remove ${esc(a.name)}">×</button></li>`; }).join("");
+    return `<li><div class="who"><div class="nm">${pchip(a.p)} ${esc(a.name)}${stTag(a)}</div><div class="meta">${esc(a.meta)}${a.note?` · <span style="color:var(--warn)">${esc(a.note)}</span>`:""}</div></div><span class="v">${fmt(a.v)}</span><button type="button" class="x" data-id="${esc(id)}" aria-label="Remove ${esc(a.name)}">×</button></li>`; }).join("");
   return tot;
 }
 function render(){
