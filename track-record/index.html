@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Track Record | Prospect Actuary</title>
+<meta name="description" content="Prospect Actuary track record: predictions for the 2024, 2025 and 2026 draft classes frozen on 2026-11-13 and scored against what happened">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f5f6f3; --panel:#ffffff; --ink:#18201c; --muted:#5d6862; --line:#d9ddd6; --accent:#1f6b4f; --accent-soft:#e2efe8;
+  --warn:#8a5a00; --warn-soft:#fbf0d9; --bar:#2f6d8f; --sideA:#2f6d8f; --sideB:#c4502f;
+  --QB:#c4502f; --RB:#1d7a50; --WR:#2f6d8f; --TE:#9b4f8a; --PICK:#8a5a00;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif; --f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121815; --panel:#1a221e; --ink:#e7ece8; --muted:#9aa69f; --line:#2c3732; --accent:#5cc497; --accent-soft:#1f3229;
+  --warn:#f0c46a; --warn-soft:#3a2f17; --bar:#5b9cc0; --sideA:#5b9cc0; --sideB:#e2754f; --QB:#e2754f; --RB:#3fb07c; --WR:#5b9cc0; --TE:#c27bb3; --PICK:#f0c46a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121815; --panel:#1a221e; --ink:#e7ece8; --muted:#9aa69f; --line:#2c3732; --accent:#5cc497; --accent-soft:#1f3229;
+  --warn:#f0c46a; --warn-soft:#3a2f17; --bar:#5b9cc0; --sideA:#5b9cc0; --sideB:#e2754f; --QB:#e2754f; --RB:#3fb07c; --WR:#5b9cc0; --TE:#c27bb3; --PICK:#f0c46a; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:36px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:2.6rem} h2{font-size:1.75rem} h3{font-size:1.35rem}
+p{margin:0;max-width:70ch}
+section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+.dev b{font-family:var(--f-mono);letter-spacing:.12em;color:var(--warn);font-size:.95rem}
+.dev{background:var(--warn-soft);border:1px solid var(--warn);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.explain{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.pos{font-family:var(--f-mono);font-size:.8rem;font-weight:600}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button,.btn{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:5px 12px;cursor:pointer}
+.tabs button:disabled{opacity:.45;cursor:not-allowed}
+.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.stat .lbl{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.stat .big{font-family:var(--f-mono);font-size:1.6rem;font-weight:600;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+.box ol li span.d{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.controls input{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:6px 10px;min-width:0;width:220px;max-width:100%}
+.tblwrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td:first-child{white-space:normal;min-width:150px}
+thead th{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);position:sticky;top:0;background:var(--panel)}
+thead th button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;padding:0;text-transform:inherit;letter-spacing:inherit}
+thead th button[aria-sort]{color:var(--ink)}
+tbody tr:last-child td{border-bottom:none}
+td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.up{color:var(--RB)} .down{color:var(--QB)}
+.meta{font-size:.78rem;color:var(--muted)}
+@media (max-width:720px){.two{grid-template-columns:1fr}}
+@media (max-width:520px){h1{font-size:2.1rem}}
+</style></head>
+
+<body><div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+    <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
+  <h1>Track Record</h1>
+  <p class="lede" style="max-width:72ch">Every grade on this site was tested on past draft classes, but those classes were also used to choose the models, so their scores flatter us a little. The <b>2024, 2025 and 2026 classes</b> were never used for any choice. Their predictions were frozen on <b>2026-11-13</b> (pre-draft and post-draft probabilities, grades and values, with a hash so they cannot be edited) and are scored here against what actually happened. This is the true holdout.</p>
+  <p class="small muted" style="max-width:72ch"><b>Read with care: the samples are still small.</b> The 2024 class has played two of its three seasons, the 2025 class one, the 2026 class none that are complete. "Hit" means at least one top-tier fantasy season in years 1-3 (QB, RB top 24; WR top 36; TE top 18), so rates will rise as more seasons are played. Results run through the 2025 season; scored on 2026-11-13.</p>
+</header>
+<section><h2>Hit rate by grade so far</h2>
+<p class="small" style="max-width:72ch">"Expected" is the frozen probability of a hit over all three seasons, so "so far" should still be below it for classes that have not finished.</p>
+<div class="tablebox"><table><thead><tr><th>Board</th><th>Grade</th><th>Players</th><th>Any tier so far</th><th>95% range</th><th>Top tier so far</th><th>Expected (3 yrs)</th></tr></thead><tbody><tr><td>pre-draft</td><td>A</td><td>24</td><td>62%</td><td>46% – 79%</td><td>25%</td><td>61%</td></tr><tr><td>pre-draft</td><td>B</td><td>57</td><td>12%</td><td>5% – 21%</td><td>5%</td><td>22%</td></tr><tr><td>pre-draft</td><td>C</td><td>46</td><td>2%</td><td>0% – 6%</td><td>0%</td><td>7%</td></tr><tr><td>pre-draft</td><td>D/F</td><td>34</td><td>6%</td><td>0% – 15%</td><td>3%</td><td>1%</td></tr><tr><td>post-draft</td><td>A</td><td>30</td><td>60%</td><td>43% – 77%</td><td>27%</td><td>66%</td></tr><tr><td>post-draft</td><td>B</td><td>42</td><td>10%</td><td>2% – 19%</td><td>5%</td><td>28%</td></tr><tr><td>post-draft</td><td>C</td><td>46</td><td>4%</td><td>0% – 11%</td><td>0%</td><td>14%</td></tr><tr><td>post-draft</td><td>D/F</td><td>44</td><td>2%</td><td>0% – 7%</td><td>0%</td><td>7%</td></tr></tbody></table></div>
+</section>
+<section><h2>Model vs draft pick</h2>
+<p class="small" style="max-width:72ch">Brier score of the frozen any-tier probability against a pick-only benchmark frozen at the same time (lower is better). With one or two seasons played this is an early read.</p>
+<div class="tablebox"><table><thead><tr><th>Board</th><th>Class</th><th>Players</th><th>Seasons</th><th>Model</th><th>Draft pick</th><th>Better so far</th></tr></thead><tbody><tr><td>post-draft</td><td>2024</td><td>77</td><td>2</td><td>0.097</td><td>0.105</td><td>model</td></tr><tr><td>post-draft</td><td>2025</td><td>85</td><td>1</td><td>0.082</td><td>0.088</td><td>model</td></tr><tr><td>pre-draft</td><td>2024</td><td>77</td><td>2</td><td>0.089</td><td>0.105</td><td>model</td></tr><tr><td>pre-draft</td><td>2025</td><td>84</td><td>1</td><td>0.099</td><td>0.089</td><td>draft pick</td></tr></tbody></table></div>
+</section>
+<section><h2>Calibration so far</h2>
+<div class="tablebox"><table><thead><tr><th>Board</th><th>Predicted (3 yrs)</th><th>Players</th><th>Mean predicted</th><th>Hit so far</th></tr></thead><tbody><tr><td>post-draft</td><td>[0,0.1]</td><td>46</td><td>7%</td><td>2%</td></tr><tr><td>post-draft</td><td>(0.1,0.25]</td><td>60</td><td>16%</td><td>5%</td></tr><tr><td>post-draft</td><td>(0.25,0.5]</td><td>35</td><td>36%</td><td>17%</td></tr><tr><td>post-draft</td><td>(0.5,0.75]</td><td> 9</td><td>62%</td><td>56%</td></tr><tr><td>post-draft</td><td>(0.75,1]</td><td>12</td><td>86%</td><td>83%</td></tr><tr><td>pre-draft</td><td>[0,0.1]</td><td>75</td><td>4%</td><td>3%</td></tr><tr><td>pre-draft</td><td>(0.1,0.25]</td><td>44</td><td>17%</td><td>14%</td></tr><tr><td>pre-draft</td><td>(0.25,0.5]</td><td>25</td><td>35%</td><td>20%</td></tr><tr><td>pre-draft</td><td>(0.5,0.75]</td><td>11</td><td>61%</td><td>73%</td></tr><tr><td>pre-draft</td><td>(0.75,1]</td><td> 6</td><td>84%</td><td>67%</td></tr></tbody></table></div>
+</section>
+<section><h2>Market Check log</h2>
+<p class="small" style="max-width:72ch">Each week we also save where our dynasty ranks and the market's disagree (top 150 on either side). Once games are played we score which side was closer to the points each player actually scored over replacement. First log: 2026-11-13, 169 players, 69 disagreements of 25 ranks or more. No games have been played since, so there is nothing to score yet.</p>
+</section>
+<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: our values use NFL stats from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Market values from the <a href="https://dynasty-daddy.com/help/api-documentation">Dynasty Daddy public values API</a> and the <a href="https://github.com/dynastyprocess/data">DynastyProcess open data repository</a> by Tan Ho; only ranks are shown. Values and models by Prospect Actuary. Not affiliated with the NFL, any team, Dynasty Daddy, DynastyProcess or FantasyPros.</footer>
+</div></body></html>
