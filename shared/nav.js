@@ -12,7 +12,7 @@
   const nav = document.querySelector("nav.pa-brand"); if (!nav) return;
   const root = nav.dataset.root != null ? nav.dataset.root : "../";
   const GROUPS = [
-    ["Rookies", [["pre-draft","Pre-draft grades"],["post-draft","Post-draft grades"]]],
+    ["Rookies", [["pre-draft","Pre-draft grades"],["post-draft","Post-draft grades"],["buy-sell","Buy / Sell"]]],
     ["Trade",   [["trade-values","Trade values"],["trade-calculator","Trade calculator"],["value-research","Market check"]]],
     ["",        [["track-record","Track record"],["guide","Guide"]]]];
   const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";
