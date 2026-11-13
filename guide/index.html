@@ -22,7 +22,10 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 .callout{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:6px}
 .explain{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 16px;font-style:italic}
 .explain b{font-style:normal}
-.toc{display:flex;flex-wrap:wrap;gap:8px 16px;font-family:var(--f-mono);font-size:.8rem}
+.contents{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px 20px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.contents div{display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+.contents .lbl,.part{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.part{border-top:2px solid var(--accent);padding-top:10px;color:var(--accent);margin-bottom:-18px}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
 table{border-collapse:collapse;width:100%;font-size:.9rem}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -32,13 +35,19 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
 </style></head>
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:12px">
-  <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Value research</a><a href="../guide/" aria-current="page">Guide</a></span></nav>
-  <div class="eyebrow">How the grades work</div>
+  <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">How everything works</div>
   <h1>Plain-English Guide</h1>
   <p class="lead">What each Prospect Actuary model predicts, what the final model is, what drives it, and how to explain it to someone who doesn't do statistics. It covers the <a href="../pre-draft/">Pre-Draft Player Grades</a> , the <a href="../post-draft/">Post-Draft Player Grades</a> and the <a href="../trade-values/">Trade Values</a> (Redraft and Dynasty sheets, in development).</p>
-  <div class="toc"><a href="#short">Short version</a><a href="#ideas">Shared ideas</a><a href="#model">Pre-draft model</a><a href="#pre">Pre-draft grades</a><a href="#post">Post-draft grades</a><a href="#redraft">Redraft Trade Values</a><a href="#dynasty">Dynasty Trade Values</a><a href="#actuarial">Actuarial concepts</a></div>
+  <nav class="contents" aria-label="Contents">
+    <div><span class="lbl">Start here</span><a href="#short">The short version</a><a href="#ideas">Shared ideas</a></div>
+    <div><span class="lbl">Rookie grades</span><a href="#model">The pre-draft model</a><a href="#pre">Pre-draft grades</a><a href="#post">Post-draft grades</a><a href="#value">The Value column</a></div>
+    <div><span class="lbl">Trade</span><a href="#redraft">Redraft values</a><a href="#dynasty">Dynasty values and 2027 picks</a><a href="#market">Market check</a></div>
+    <div><span class="lbl">Background</span><a href="#actuarial">Actuarial ideas behind it</a></div>
+  </nav>
 </header>
 
+<div class="part">Start here</div>
 <section id="short">
   <h2>The one-paragraph version</h2>
   <p>Both boards answer one question: "How likely is this player to become a useful fantasy starter in his first three NFL seasons?" The pre-draft grade answers it with college data only, before anyone is drafted. The post-draft grade answers it again once we know where he was picked and where he landed.</p>
@@ -57,6 +66,7 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   </ul>
 </section>
 
+<div class="part">Rookie grades</div>
 <section id="model">
   <div class="eyebrow">1</div>
   <h2>The pre-draft (college-only) model</h2>
@@ -90,7 +100,7 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   <p><b>Final model in plain words.</b> An ordered model: picture a ladder with rungs at top 8, top 16 and top 24 (top 6, 12 and 18 for TEs; top 12, 24 and 36 for WRs). One score per player says how high up the ladder he's likely to climb. It's fit as an elastic net, and the biggest single input is the draft pick (as its log, because the gap between picks 1 and 10 matters far more than between 150 and 160).</p>
   <p><b>The result.</b> Post-draft A-range players hit 66% of the time, B 34%, C 10% and D/F 4%. Unlike the pre-draft grade, it separates the bottom too. It also ranks players within a class better (average rank correlation 0.49-0.61 vs 0.31-0.45). For QBs it beats draft slot alone; for RBs, WRs and TEs it's about the same as draft slot. Big risers include Carson Wentz (F to A-), Doug Martin (D to A) and Travis Kelce (C to A-); big fallers are mostly late picks with strong college numbers, such as Alex Collins (A- to D).</p>
   <p class="explain"><b>How to explain it:</b> "The pre-draft grade is what the college stats say. The post-draft grade adds what the NFL said with its pick. When they disagree, history sides with the pick more often, which is why a pre-draft A who goes in round 6 usually fades."</p>
-  <h3>Comparing across positions: the Value column</h3>
+  <h3 id="value">Comparing across positions: the Value column</h3>
   <p><b>Why.</b> A grade is a rank <i>within</i> a position, so an A tight end and an A quarterback aren't worth the same. Both grade boards show <b>Value</b>: each player's expected dynasty trade value on the same 100,000-point scale as the Trade Values page, for the league you set on the Trade Values page (it follows every setting there: teams, scoring, TE premium, superflex, starters, flex, first-down bonus), or the default league (12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex) if you haven't set one. The All tab is sorted by it.</p>
   <p><b>How it's built.</b> Take his chance of each fantasy tier (top, middle, bottom, none), and for each tier what past drafted players in it actually scored over their first five seasons: games, points per game above the replacement starter, discounted 15% a year and adjusted for his age. Add those up, weighted by the chances, then apply one calibration multiplier (1.11, fit so that past round-1 rookie picks come out at what those players actually produced). It's the same math that prices the 2027 rookie picks, so a 2027 prospect's Value is exactly his rookie-pick value.</p>
   <p><b>Which chances.</b> Post-draft probabilities for drafted players and for 2027 players in the mock draft. For other 2027 prospects, the pre-draft probabilities after a fix: the college-only model is trained on every college player, so its chances include the risk of never being drafted, and among players who were drafted they ran about a third too low (expected any-tier rate 16% vs 25% actual, 2010-2023). A small logistic recalibration per position and tier, fit on drafted players' out-of-class predictions, fixes the level without changing anyone's order within a position. The original pre-draft grades and probabilities are unchanged. For past classes, Value is what the player looked like at draft time in today's league, not what he's worth now.</p>
@@ -98,6 +108,7 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   <p><a href="../post-draft/">Open the Post-Draft Player Grades →</a></p>
 </section>
 
+<div class="part">Trade</div>
 <section id="redraft">
   <div class="eyebrow">4 · In development</div>
   <h2>Redraft Trade Values</h2>
@@ -132,6 +143,13 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   <p><a href="../trade-values/#dynasty">Open the Dynasty Trade Values →</a></p>
 </section>
 
+<section id="market">
+  <h2>Market check</h2>
+  <p>The <a href="../value-research/">Market check</a> page ranks every player by our trade values and by a market source, then shows where the two lists disagree. Our side is the Trade Values page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs and 2 RB, 3 WR, 1 TE starters. The market side is either Dynasty Daddy (dynasty and redraft trade values from its public API, saved once a week) or DynastyProcess (dynasty values built from FantasyPros expert consensus rankings). Only ranks are shown.</p>
+  <p class="explain"><b>How to explain it:</b> "It's a second opinion. When our numbers and the market agree, that's reassuring. When they disagree by a lot, one side knows something the other doesn't: a role change, an injury, or production the market hasn't priced in yet. Those are the players worth a closer look."</p>
+</section>
+
+<div class="part">Background</div>
 <section id="actuarial">
   <h2>Actuarial concepts behind it</h2>
   <p>The methods come from the Society of Actuaries' predictive analytics exams (ATPA and PA).</p>

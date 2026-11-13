@@ -56,61 +56,38 @@ svg .ax{stroke:var(--line)} svg .bar{fill:var(--bar)} svg .ci{stroke:var(--muted
 ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
 @media (max-width:520px){h1{font-size:2.1rem} .ctl input{width:100%}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+details.fold{background:var(--panel);border:1px solid var(--line);border-radius:8px}
+details.fold>summary{cursor:pointer;list-style:none;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary h2{display:inline}
+details.fold>summary h2::before{content:"\25B8  ";color:var(--accent);font-size:1.1rem}
+details.fold[open]>summary h2::before{content:"\25BE  "}
+details.fold>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details.fold .foldbody{padding:4px 16px 20px;display:flex;flex-direction:column;gap:32px}
+details.fold .foldbody h3{font-size:1.4rem} details.fold .foldbody h4{font-family:var(--f-display);font-size:1.15rem;margin:0}
+.switch{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.switch .lbl{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.switch a{font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:5px 12px;text-decoration:none}
+.switch a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+.switch a:not([aria-current]):hover{border-color:var(--accent)}
+details.note summary{cursor:pointer;color:var(--accent);font-size:.9rem}
+details.note p{margin-top:6px}
 </style>
 
 <div class="wrap">
 <header style="display:flex;flex-direction:column;gap:12px">
-  <nav class="pa-brand" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Value research</a><a href="../guide/">Guide</a></span></nav>
+  <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
   <div class="eyebrow">Post-draft model · college profile + draft slot + landing spot</div>
   <h1>Post-Draft Player Grades</h1>
   <p class="lede">Every drafted QB, RB, WR and TE from the 2010-2026 classes, scored by the post-draft model, ranked within position and given a letter grade on one fixed scale. NFL results sit next to every historical player so the grades can be checked. The 2027 class hasn't been drafted yet, so it gets its own section <a href="#mock-2027">graded from a mock draft</a>. Its college-only grades are on the <a href="../pre-draft/">pre-draft player grades</a> page.</p>
+  <div class="switch" role="group" aria-label="Model"><span class="lbl">Model</span><a href="../pre-draft/" id="modelOther">Pre-draft (college only)</a><a href="../post-draft/" aria-current="page">Post-draft (adds draft slot and team)</a></div>
 </header>
 
-<section>
-  <h2>What the grades show</h2>
-  <div class="findings" id="findings"></div>
-  <ul>
-    <li><b>The grade sorts the whole range, top to bottom.</b> A-range players hit far more often than B-range, B more than C, and D/F players almost never reach a tier. The late hits that do get through are rare: Puka Nacua (D), Hunter Renfrow (F), Aaron Jones and Alfred Morris (D).</li>
-    <li><b>For QBs it beats draft slot alone.</b> QB AUC is 0.88-0.91 against 0.84-0.88 for pick number, and adding the grade to log(pick) improves the QB16 and QB24 fit (likelihood-ratio p = 0.005 and 0.0004).</li>
-    <li><b>For RB, WR and TE it is about the same as draft slot.</b> AUC is 0.79-0.85 against 0.80-0.86 for pick alone, and the grade adds nothing significant on top of log(pick). Once the pick is known, the college profile and landing spot add little for these positions.</li>
-    <li><b>Within the late rounds, the grade still sorts players.</b> Among Rounds 4-7 picks, B-range players hit at 15-29% versus 0-13% for C and below (table below).</li>
-  </ul>
-</section>
-
-<section>
-  <h2>The grade scale</h2>
-  <p>Score = expected tier points = 3 × P(top tier) + 2 × P(middle tier) + 1 × P(bottom tier), which equals P(top) + P(top two) + P(any tier). The grade is the percentile of that score among drafted players at the same position in 2010-2023. The cut points never move, so a B+ in 2012 means the same as a B+ in 2026.</p>
-  <div class="tablebox"><table id="scaleTable"></table></div>
-  <p class="small muted">Tiers follow your cutoffs: QB and RB top 8 / 16 / 24, TE top 6 / 12 / 18, WR top 12 / 24 / 36, judged on the best PPR finish in NFL years 1-3. Historical scores are leave-one-class-out (each class is scored by a model that never saw it); 2024-2026 use the final model trained on 2010-2023.</p>
-</section>
-
-<section>
-  <h2>Does a better grade mean a better NFL outcome?</h2>
-  <div class="tabs" id="valTabs" role="group" aria-label="Position"></div>
-  <div class="chartbox"><svg id="valChart" viewBox="0 0 760 270" width="100%" role="img" aria-label="Hit rate by grade"></svg></div>
-  <div class="legend"><span><span class="sw" style="background:var(--bar)"></span>actual share with an any-tier season (yrs 1-3), drafted 2010-2023</span><span>— 95% bootstrap interval</span><span><span class="sw" style="background:var(--dot);border-radius:50%"></span>what the model expected</span></div>
-  <div class="tablebox"><table id="valTable"></table></div>
-  <div class="two">
-    <div style="display:flex;flex-direction:column;gap:8px"><h3>Grade vs draft slot</h3><div class="tablebox"><table id="vpTable"></table></div>
-      <p class="small muted">AUC among drafted players. "LRT p" tests whether the grade adds to log(pick) in a logistic regression. Spearman is with 3-year PPR points.</p></div>
-    <div style="display:flex;flex-direction:column;gap:8px"><h3>Any-tier hit rate within draft-round bands</h3><div class="tablebox"><table id="brTable"></table></div>
-      <p class="small muted">Count of players in brackets. Blank = no players in that cell. Draft slot is an input, so early picks rarely grade low and late picks rarely grade high.</p></div>
-  </div>
-</section>
-
-<section id="mock-2027">
-  <h2>2027 class, graded from a mock draft</h2>
-  <p>Nobody in the 2027 class has been drafted yet, so a mock draft stands in for the draft. Each QB, RB, WR and TE takes his mock pick as his draft capital and his mock team as his landing spot, then goes through the same post-draft model as every drafted player. The pre-draft grade is shown next to it for comparison. These grades will move as the mocks change, and they become real grades after the draft in April.</p>
-  <p class="small muted">Source: <b>Renner 2027 Mock Draft (post-trade-deadline)</b>, fantasy positions only (30 of its 96 picks, rounds 1-3). The picks and teams come from the mock. The grades are Prospect Actuary's.</p>
-  <div class="tabs" id="mockTabs" role="group" aria-label="Position"></div>
-  <div class="tablebox"><table id="mockTable"></table></div>
-  <p class="small muted">Some inputs are estimates. The combine hasn't happened, so every player is treated as an average tester at his position. Age comes from years since high school. The landing spot uses the team's 2026 stats and assumes nobody leaves. When the 2024-2026 classes were scored the same way, the estimate ranked players much like their real post-draft scores did (rank correlation .91 to .98 by position), and the grade is calibrated to that check. "Move" is the number of grade steps from the pre-draft grade (+ means the mock's draft slot and landing spot raised him). Data: <a href="https://github.com/KyleMSchyma/prospect-actuary/blob/main/post-draft/data/pd_post_2027_mock_grades.csv">pd_post_2027_mock_grades.csv</a>.</p>
-</section>
-
-<section>
+<section id="board-sec">
   <h2>Rankings board</h2>
   <p>Rank is within position across every class from 2010 to 2026, plus the 2027 class graded from the mock draft above (purple rows; the pick shown is the mock pick).</p>
-  <p>The grade is a rank <i>within</i> position: an A QB and an A tight end are both near the top of their own position, not worth the same. To compare across positions, use <b>Value</b>: each player's expected dynasty trade value, on the same 100,000-point scale as the <a href="../trade-values/">trade values</a> page, for your league (default: 12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex). Value = the chance of each fantasy tier from this post-draft model times what past players in that tier scored over their first four seasons, above replacement, discounted and adjusted for age. The All tab is ordered by Value; each position tab by score. For past classes it's the value at draft time in today's league, not what the player is worth now. It follows the league you set on the Trade Values page (teams, scoring, TE premium, superflex, starters, flex, first-down bonus; saved in this browser); with none saved it uses the default league.</p>
+  <p>The grade is a rank <i>within</i> position: an A QB and an A tight end are both near the top of their own position, not worth the same. To compare across positions, use <b>Value</b>: each player's expected dynasty trade value, on the same 100,000-point scale as the <a href="../trade-values/">trade values</a> page, for your league (default: 12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex).</p>
+  <details class="note"><summary>How Value is calculated</summary><p class="small">Value = the chance of each fantasy tier from this post-draft model times what past players in that tier scored over their first four seasons, above replacement, discounted and adjusted for age. The All tab is ordered by Value; each position tab by score. For past classes it's the value at draft time in today's league, not what the player is worth now. It follows the league you set on the Trade Values page (teams, scoring, TE premium, superflex, starters, flex, first-down bonus; saved in this browser); with none saved it uses the default league.</p></details>
   <div class="tabs" id="posTabs" role="group" aria-label="Position"></div>
   <div class="ctl">
     <label for="fClass">Class<select id="fClass"></select></label>
@@ -124,20 +101,67 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-wid
   <div><button class="more" id="more" type="button">Show 100 more</button></div>
 </section>
 
+<section id="mock-2027">
+  <h2>2027 class, graded from a mock draft</h2>
+  <p>Nobody in the 2027 class has been drafted yet, so a mock draft stands in for the draft. Each QB, RB, WR and TE takes his mock pick as his draft capital and his mock team as his landing spot, then goes through the same post-draft model as every drafted player. The pre-draft grade is shown next to it for comparison. These grades will move as the mocks change, and they become real grades after the draft in April.</p>
+  <p class="small muted">Source: <b>Renner 2027 Mock Draft (post-trade-deadline)</b>, fantasy positions only (30 of its 96 picks, rounds 1-3). The picks and teams come from the mock. The grades are Prospect Actuary's.</p>
+  <div class="tabs" id="mockTabs" role="group" aria-label="Position"></div>
+  <div class="tablebox"><table id="mockTable"></table></div>
+  <p class="small muted">Some inputs are estimates. The combine hasn't happened, so every player is treated as an average tester at his position. Age comes from years since high school. The landing spot uses the team's 2026 stats and assumes nobody leaves. When the 2024-2026 classes were scored the same way, the estimate ranked players much like their real post-draft scores did (rank correlation .91 to .98 by position), and the grade is calibrated to that check. "Move" is the number of grade steps from the pre-draft grade (+ means the mock's draft slot and landing spot raised him). Data: <a href="https://github.com/KyleMSchyma/prospect-actuary/blob/main/post-draft/data/pd_post_2027_mock_grades.csv">pd_post_2027_mock_grades.csv</a>.</p>
+</section>
+
+<details class="fold" id="does-it-work">
+  <summary><h2>Does it work?</h2><span class="muted small">Hit rates by grade, the grade scale, grade vs draft slot, and the biggest misses</span></summary>
+  <div class="foldbody">
 <section>
-  <h2>Where the grade misses</h2>
+  <h3>What the grades show</h3>
+  <div class="findings" id="findings"></div>
+  <ul>
+    <li><b>The grade sorts the whole range, top to bottom.</b> A-range players hit far more often than B-range, B more than C, and D/F players almost never reach a tier. The late hits that do get through are rare: Puka Nacua (D), Hunter Renfrow (F), Aaron Jones and Alfred Morris (D).</li>
+    <li><b>For QBs it beats draft slot alone.</b> QB AUC is 0.88-0.91 against 0.84-0.88 for pick number, and adding the grade to log(pick) improves the QB16 and QB24 fit (likelihood-ratio p = 0.005 and 0.0004).</li>
+    <li><b>For RB, WR and TE it is about the same as draft slot.</b> AUC is 0.79-0.85 against 0.80-0.86 for pick alone, and the grade adds nothing significant on top of log(pick). Once the pick is known, the college profile and landing spot add little for these positions.</li>
+    <li><b>Within the late rounds, the grade still sorts players.</b> Among Rounds 4-7 picks, B-range players hit at 15-29% versus 0-13% for C and below (table below).</li>
+  </ul>
+</section>
+<section>
+  <h3>The grade scale</h3>
+  <p>Score = expected tier points = 3 × P(top tier) + 2 × P(middle tier) + 1 × P(bottom tier), which equals P(top) + P(top two) + P(any tier). The grade is the percentile of that score among drafted players at the same position in 2010-2023. The cut points never move, so a B+ in 2012 means the same as a B+ in 2026.</p>
+  <div class="tablebox"><table id="scaleTable"></table></div>
+  <p class="small muted">Tiers follow your cutoffs: QB and RB top 8 / 16 / 24, TE top 6 / 12 / 18, WR top 12 / 24 / 36, judged on the best PPR finish in NFL years 1-3. Historical scores are leave-one-class-out (each class is scored by a model that never saw it); 2024-2026 use the final model trained on 2010-2023.</p>
+</section>
+<section>
+  <h3>Does a better grade mean a better NFL outcome?</h3>
+  <div class="tabs" id="valTabs" role="group" aria-label="Position"></div>
+  <div class="chartbox"><svg id="valChart" viewBox="0 0 760 270" width="100%" role="img" aria-label="Hit rate by grade"></svg></div>
+  <div class="legend"><span><span class="sw" style="background:var(--bar)"></span>actual share with an any-tier season (yrs 1-3), drafted 2010-2023</span><span>— 95% bootstrap interval</span><span><span class="sw" style="background:var(--dot);border-radius:50%"></span>what the model expected</span></div>
+  <div class="tablebox"><table id="valTable"></table></div>
   <div class="two">
-    <div style="display:flex;flex-direction:column;gap:8px"><h3>A or A+ with no tier season</h3><div class="tablebox"><table id="missHi"></table></div></div>
-    <div style="display:flex;flex-direction:column;gap:8px"><h3>D or F who reached the top tier</h3><div class="tablebox"><table id="missLo"></table></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><h4>Grade vs draft slot</h4><div class="tablebox"><table id="vpTable"></table></div>
+      <p class="small muted">AUC among drafted players. "LRT p" tests whether the grade adds to log(pick) in a logistic regression. Spearman is with 3-year PPR points.</p></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><h4>Any-tier hit rate within draft-round bands</h4><div class="tablebox"><table id="brTable"></table></div>
+      <p class="small muted">Count of players in brackets. Blank = no players in that cell. Draft slot is an input, so early picks rarely grade low and late picks rarely grade high.</p></div>
+  </div>
+</section>
+<section>
+  <h3>Where the grade misses</h3>
+  <div class="two">
+    <div style="display:flex;flex-direction:column;gap:8px"><h4>A or A+ with no tier season</h4><div class="tablebox"><table id="missHi"></table></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><h4>D or F who reached the top tier</h4><div class="tablebox"><table id="missLo"></table></div></div>
   </div>
   <ul>
     <li>High-grade misses are mostly early picks whose NFL careers stalled (Zach Wilson, Trey Lance, Kevin White, John Ross, Treylon Burks). The model trusts a high pick, so it shares the NFL's mistakes.</li>
     <li>Low-grade hits are late picks who won a role anyway. There are only a handful, because a late pick and a crowded depth chart rarely lead to a top-tier season.</li>
   </ul>
 </section>
+  </div>
+</details>
 
+<details class="fold" id="method">
+  <summary><h2>Method and caveats</h2><span class="muted small">Model, coverage, data files</span></summary>
+  <div class="foldbody">
 <section>
-  <h2>Method and caveats</h2>
+  
+  <p class="small">The full explanation, in plain English, is in <a href="../guide/#post">the guide</a>.</p>
   <ul>
     <li>Model: the post-draft tier ladder from each position model (QB, RB and TE phase 4; WR phase 6), an ordinal elastic net on the college profile and age plus log(pick) and landing spot (vacated target, touch or attempt share, and incumbent production).</li>
     <li>Coverage: drafted players need a college stats match in the position model, so a few drafted players are missing (for example Cam Newton 2010).</li>
@@ -146,6 +170,8 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-wid
     <li>Files: <span class="num">pd_post_player_grades.csv</span> (every row on this page, plus the pre-draft grade for reference), <span class="num">pd_post_grade_scale.csv</span>, <span class="num">pd_post_grade_validation.csv</span>, <span class="num">pd_post_grade_vs_pick.csv</span>, <span class="num">pd_post_grade_by_round.csv</span>, <span class="num">pd_post_2027_mock_grades.csv</span> (the 2027 mock-draft section). All of them are in the <a href="https://github.com/KyleMSchyma/prospect-actuary/tree/main/post-draft/data">post-draft/data folder</a> of the Prospect Actuary repository.</li>
   </ul>
 </section>
+  </div>
+</details>
 <p class="pa-tip" style="margin:0;font-size:.9rem;color:var(--muted);max-width:72ch">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
 <footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: college stats, team stats and recruiting ratings from <a href="https://collegefootballdata.com">CollegeFootballData.com</a> (via the <a href="https://cfbfastr.sportsdataverse.org">cfbfastR</a> package). NFL draft picks, player stats and combine results from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Draft and combine data originally from <a href="https://www.pro-football-reference.com">Pro Football Reference</a> (Sports Reference LLC). Grades and models by Prospect Actuary. Not affiliated with the NFL or any team.</footer>
 </div>
@@ -247,7 +273,19 @@ tabs(document.getElementById("posTabs"), p=>{bPos=p;shown=100;fSort.value=p==="A
 [fClass,fGrade,fSort].forEach(el=>el.addEventListener("change",()=>{shown=100;drawBoard();}));
 fName.addEventListener("input",()=>{shown=100;drawBoard();});
 document.getElementById("more").addEventListener("click",()=>{shown+=100;drawBoard();});
-document.addEventListener("DOMContentLoaded", drawBoard);
+document.addEventListener("DOMContentLoaded", ()=>{ drawBoard();
+  // model switch keeps the position tab and search; ?pos= and ?q= are read on load
+  (function(){
+    let qs=null; try{ qs=new URLSearchParams(location.search); }catch(e){}
+    const p=qs&&qs.get("pos"), q=qs&&qs.get("q");
+    if(q) fName.value=q;
+    const b=p&&[...document.querySelectorAll("#posTabs button")].find(x=>x.dataset.p===p);
+    if(b) b.click(); else if(q){ shown=100; drawBoard(); }
+    const o=document.getElementById("modelOther");
+    if(o) o.addEventListener("click",()=>{ const u=new URL(o.href); if(bPos!=="All") u.searchParams.set("pos",bPos); const t=fName.value.trim(); if(t) u.searchParams.set("q",t); o.href=u.toString(); });
+    if(location.hash==="#does-it-work"||location.hash==="#method"){ const d=document.querySelector(location.hash); if(d) d.open=true; }
+  })();
+  });
 
 const H = D.players.filter(p=>p.cls<=2023);
 const mrow = p=>`<tr><td>${p.pos}</td><td class="num">${p.cls}</td><td>${esc(p.name)}</td><td class="r num">${p.pk}</td><td class="r num" title="${vTip(p)}">${fv(p.v)}</td><td>${chip(p.g)}</td><td>${esc(p.out||"")}</td></tr>`;
