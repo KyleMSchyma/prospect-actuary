@@ -220,7 +220,9 @@ function summary(){
     const rh = spearman(g.map(r=>[r.up, r.tp])), md = median(g.map(r=>Math.abs(r.dp)));
     return `<tr><td><span class="pos" style="color:var(--${p})">${p}</span> <span class="meta">top ${N}</span></td><td class="num">${rh==null?"–":rh.toFixed(2)}</td><td class="num">${md==null?"–":md}</td><td class="num">${both} of ${N}</td></tr>`; });
   $("posTbl").innerHTML = `<thead><tr><th>Position</th><th>Rank correlation</th><th>Typical gap</th><th>In both top groups</th></tr></thead><tbody>${posRows.join("")}</tbody>`;
-  const li = r => `<li><b>${esc(r.n)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span> <span class="d">us ${r.uo}, market ${r.to} (${r.d>0?"+":""}${r.d})</span></li>`;
+  // a profile link only for players in our values (market-only rows have no profile)
+  const nm = r => !r.miss ? `<a class="pl" href="../player/?key=${encodeURIComponent("tv:"+r.n+"|"+r.p)}">${esc(r.n)}</a>` : esc(r.n);
+  const li = r => `<li><b>${nm(r)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span> <span class="d">us ${r.uo}, market ${r.to} (${r.d>0?"+":""}${r.d})</span></li>`;
   const pool = top.filter(r=>r.uo<=150 || r.to<=150);
   $("hi").innerHTML = [...pool].sort((a,b)=>b.d-a.d).slice(0,10).filter(r=>r.d>0).map(li).join("");
   $("lo").innerHTML = [...pool].sort((a,b)=>a.d-b.d).slice(0,10).filter(r=>r.d<0).map(li).join("");
@@ -237,7 +239,7 @@ function table(){
   const gapC = d => d==null ? "–" : `<span class="${d>0?"up":d<0?"down":""}">${d>0?"+":""}${d}</span>`;
   const rk = (r,p) => r==null ? "–" : (p ? p+r : r);
   $("tbl").innerHTML = `<thead><tr>${COLS.map(([c,l])=>`<th><button type="button" data-k="${c}"${SORT.k===c?` aria-sort="${dir>0?"ascending":"descending"}"`:""}>${l}${SORT.k===c?(dir>0?" ▲":" ▼"):""}</button></th>`).join("")}</tr></thead><tbody>` +
-    (rows.length ? rows.map(r=>`<tr><td><b>${esc(r.n)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span><div class="meta">${esc(r.tm)}${r.a!=null?" · age "+Number(r.a).toFixed(1):""}${r.miss?" · not in our values":""}</div></td><td class="num">${rk(r.uo)}</td><td class="num">${rk(r.to)}</td><td class="num">${gapC(r.d)}</td><td class="num">${rk(r.up,r.p)}</td><td class="num">${rk(r.tp,r.p)}</td><td class="num">${gapC(r.dp)}</td></tr>`).join("")
+    (rows.length ? rows.map(r=>`<tr><td><b>${nm(r)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span><div class="meta">${esc(r.tm)}${r.a!=null?" · age "+Number(r.a).toFixed(1):""}${r.miss?" · not in our values":""}</div></td><td class="num">${rk(r.uo)}</td><td class="num">${rk(r.to)}</td><td class="num">${gapC(r.d)}</td><td class="num">${rk(r.up,r.p)}</td><td class="num">${rk(r.tp,r.p)}</td><td class="num">${gapC(r.dp)}</td></tr>`).join("")
       : `<tr><td colspan="7" class="muted">No players match.</td></tr>`) + `</tbody>`;
 }
 $("tbl").addEventListener("click", e=>{ const b = e.target.closest("button[data-k]"); if (!b) return; const k = b.dataset.k;

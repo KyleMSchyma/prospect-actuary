@@ -20,7 +20,7 @@ Validation (a failed check writes nothing, so the published files stay as they w
 usage: python3 scripts/build_players.py [--site .] [--nflverse DIR] [--check-only]
        (downloads the two nflverse files when --nflverse is not given)
 """
-import argparse, csv, io, json, os, re, sys, unicodedata, urllib.request, datetime, collections
+import argparse, csv, hashlib, io, json, os, re, sys, unicodedata, urllib.request, datetime, collections
 
 POS = {"QB", "RB", "WR", "TE"}
 GRADES = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"}
@@ -254,6 +254,14 @@ def main():
                       "pre_model": srcs(pre, "score_source"), "post_model": srcs(post, "score_source"),
                       "projected": "2027 prospects are projections from 2026 college stats (pro-rated to 12 games); the mock pick stands in for draft capital."},
         "ids": {"players": len(out), "with_nfl_id": sum(1 for r in out if r.get("gsis")), "unmatched_value_players": unmatched},
+        # fingerprint of each published input: changes whenever the file's contents change (the "data version" shown on the site)
+        "files": {p: {"sha": hashlib.sha256(open(os.path.join(site, p), "rb").read()).hexdigest()[:10],
+                      "bytes": os.path.getsize(os.path.join(site, p))}
+                  for p in ["pre-draft/data/pd_player_grades.csv", "post-draft/data/pd_post_player_grades.csv",
+                            "post-draft/data/pd_post_2027_mock_grades.csv", "trade-values/data/tv.js"] if os.path.exists(os.path.join(site, p))},
+        "checks": ["every row of every grade and value file has exactly one player id", "no two players share an id",
+                   "positions and grades are valid", "at most 10% of valued players lack an NFL id",
+                   "at most 2% of ids disappear and the player count moves at most 10% from the last build"],
         "limits": ["No combine data and no draft capital in the pre-draft model, on purpose.",
                    "Grades rank within position; Value is the cross-position measure.",
                    "Players are joined across files by official NFL id where one exists, else by name, position and class."],
@@ -262,6 +270,13 @@ def main():
         print(f"check passed: {len(out)} players, {manifest['ids']['with_nfl_id']} with NFL id (nothing written: --check-only)")
         return
     os.makedirs(os.path.join(site, "data"), exist_ok=True)
+    # nothing changed but the clock: keep both files as they are, so a scheduled run makes no commit
+    man_path = os.path.join(site, "data/manifest.json")
+    old_man = json.load(open(man_path, encoding="utf-8")) if os.path.exists(man_path) else {}
+    strip = lambda m: {k: v for k, v in m.items() if k != "built"}
+    if prev.get("players") == out and strip(old_man) == strip(manifest):
+        print(f"no change: {len(out)} players, nothing written")
+        return
     with open(prev_path, "w", encoding="utf-8") as f:
         json.dump(players, f, ensure_ascii=False, separators=(",", ":"))
     with open(os.path.join(site, "data/manifest.json"), "w", encoding="utf-8") as f:

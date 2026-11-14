@@ -147,6 +147,7 @@ const status = [];
 if (D) status.push(`Values: <b>${esc(D.asof)}</b>`);
 status.push(`Prospect grades: <b>2010-2026 classes + 2027 projected</b>`);
 status.push(`League: <b>${esc(L.short(S))}</b>${L.isDefault(S) ? " (default)" : ""} <a href="trade-values/?open=league">change</a>`);
+status.push(`<a href="research/#data-status">Data status and limits</a>`);
 $("status").innerHTML = status.map(s=>`<span>${s}</span>`).join("");
 if (!C) { $("topTbl").innerHTML = `<tbody><tr><td class="muted">The values didn't load. Refresh the page to try again.</td></tr></tbody>`; return; }
 
@@ -159,7 +160,7 @@ $("topTabs").addEventListener("click", e=>{ const b = e.target.closest("button")
 function drawTop(){
   const rows = C.dyn.filter(r=>tPos==="ALL" ? true : (!r.pick && r.p===tPos)).slice(0, 12), mx = rows.length ? rows[0].v : 1;   // picks stay in All, so ranks match Player Values
   $("topTbl").innerHTML = `<thead><tr><th class="r">#</th><th>Player</th><th>Pos</th><th class="r hm">Age</th><th class="r">Value</th></tr></thead><tbody>` +
-    rows.map(r=>r.pick ? `<tr><td class="r num">${r.r}</td><td><a href="trade-values/?mode=dynasty&pos=PICK${amp}" style="color:var(--ink);text-decoration:none">${esc(r.n)}</a></td><td><span class="posb" style="color:var(--PICK)">PICK</span></td><td class="hm"></td><td class="r num"><span class="vbar">${fmt(r.v)}<i style="width:${Math.max(3,Math.round(56*r.v/mx))}px;background:var(--PICK)"></i></span></td></tr>` : `<tr><td class="r num">${r.r}</td><td><a href="trade-values/?mode=dynasty&q=${encodeURIComponent(r.n)}${amp}" style="color:var(--ink);text-decoration:none">${esc(r.n)}</a>${r.st?` <span class="st">${esc(r.st)}</span>`:""} <span class="meta hm2">${esc(r.tm||"FA")}</span></td><td>${posb(r.p)} <span class="meta num">${r.rp}</span></td><td class="r num hm">${r.a==null?"":Number(r.a).toFixed(1)}</td><td class="r num"><span class="vbar">${fmt(r.v)}<i style="width:${Math.max(3,Math.round(56*r.v/mx))}px"></i></span></td></tr>`).join("") + "</tbody>";
+    rows.map(r=>r.pick ? `<tr><td class="r num">${r.r}</td><td><a href="trade-values/?mode=dynasty&pos=PICK${amp}" style="color:var(--ink);text-decoration:none">${esc(r.n)}</a></td><td><span class="posb" style="color:var(--PICK)">PICK</span></td><td class="hm"></td><td class="r num"><span class="vbar">${fmt(r.v)}<i style="width:${Math.max(3,Math.round(56*r.v/mx))}px;background:var(--PICK)"></i></span></td></tr>` : `<tr><td class="r num">${r.r}</td><td><a href="player/?key=${encodeURIComponent("tv:"+r.n+"|"+r.p)}${amp}" style="color:var(--ink);text-decoration:none">${esc(r.n)}</a>${r.st?` <span class="st">${esc(r.st)}</span>`:""} <span class="meta hm2">${esc(r.tm||"FA")}</span></td><td>${posb(r.p)} <span class="meta num">${r.rp}</span></td><td class="r num hm">${r.a==null?"":Number(r.a).toFixed(1)}</td><td class="r num"><span class="vbar">${fmt(r.v)}<i style="width:${Math.max(3,Math.round(56*r.v/mx))}px"></i></span></td></tr>`).join("") + "</tbody>";
 }
 drawTop();
 
@@ -193,7 +194,7 @@ Promise.all([getText("pre-draft/data/rookie_board_values.csv"), getText("pre-dra
     return {n:r.name, p:r.position, col:r.college, v, g:grade[k], m:mock[k]}; }).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v).slice(0, 10);
   const mx = pros.length ? pros[0].v : 1;
   $("prosTbl").innerHTML = pros.length ? `<thead><tr><th class="r">#</th><th>Prospect</th><th>Pos</th><th title="Pre-draft grade: rank within position, college stats only">Grade</th><th class="hm">Mock pick</th><th class="r" title="Expected dynasty value in your league, 100k scale">Value</th></tr></thead><tbody>` +
-    pros.map((x,i)=>`<tr><td class="r num">${i+1}</td><td><a href="pre-draft/?q=${encodeURIComponent(x.n)}&pos=${x.p}" style="color:var(--ink);text-decoration:none">${esc(x.n)}</a> <span class="meta hm2">${esc(x.col||"")}</span></td><td>${posb(x.p)}</td><td>${x.g&&x.g.grade?`<span class="chip ${chipCls(x.g.grade)}">${esc(x.g.grade)}</span>`:""}</td><td class="num small hm">${x.m?`${x.m.pick} <span class="meta">${esc(x.m.team_abbr||"")}</span>`:'<span class="meta">not in mock</span>'}</td><td class="r num"><span class="vbar">${fmt(x.v)}<i style="width:${Math.max(3,Math.round(56*x.v/mx))}px"></i></span></td></tr>`).join("") + "</tbody>"
+    pros.map((x,i)=>`<tr><td class="r num">${i+1}</td><td><a href="player/?key=${encodeURIComponent("pre:"+x.n+"|"+x.p+"|2027")}${amp}" style="color:var(--ink);text-decoration:none">${esc(x.n)}</a> <span class="meta hm2">${esc(x.col||"")}</span></td><td>${posb(x.p)}</td><td>${x.g&&x.g.grade?`<span class="chip ${chipCls(x.g.grade)}">${esc(x.g.grade)}</span>`:""}</td><td class="num small hm">${x.m?`${x.m.pick} <span class="meta">${esc(x.m.team_abbr||"")}</span>`:'<span class="meta">not in mock</span>'}</td><td class="r num"><span class="vbar">${fmt(x.v)}<i style="width:${Math.max(3,Math.round(56*x.v/mx))}px"></i></span></td></tr>`).join("") + "</tbody>"
     : `<tbody><tr><td class="muted">The 2027 prospect file didn't load.</td></tr></tbody>`;
   // movers: written by the weekly refresh (rf_04_archive.R) once two weekly snapshots exist; default league
   const M = csv(mv).filter(r=>r.sheet==="dynasty" && r.value_change!=null);

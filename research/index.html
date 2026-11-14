@@ -7,6 +7,7 @@
 <style>
 .wrap{max-width:1080px}
 .lvl{display:flex;flex-direction:column;gap:14px}
+#dsTbl td{white-space:normal;vertical-align:top}
 .lvl>header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
 .lvl>header .tag{margin:0}
 .card h3{font-size:1.02rem}
@@ -76,6 +77,12 @@ ul.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
   </div>
 </section>
 
+<section class="lvl" aria-labelledby="l35" id="data-status">
+  <header><h2 id="l35">Data status</h2><span class="small muted">What is on the site right now, how current it is, and what it does not cover</span></header>
+  <div class="tablebox"><table id="dsTbl" style="min-width:640px"><tbody><tr><td class="muted">Loading data status…</td></tr></tbody></table></div>
+  <div class="grid2" id="dsMore"></div>
+</section>
+
 <section class="lvl" aria-labelledby="l4">
   <header><h2 id="l4">Data sources</h2></header>
   <ul class="plain">
@@ -99,4 +106,34 @@ ul.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
 
 <p class="pa-tip">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
 <footer>Grades, values and models by Prospect Actuary. Not affiliated with the NFL or any team.</footer>
-</div></body></html>
+</div>
+<script src="../value-research/data/dd.js"></script>
+<script>
+(async function(){
+const esc = t => String(t==null?"":t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const get = u => fetch(u).then(r=>r.ok ? r.text() : null).catch(()=>null);
+const [mt, mv] = await Promise.all([get("../data/manifest.json"), get("../data/movers.csv")]);
+let M = null; try { M = JSON.parse(mt); } catch(e){}
+const tbl = document.getElementById("dsTbl");
+if (!M) { tbl.innerHTML = `<tbody><tr><td class="muted">The data manifest didn't load. The pages still work; this table just can't describe them.</td></tr></tbody>`; return; }
+const v = M.values||{}, p = M.prospects||{}, ids = M.ids||{}, F = M.files||{};
+const ver = path => F[path] ? `<span class="num muted small" title="Fingerprint of the published file: it changes whenever the data changes">v ${esc(F[path].sha)}</span>` : "";
+const movers = mv ? mv.trim().split(/\r?\n/).length - 1 : 0;
+const rows = [
+  ["Player values", `<b>${esc(v.asof)}</b>`, `${v.players} NFL players + 2027 rookie picks`, esc(v.projected), ver("trade-values/data/tv.js")],
+  ["Pre-draft grades", `Classes ${esc(p.pre_classes)}`, `${p.pre_rows} prospects, ${p.pre_projected_2027} of them 2027 projections`, esc(p.projected), ver("pre-draft/data/pd_player_grades.csv")],
+  ["Post-draft grades", "Drafted classes 2010-2026", `${p.post_rows} drafted players`, "Actual draft slot and team; NFL results so far are actual.", ver("post-draft/data/pd_post_player_grades.csv")],
+  ["2027 mock grades", "Renner mock", `${p.mock_2027} skill-position picks`, "Mock picks stand in for draft capital until the real draft.", ver("post-draft/data/pd_post_2027_mock_grades.csv")],
+  ["Market comparison", `Dynasty Daddy snapshot ${esc((window.DD&&window.DD.asof)||"–")}`, "Fixed 12-team superflex 0.5 PPR", "Comparison only; never used in our values.", ""],
+  ["Risers and fallers", movers ? `${movers} rows` : "Not published yet", "Week-over-week value changes", movers ? "Actual changes between two weekly value builds." : "Appears after the next weekly refresh.", ""],
+  ["Player ids", `Built ${esc(String(M.built).slice(0,10))}`, `${ids.players} people, ${ids.with_nfl_id} with an official NFL id`, ids.unmatched_value_players && ids.unmatched_value_players.length ? `${ids.unmatched_value_players.length} valued players matched by name only` : "Every valued player matched to an NFL id.", ""]];
+tbl.innerHTML = `<thead><tr><th>Data</th><th>Updated</th><th>Coverage</th><th>Projected or actual</th><th>Version</th></tr></thead><tbody>` +
+  rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td class="small">${r[2]}</td><td class="small">${r[3]}</td><td>${r[4]}</td></tr>`).join("") + `</tbody>`;
+const models = [...new Set([...(p.pre_model||[]).map(x=>"Pre-draft: "+x), ...(p.post_model||[]).map(x=>"Post-draft: "+x)])];
+document.getElementById("dsMore").innerHTML = `<div class="card"><h3>Model versions in use</h3><ul class="plain small">${models.map(x=>`<li>${esc(x)}</li>`).join("")}<li>${esc(v.model)}</li></ul>
+  <p class="small muted">"Out-of-class (LOCO)" means the grade came from a model that never saw that player's draft class, the honest way to grade the past.</p></div>
+  <div class="card"><h3>Known limits</h3><ul class="plain small">${(M.limits||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+  <h3 style="margin-top:12px">Checks before anything is published</h3><ul class="plain small">${(M.checks||[]).map(x=>`<li>${esc(x)}</li>`).join("")}<li>Weekly values pass six output checks on the build machine; if any fails, nothing is published and the last good values stay up.</li></ul></div>`;
+})();
+</script>
+</body></html>

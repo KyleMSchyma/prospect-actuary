@@ -1,5 +1,5 @@
 {
- "built": "2026-11-14T14:01Z",
+ "built": "2026-11-14T14:12Z",
  "values": {
   "asof": "2026 stats through week 9. Updated November 13, 2026.",
   "players": 566,
@@ -29,6 +29,31 @@
   "with_nfl_id": 1492,
   "unmatched_value_players": []
  },
+ "files": {
+  "pre-draft/data/pd_player_grades.csv": {
+   "sha": "76002ceb4b",
+   "bytes": 251679
+  },
+  "post-draft/data/pd_post_player_grades.csv": {
+   "sha": "2b70c11478",
+   "bytes": 234410
+  },
+  "post-draft/data/pd_post_2027_mock_grades.csv": {
+   "sha": "7a2307c397",
+   "bytes": 8678
+  },
+  "trade-values/data/tv.js": {
+   "sha": "226da4310d",
+   "bytes": 851440
+  }
+ },
+ "checks": [
+  "every row of every grade and value file has exactly one player id",
+  "no two players share an id",
+  "positions and grades are valid",
+  "at most 10% of valued players lack an NFL id",
+  "at most 2% of ids disappear and the player count moves at most 10% from the last build"
+ ],
  "limits": [
   "No combine data and no draft capital in the pre-draft model, on purpose.",
   "Grades rank within position; Value is the cross-position measure.",

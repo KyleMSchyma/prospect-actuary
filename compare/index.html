@@ -63,6 +63,7 @@ const ds = [];
 if (DB.D) ds.push(`Values: <b>${esc(DB.D.asof)}</b>`);
 ds.push(`League: <b>${esc(L.short(S))}</b> <a href="../trade-values/?open=league">change</a>`);
 if (DB.manifest) ds.push(`Player ids built <b>${esc(DB.manifest.built.slice(0,10))}</b>`);
+ds.push(`<a href="../research/#data-status">Data status and limits</a>`);
 $("ds").innerHTML = ds.map(s=>`<span>${s}</span>`).join("");
 
 function setUrl(){ try { const u = new URL(location.href); if (ids.length) u.searchParams.set("ids", ids.join(",")); else u.searchParams.delete("ids"); history.replaceState(null, "", u); } catch(e){} }

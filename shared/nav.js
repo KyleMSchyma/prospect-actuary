@@ -17,7 +17,7 @@
     ["lab",      "Prospect Lab",  "pre-draft/",        [["pre-draft/","Pre-draft board"],["post-draft/","Post-draft board"],["pre-draft/#class-2027","2027 class"],["post-draft/#mock-2027","2027 mock draft"],["pre-draft/#does-it-work","Hit rates"]]],
     ["values",   "Player Values", "trade-values/",     [["trade-values/?mode=dynasty","Dynasty"],["trade-values/?mode=redraft","Redraft"],["trade-values/?mode=dynasty&pos=PICK","Rookie picks"],["trade-values/?open=league","League settings"]]],
     ["trade",    "Trade Center",  "trade-calculator/", [["trade-calculator/","Trade calculator"],["value-research/","Market check"],["buy-sell/","Buy / Sell"]]],
-    ["research", "Research",      "research/",         [["research/","Overview"],["guide/","Methodology guide"],["track-record/","Track record"],["about/","About"]]]];
+    ["research", "Research",      "research/",         [["research/","Overview"],["guide/","Methodology guide"],["track-record/","Track record"],["research/#data-status","Data status"],["about/","About"]]]];
   const FOLDER = {"":"dash","pre-draft":"lab","post-draft":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"trade",
                   "research":"research","guide":"research","track-record":"research","about":"research"};
   const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";

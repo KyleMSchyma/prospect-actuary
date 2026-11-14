@@ -69,6 +69,9 @@ const qs = new URLSearchParams(location.search);
 // ?id= (canonical) or ?key=src:value (links from pages that only know a source key, e.g. tv:Name|POS); the address is then rewritten to ?id=
 let p = DB.byId[qs.get("id")];
 if (!p && qs.get("key")) { const [src, ...rest] = qs.get("key").split(":"), kv = rest.join(":"); p = DB.players.find(x=>x.keys[src]===kv); }
+// fallback for a key whose spelling differs from the canonical list: same normalized name and position (and class, when the key has one)
+if (!p && qs.get("key")) { const kv = qs.get("key").split(":").slice(1).join(":").split("|"), nk = PAData.norm(kv[0]), cl = kv[2] ? +kv[2] : null;
+  const hits = DB.players.filter(x=>x.k===nk && x.pos===kv[1] && (cl==null || x.cls===cl)); if (hits.length===1) p = hits[0]; }
 if (!p) { $("main").innerHTML = `<div class="page-head"><div class="eyebrow">Player profile</div><h1>Player not found</h1><p class="lede">Search for him with the box at the top of the page.</p></div>`; return; }
 try { const u = new URL(location.href); u.searchParams.delete("key"); u.searchParams.set("id", p.id); history.replaceState(null, "", u); } catch(e){}
 document.title = `${p.name} | Prospect Actuary`;
@@ -103,6 +106,7 @@ ds.push(`League: <b>${esc(L.short(S))}</b> <a href="../trade-values/?open=league
 if (R.pre) ds.push(`Pre-draft: <b>${esc(R.pre.score_source||"")}</b>`);
 if (R.post) ds.push(`Post-draft: <b>${esc(R.post.score_source||"")}</b>`);
 if (DB.manifest) ds.push(`Player ids built <b>${esc(DB.manifest.built.slice(0,10))}</b>`);
+ds.push(`<a href="../research/#data-status">Data status and limits</a>`);
 $("ds").innerHTML = ds.map(s=>`<span>${s}</span>`).join("");
 const sec = (where, title, sub, body) => { const el = document.createElement("section"); el.className = "sec";
   el.innerHTML = `<header><h2>${title}</h2>${sub?`<span class="sub">${sub}</span>`:""}</header><div class="body">${body}</div>`; $(where).appendChild(el); return el; };

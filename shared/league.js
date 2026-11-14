@@ -6,7 +6,7 @@
  * so saved settings and shared links keep working.
  *   PALeague.load()                -> league S (address first, then this browser, else the default)
  *   PALeague.save(S, {url:true})   -> remembers it (and puts it in the address)
- *   PALeague.panel(el, get, set)   -> draws the settings buttons into el
+ *   PALeague.panel(el, get, set, setAll) -> draws the settings buttons into el, with named leagues saved in this browser ("pa-leagues")
  */
 (function(){
   const DEF = {teams:12, ppr:1, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:0, fdQB:0, fdRB:0, fdWR:0, fdTE:0};
@@ -65,12 +65,33 @@
   const label = S => `${S.teams} teams, ${S.sf?"superflex":"1 QB"}, ${S.ppr===1?"PPR":"half PPR"}` +
     `${S.tep?`, TE premium +${S.tep}`:""}${S.ptd!==4?`, ${S.ptd}-pt passing TD`:""}` +
     `, ${S.rb} RB / ${S.wr} WR / ${S.te} TE${S.flex?`, ${S.flex} FLEX`:", no flex"}${fdList(S).length?`, first-down bonus ${fdList(S).map(x=>x.replace(" +"," ")).join(", ")}`:""}`;
-  // settings buttons: get() returns the current league, set(k, v) changes one setting
-  function panel(el, get, set){
-    el.innerHTML = OPTS.map(([k,l,os])=>`<div class="setting"><span class="lbl" id="l-${k}">${l}</span><div class="tabs seg" role="group" aria-labelledby="l-${k}" data-k="${k}">${os.map(([v,t])=>`<button type="button" data-v="${v}">${t}</button>`).join("")}</div></div>`).join("");
-    el.addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; set(b.parentNode.dataset.k, Number(b.dataset.v)); });
-    const mark = () => { const S = get(); el.querySelectorAll(".tabs").forEach(t=>t.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", Number(b.dataset.v)===S[t.dataset.k]))); };
+  // named leagues saved in this browser ("pa-leagues"): [{name, s}] where s is the league string. Nothing leaves the browser.
+  const LS = "pa-leagues", MAXN = 12;
+  function saved(){ try { const a = JSON.parse(localStorage.getItem(LS) || "[]"); return Array.isArray(a) ? a.filter(x=>x && x.name && parse(x.s)) : []; } catch(e){ return []; } }
+  function keep(a){ try { localStorage.setItem(LS, JSON.stringify(a.slice(0, MAXN))); return true; } catch(e){ return false; } }
+  function saveNamed(name, S){ name = String(name||"").trim().slice(0, 40); if (!name) return false;
+    const a = saved().filter(x=>x.name.toLowerCase()!==name.toLowerCase()); a.unshift({name, s: serialize(S)}); return keep(a); }
+  function removeNamed(name){ return keep(saved().filter(x=>x.name!==name)); }
+  // settings buttons: get() returns the current league, set(k, v) changes one setting, setAll(S) swaps in a whole league (optional)
+  function panel(el, get, set, setAll){
+    const esc = t => String(t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+    el.innerHTML = `<div class="setting pa-saved"><span class="lbl">My leagues</span><div class="pa-saved-list"></div>
+      <form class="pa-saved-add"><input type="text" maxlength="40" placeholder="Name this league" aria-label="Name for these settings"><button type="submit" class="btn">Save</button></form></div>` +
+      OPTS.map(([k,l,os])=>`<div class="setting"><span class="lbl" id="l-${k}">${l}</span><div class="tabs seg" role="group" aria-labelledby="l-${k}" data-k="${k}">${os.map(([v,t])=>`<button type="button" data-v="${v}">${t}</button>`).join("")}</div></div>`).join("");
+    const list = el.querySelector(".pa-saved-list"), form = el.querySelector(".pa-saved-add");
+    const apply = S2 => { if (setAll) setAll(Object.assign({}, S2)); else ORDER.forEach(k=>{ if (get()[k]!==S2[k]) set(k, S2[k]); }); mark(); };
+    function drawSaved(){ const cur = serialize(get()), a = saved();
+      list.innerHTML = (a.length ? a.map(x=>`<span class="pa-lg${x.s===cur?" on":""}"><button type="button" data-use="${esc(x.name)}" title="${esc(label(parse(x.s)))}">${esc(x.name)}</button><button type="button" class="rm" data-rm="${esc(x.name)}" aria-label="Delete ${esc(x.name)}" title="Delete">×</button></span>`).join("") : `<span class="muted small">None yet. Set up a league below, name it and save it to switch between leagues in one click.</span>`) +
+        (isDefault(get()) ? "" : `<button type="button" class="pa-lg-def" data-def="1">Default</button>`); }
+    el.addEventListener("click", e=>{
+      const u = e.target.closest("[data-use]"), r = e.target.closest("[data-rm]"), d = e.target.closest("[data-def]");
+      if (u) { const x = saved().find(y=>y.name===u.dataset.use); if (x) apply(parse(x.s)); return; }
+      if (r) { removeNamed(r.dataset.rm); drawSaved(); return; }
+      if (d) { apply(DEF); return; }
+      const b = e.target.closest("button[data-v]"); if (!b) return; set(b.parentNode.dataset.k, Number(b.dataset.v)); });
+    form.addEventListener("submit", e=>{ e.preventDefault(); const i = form.querySelector("input"); if (saveNamed(i.value, get())) { i.value = ""; drawSaved(); } });
+    function mark(){ const S = get(); el.querySelectorAll(".tabs.seg").forEach(t=>t.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", Number(b.dataset.v)===S[t.dataset.k]))); drawSaved(); }
     mark(); return {mark};
   }
-  window.PALeague = {DEF, OPTS, ORDER, parse, serialize, isDefault, load, save, loadMode, saveMode, param, short, long, label, starters, panel};
+  window.PALeague = {DEF, OPTS, ORDER, parse, serialize, isDefault, load, save, loadMode, saveMode, param, short, long, label, starters, panel, saved, saveNamed, removeNamed};
 })();
