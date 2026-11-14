@@ -14,6 +14,28 @@ real NFL results sit beside his grade, so you can check the model yourself.
 | Trade Calculator | Add players and 2027 rookie picks to each side of a trade and compare the totals, redraft or dynasty, for your league. Uses the same values as the Trade Values page (`trade-values/data/tv.js`, refreshed weekly). | [trade-calculator](https://kylemschyma.github.io/prospect-actuary/trade-calculator/) | [`trade-values/data`](trade-values/data) |
 | Market Check (folder value-research) | Our trade values (12-team superflex, 0.5 PPR) ranked against market values: [Dynasty Daddy](https://dynasty-daddy.com/help/api-documentation) (dynasty and redraft, from its public API, snapshot refreshed weekly in `value-research/data/dd.js`) and [DynastyProcess](https://github.com/dynastyprocess/data) (dynasty, loaded live with a saved copy as fallback). Overall and positional rank gaps, agreement by position, biggest disagreements. | [value-research](https://kylemschyma.github.io/prospect-actuary/value-research/) | [`value-research/data`](value-research/data) |
 
+## How the site is organized
+
+Five sections share one menu (`shared/nav.js`). Folder URLs did not change when the sections were introduced.
+
+| Section | Pages (folders) |
+|---|---|
+| Dashboard | `index.html`: search, top dynasty values, quick trade, risers and fallers, 2027 prospects and pick values |
+| Prospect Lab | `pre-draft/`, `post-draft/` (two stages of the same 2010-2026 players, plus the 2027 class) |
+| Player Values | `trade-values/` (dynasty default, redraft, rookie picks, league settings) |
+| Trade Center | `trade-calculator/`, `value-research/` (Market Check), `buy-sell/` |
+| Research | `research/` (hub), `guide/`, `track-record/`, `about/` |
+
+Shared code in `shared/`: `theme.css` (the one design), `nav.js` (menu), `search.js` (site-wide player search),
+`league.js` (league settings, saved as `pa-tv-league` and shared as `?league=`), `engine.js` (the one copy of the
+trade-value math every page uses), `league-value.js` (grade boards' Value column). The models run in R
+([Football repo](https://github.com/KyleMSchyma/Football)); this site only displays their output.
+
+Weekly refresh: `trade-values/index.html` is rebuilt from `Trade_Values/tv_page_template.html` (Football repo, and the
+copy in Football2_Dynasty on the PC), so edit that template for any change to the Player Values page. The grade pages
+keep exactly one `window.PD=` line (and `window.MOCK27=` on post-draft), which the refresh replaces. `data/movers.csv`
+is the latest week-over-week movers file.
+
 How the models work, in plain English: the [Guide page](https://kylemschyma.github.io/prospect-actuary/guide/)
 (also in this repo as [GUIDE.md](GUIDE.md)).
 

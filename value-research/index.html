@@ -188,7 +188,7 @@ function build(){
   const miss = rows.filter(r=>r.miss && r.to<=150).length;
   $("missNote").textContent = miss ? `${miss} of the market's top 150 aren't in our trade values yet (marked "not in our values"), so they count as disagreements above.` : "";
   $("asof").textContent = `${D.asof} Market values: ${SRCNAME[SRC]} ${MODE==="r"?"redraft":"dynasty"} superflex values, pulled ${m.asof || "recently"}${SRC==="dp" && !m.live ? " (saved copy)" : ""}.`;
-  $("eyebrow").textContent = `Market check · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · 12-team superflex · 0.5 PPR`;
+  $("eyebrow").textContent = `Trade Center · Market check · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · 12-team superflex · 0.5 PPR`;
   $("src").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.v===SRC));
   $("mode").querySelectorAll("button").forEach(x=>{ x.setAttribute("aria-pressed", x.dataset.v===MODE); if (x.dataset.v==="r") x.disabled = SRC==="dp"; });
   $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy." : "";

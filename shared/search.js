@@ -88,8 +88,10 @@
     if (e.mock) grades.push(`2027 mock: pick ${e.mock.pick} ${esc(e.mock.team||"")} ${chip(e.mock.grade)}`);
     if (grades.length) rows.push(["Grade", grades.join(" &nbsp; ") + ` <span class="muted">within ${e.p}</span>`]);
     if (e.tv!=null && V){ const d = V.C.d[e.tv], r = V.C.r[e.tv], rd = V.C.rd[e.tv], rr = V.C.rr[e.tv];
-      rows.push(["Value", `Dynasty <b class="num">${fmt(d)}</b>${rd?` <span class="muted">${rd}</span>`:""} &nbsp; Redraft <b class="num">${fmt(r)}</b>${rr?` <span class="muted">${rr}</span>`:""}`]); }
+      const one = (lab, v, rk) => v < 50 ? `${lab} <span class="muted">below replacement</span>` : `${lab} <b class="num">${fmt(v)}</b>${rk?` <span class="muted">${rk}</span>`:""}`;
+      rows.push(["Value", one("Dynasty", d, rd) + " &nbsp; " + one("Redraft", r, rr)]); }
     else if (e.proj) rows.push(["Value", `<span class="muted">Priced through the 2027 rookie picks until he is drafted</span>`]);
+    else if (e.cls && e.cls >= 2016) rows.push(["Value", `<span class="muted">Not in the trade values (retired, unsigned, or not valued yet)</span>`]);
     const name = encodeURIComponent(e.n);
     const acts = [];
     if (e.pre || e.post) acts.push(`<a href="${root}${e.post && !e.proj ? "post" : "pre"}-draft/?q=${name}&pos=${e.p}">Prospect Lab</a>`);

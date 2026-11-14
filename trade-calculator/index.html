@@ -74,18 +74,19 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:14px">
   <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
-  <div class="dev" role="note"><b>KNOWN LIMITS</b><span>Values are estimates, shown to the nearest 100. When the two sides are within 10% the calculator calls the trade too close to call. Rookie pick values are rougher than player values. Not valued yet: Jayden Higgins, Travis Hunter and Brandon Aiyuk.</span></div>
-  <div class="eyebrow">Fantasy trade calculator · your league's scoring and lineup · players and 2027 rookie picks</div>
+
+  <div class="eyebrow">Trade Center · trade calculator · your league's scoring and lineup · players and 2027 rookie picks</div>
   <h1>Trade Calculator</h1>
   <p class="small muted st-legend">Status tags: <span class="st">IR</span> reserve list (injured reserve, PUP, suspended) · <span class="st">Out</span> / <span class="st">Doubtful</span> / <span class="st">Q</span> last game's injury report · <span class="st">Backup</span> not first on the team's depth chart. Values already account for the status.</p>
   <p>Add the players (and, in dynasty, 2027 rookie picks) each side would give up. The calculator adds up each side's <a href="../trade-values/">trade values</a> for your league and shows who comes out ahead.</p>
   <p class="small muted" id="asof"></p>
+  <div class="dev" role="note"><b>KNOWN LIMITS</b><span>Values are estimates, shown to the nearest 100. When the two sides are within 10% the calculator calls the trade too close to call. Rookie pick values are rougher than player values. Not valued yet: Jayden Higgins, Travis Hunter and Brandon Aiyuk.</span></div>
 </header>
 
 <section>
   <div class="tabs mode" id="mode" role="group" aria-label="Value type">
-    <button type="button" data-v="r">Redraft · rest of 2026</button>
     <button type="button" data-v="d">Dynasty · 2026-2031</button>
+    <button type="button" data-v="r">Redraft · rest of 2026</button>
   </div>
   <details class="lgwrap" id="lgWrap">
     <summary><span class="lbl">Your league</span><span class="small" id="lgSum"></span><span class="small muted">Change</span></summary>

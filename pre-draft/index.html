@@ -11,7 +11,7 @@ h1{font-size:2.6rem} h2{font-size:1.75rem} h3{font-size:1.2rem}
 p{margin:0;max-width:68ch}
 section{display:flex;flex-direction:column;gap:14px}
 .eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
-.lede{font-size:1.05rem;color:var(--ink)}
+.lede{font-size:.95rem;color:var(--ink-2)}
 .muted{color:var(--muted)} .small{font-size:.85rem}
 .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 .findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
@@ -57,8 +57,11 @@ details.fold .foldbody{padding:4px 16px 20px;display:flex;flex-direction:column;
 details.fold .foldbody h3{font-size:1.4rem} details.fold .foldbody h4{font-family:var(--f-display);font-size:1.15rem;margin:0}
 .switch{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .switch .lbl{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.switch a{font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:5px 12px;text-decoration:none}
-.switch a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+.switch{gap:10px}
+.switch .seg{display:inline-flex}
+.switch a{font-size:.92rem;border:1px solid var(--line-2);background:var(--panel);color:var(--ink);padding:8px 16px;text-decoration:none;margin-left:-1px}
+.switch a:first-of-type{border-radius:6px 0 0 6px;margin-left:0} .switch a:last-of-type{border-radius:0 6px 6px 0}
+.switch a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 .switch a:not([aria-current]):hover{border-color:var(--accent)}
 details.note summary{cursor:pointer;color:var(--accent);font-size:.9rem}
 details.note p{margin-top:6px}
@@ -67,10 +70,10 @@ details.note p{margin-top:6px}
 <div class="wrap">
 <header style="display:flex;flex-direction:column;gap:12px">
   <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
-  <div class="eyebrow">College-only model · no combine · no draft capital</div>
+  <div class="eyebrow">Prospect Lab · pre-draft view · college-only model, no combine, no draft capital</div>
   <h1>Pre-Draft Player Grades</h1>
   <p class="lede">Every drafted QB, RB, WR and TE from the 2010-2026 classes, scored by the college-only pre-draft model, ranked within position and given a letter grade on one fixed scale. The top 2027 prospects (2026 season through about week 10) are slotted into the same rankings and marked as projected. NFL results sit next to every historical player so the grades can be checked. The <a href="../post-draft/">post-draft player grades</a> page grades the same 2010-2026 players with draft slot and landing spot added.</p>
-  <div class="switch" role="group" aria-label="Model"><span class="lbl">Model</span><a href="../pre-draft/" aria-current="page">Pre-draft (college only)</a><a href="../post-draft/" id="modelOther">Post-draft (adds draft slot and team)</a></div>
+  <div class="switch" role="group" aria-label="Evaluation stage"><span class="lbl">Stage</span><span class="seg"><a href="../pre-draft/" aria-current="page">Pre-draft (college only)</a><a href="../post-draft/" id="modelOther">Post-draft (adds draft slot and team)</a></span><span class="small muted">Same 2010-2026 players in both views: switch to see how draft slot and landing spot changed each grade.</span></div>
 </header>
 
 <section id="board-sec">
