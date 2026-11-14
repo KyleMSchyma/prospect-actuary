@@ -90,6 +90,7 @@ table.fresh td{white-space:normal;vertical-align:top;font-size:.84rem}
 .mfacts div{background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:6px 10px;display:flex;flex-direction:column}
 .mfacts .l{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .mfacts .v{font-size:.86rem}
+.mfacts div:last-child:nth-child(odd){grid-column:1/-1}
 .picks button{font:inherit;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:5px 8px;display:flex;flex-direction:column;cursor:pointer;color:var(--ink)}
 .picks button:hover,.picks button[aria-pressed=true]{border-color:var(--accent)}
 .pickwhy{background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:.84rem;color:var(--ink-2)}
@@ -327,8 +328,8 @@ $("labTabs").addEventListener("click", e=>{ const b = e.target.closest("button")
   if (labStage==="post" && POST===null) { POST = undefined; drawLab(); getText("post-draft/data/pd_post_player_grades.csv").then(t=>{ POST = csv(t).filter(r=>String(r.class)==="2026").sort((a,b)=>b.post_pctile-a.post_pctile || b.post_score-a.post_score); drawLab(); }); }
   else drawLab(); });
 
-Promise.all([getText("pre-draft/data/pd_player_grades.csv"), getText("data/movers.csv"), getText("data/manifest.json"), new Promise(ok=>withSearch(ok))])
-.then(([pg, mv, mt])=>{
+Promise.all([getText("pre-draft/data/pd_player_grades.csv"), getText("data/movers.csv"), getText("data/manifest.json"), new Promise(ok=>withSearch(ok)), getText("data/snapshots.json")])
+.then(([pg, mv, mt, , sj])=>{
   const preAll = csv(pg);
   PRE = preAll.filter(r=>String(r.class)==="2027").sort((a,b)=>b.pctile-a.pctile || b.score-a.score); drawLab();
   let M = null; try { M = JSON.parse(mt); } catch(e){}
@@ -337,10 +338,12 @@ Promise.all([getText("pre-draft/data/pd_player_grades.csv"), getText("data/mover
   // ---------- 6. Market Movers: only from published weekly snapshots ----------
   const MV = csv(mv).filter(r=>r.sheet==="dynasty" && r.value_change!=null && r.value_before!=null && r.value_now!=null);
   if (!MV.length) {
-    // FIRST_SNAPSHOT: the first weekly archive (Trade_Values/archive/2026-11-13_week10 on the build machine); the site has no snapshot list yet
-    const FIRST_SNAPSHOT = "November 13, 2026 (week 10)";
+    // first snapshot and count come from data/snapshots.json, which the weekly refresh rebuilds from the archive files
+    let SN = []; try { SN = (JSON.parse(sj) || {}).snapshots || []; } catch(e){}
+    const day = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
+    const first = SN.length ? `${day(SN[0].date)} (week ${SN[0].week})` : "Not published yet";
     $("movers").innerHTML = `<span class="status">Collecting data</span><p class="small">Historical valuation tracking has started. Risers and fallers appear once two weekly snapshots exist to compare; nothing is estimated in the meantime.</p>
-      <div class="mfacts"><div><span class="l">First snapshot</span><span class="v">${FIRST_SNAPSHOT}</span></div><div><span class="l">Next comparison</span><span class="v">After the next weekly refresh (Tuesday)</span></div></div>`;
+      <div class="mfacts"><div><span class="l">First snapshot</span><span class="v">${first}</span></div><div><span class="l">Snapshots stored</span><span class="v num">${SN.length}</span></div><div><span class="l">Next comparison</span><span class="v">After the next weekly refresh (Tuesday)</span></div></div>`;
   } else {
     const per = MV[0].compared_with ? `vs ${esc(MV[0].compared_with.replace(/_week(\d+)/," (week $1)"))}` : "vs the previous weekly snapshot";
     $("movSub").textContent = `Dynasty values, default league (12-team superflex PPR), ${per.replace(/<[^>]+>/g,"")}`;
