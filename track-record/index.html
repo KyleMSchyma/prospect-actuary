@@ -21,7 +21,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);fo
 h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.1}
 h1{font-size:2.6rem} h2{font-size:1.75rem} h3{font-size:1.35rem}
 p{margin:0;max-width:70ch}
-section{display:flex;flex-direction:column;gap:14px}
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
 .eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
 .muted{color:var(--muted)} .small{font-size:.85rem}
 .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
@@ -46,7 +46,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
 .box ol li span.d{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
 .controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 .controls input{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:6px 10px;min-width:0;width:220px;max-width:100%}
-.tblwrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.tablebox{max-width:100%;overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
 table{border-collapse:collapse;width:100%;font-size:.88rem}
 th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
