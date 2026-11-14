@@ -1,21 +1,32 @@
-/* Prospect Actuary: one design for every page (navy, white and orange analytics theme).
+/* Prospect Actuary: one design for every page (navy menu bar, white and light-gray content, orange accent).
  * Loaded before each page's own <style>, so page rules can still refine a component. Colors live only here, as tokens.
  * Sections: tokens · base · layout · controls · tables · chips and tags · cards and tiles · notices · site menu · search · utilities
  */
-:root{
-  color-scheme:dark;
-  --bg:#0a1424; --bg-2:#0d1a2e; --panel:#112038; --panel-2:#162a47; --raise:#1b3254;
-  --ink:#f1f4f8; --ink-2:#c9d2de; --muted:#8b9bb1; --line:#223a5c; --line-2:#2d4870;
-  --accent:#f28c28; --accent-2:#ffab5c; --accent-ink:#141008; --accent-soft:rgba(242,140,40,.13);
-  --up:#3ccf8e; --down:#ff6b6b; --up-soft:rgba(60,207,142,.12); --down-soft:rgba(255,107,107,.12);
-  --warn:#f2c14e; --warn-soft:rgba(242,193,78,.10); --bar:#5aa6e6; --dot:#f28c28;
-  --QB:#ff8fa3; --RB:#4fd1a5; --WR:#6fb3ff; --TE:#c4a0ff; --PICK:#f2c14e;
-  --sideA:#6fb3ff; --sideB:#f28c28;
-  --gA:#1f9d6a; --gB:#2f78c4; --gC:#9a7b25; --gD:#b84a3c; --chipfg:#ffffff;
-  --proj:#b79cff; --proj-soft:rgba(183,156,255,.10);
+:root, .pa-top .pa-results{
+  color-scheme:light;
+  --bg:#f3f5f9; --bg-2:#e9edf3; --panel:#ffffff; --panel-2:#f2f5f9; --raise:#e6ebf2;
+  --ink:#0f1d33; --ink-2:#34455f; --muted:#5d6d84; --line:#dce3ec; --line-2:#c6d0dd;
+  --accent:#c4650a; --accent-2:#a65308; --accent-ink:#ffffff; --accent-soft:rgba(242,140,40,.12);
+  --up:#13804f; --down:#c23a3a; --up-soft:rgba(19,128,79,.10); --down-soft:rgba(194,58,58,.09);
+  --warn:#8a5f00; --warn-soft:rgba(242,193,78,.16); --bar:#2f78c4; --dot:#c4650a;
+  --QB:#c92a62; --RB:#0e8a66; --WR:#2369b3; --TE:#7046c8; --PICK:#9a6d00;
+  --sideA:#2369b3; --sideB:#c4650a;
+  --gA:#1a8a5c; --gB:#2a6db3; --gC:#8a6c14; --gD:#b0402f; --chipfg:#ffffff;
+  --proj:#6a48cc; --proj-soft:rgba(106,72,204,.08);
+  --hover:rgba(15,29,51,.035); --shadow:0 14px 40px rgba(15,29,51,.16);
   --f-display:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
   --radius:8px; --nav-h:56px;
+}
+/* the menu bar stays navy: the dark tokens apply inside it (its search results switch back to the light set above) */
+.pa-top{
+  color-scheme:dark;
+  --bg:#0a1424; --bg-2:#0d1a2e; --panel:#112038; --panel-2:#162a47; --raise:#1b3254;
+  --ink:#f1f4f8; --ink-2:#c9d2de; --muted:#8b9bb1; --line:#223a5c; --line-2:#2d4870;
+  --accent:#f28c28; --accent-2:#ffab5c; --accent-ink:#141008;
+  --QB:#ff8fa3; --RB:#4fd1a5; --WR:#6fb3ff; --TE:#c4a0ff; --PICK:#f2c14e;
+  --hover:rgba(255,255,255,.04);
+  color:var(--ink);
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:120px}
@@ -67,7 +78,7 @@ details.fold,details.lgwrap,details.note{background:var(--panel);border:1px soli
 table{border-collapse:collapse;width:100%;font-size:.86rem}
 th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
 th{font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--panel-2);position:sticky;top:0;z-index:1}
-tbody tr:hover td{background:rgba(255,255,255,.025)}
+tbody tr:hover td{background:var(--hover)}
 td.r,th.r{text-align:right}
 tr:last-child td{border-bottom:none}
 /* keep the player column in view while a wide table scrolls sideways on a phone */
@@ -93,7 +104,7 @@ a.card:hover{border-color:var(--accent);color:var(--ink)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
 
 /* ---------- notices ---------- */
-.dev{background:var(--warn-soft);border:1px solid rgba(242,193,78,.35);border-radius:var(--radius);padding:10px 14px;display:flex;flex-direction:column;gap:4px;color:var(--ink-2);font-size:.9rem}
+.dev{background:var(--warn-soft);border:1px solid rgba(180,130,20,.35);border-radius:var(--radius);padding:10px 14px;display:flex;flex-direction:column;gap:4px;color:var(--ink-2);font-size:.9rem}
 .dev b{font-family:var(--f-mono);letter-spacing:.1em;color:var(--warn);font-size:.72rem}
 .datastrip{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--f-mono);font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0}
 .datastrip b{color:var(--ink-2);font-weight:500}
@@ -144,7 +155,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;font-size:.82rem;color:
 .pa-search .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
 .pa-search kbd{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--f-mono);font-size:.66rem;color:var(--muted);border:1px solid var(--line-2);border-radius:3px;padding:0 4px;pointer-events:none}
 .pa-search input:focus+kbd,.pa-search input:not(:placeholder-shown)+kbd{display:none}
-.pa-results{position:absolute;top:calc(100% + 6px);right:0;width:min(560px,calc(100vw - 24px));max-height:min(70vh,620px);overflow:auto;background:var(--panel);border:1px solid var(--line-2);border-radius:var(--radius);box-shadow:0 18px 50px rgba(0,0,0,.5);z-index:60;padding:6px}
+.pa-results{position:absolute;top:calc(100% + 6px);right:0;width:min(560px,calc(100vw - 24px));max-height:min(70vh,620px);overflow:auto;background:var(--panel);border:1px solid var(--line-2);border-radius:var(--radius);box-shadow:var(--shadow);z-index:60;padding:6px}
 .pa-results.left{left:0;right:auto}
 .pa-res{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:6px;cursor:pointer;border:1px solid transparent}
 .pa-res[aria-selected="true"]{background:var(--panel-2);border-color:var(--line-2)}

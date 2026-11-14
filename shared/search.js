@@ -6,7 +6,7 @@
  *   Value = what he is worth as a fantasy asset in YOUR league, on the 100,000-point scale (dynasty and redraft)
  * Choosing a result opens his player profile. Data loads only when someone starts typing.
  *   PASearch.attach(input, resultsBox, {root, mode:"site"|"asset"|"person", onPick(item)})
- *     site: results link to profiles · asset: players with a value + 2027 picks (trade launcher) · person: returns the player
+ *     site: results link to profiles (rookie picks link to the pick values) · asset: players with a value + 2027 picks (trade launcher) · person: returns the player
  */
 (function(){
   if (window.PASearch) return;
@@ -56,6 +56,23 @@
       (rows.length ? `<div class="rows">${rows.map(([k,v])=>`<span class="k">${k}</span><span class="v">${v}</span>`).join("")}</div>` : "") +
       (mode==="site" ? `<div class="acts">${acts.join("")}</div>` : "") + `</div>`;
   }
+  // rookie picks for the site search: only when the query looks like a pick ("1.01", "pick 3", "rookie picks", "2027 1st")
+  function pickRows(DB, q, S, root){
+    if (!DB.E) return [];
+    const raw = String(q).toLowerCase().trim(), m = raw.match(/\b([1-5])\.(\d{1,2})\b/), word = /\b(picks?|rookie|1st|2nd|3rd|round)\b/.test(raw);
+    if (!m && !word) return [];
+    const C = DB.E.compute(S), lg = window.PALeague.param(S), amp = lg ? "&"+lg : "";
+    let P = C.picks;
+    if (m) P = P.filter(p=>p.slot.startsWith(m[1]+"."+m[2]));
+    else { const r = raw.match(/\b([1-5])(st|nd|rd|th)?\b/); if (r) P = P.filter(p=>p.slot.startsWith(r[1]+".")); }
+    return P.slice(0, m ? 3 : 6).map(p=>({pick:true, slot:p.slot, n:p.n, v:p.v, href:`${root}trade-values/?mode=dynasty&pos=PICK${amp}`, calc:`${root}trade-calculator/?mode=dynasty&get=${encodeURIComponent(p.id)}${amp}`}));
+  }
+  function pickCard(p, j){
+    return `<div class="pa-res" role="option" id="siteP${j}" data-j="${j}" data-href="${esc(p.href)}" aria-selected="${j===0}">` +
+      `<div class="top"><span class="nm">2027 rookie pick ${esc(p.slot)}</span>${posb("PICK")}<span class="meta">rookie pick, not a player</span></div>` +
+      `<div class="rows"><span class="k">Value</span><span class="v">Dynasty <b class="num">${fmt(p.v)}</b> <span class="muted">in your league</span></span></div>` +
+      `<div class="acts"><a href="${esc(p.href)}">All pick values</a><a href="${esc(p.calc)}">+ Add to trade</a></div></div>`;
+  }
   // asset mode (Dashboard trade launcher): players with a value and 2027 picks, one line each
   function assetRows(DB, q){
     if (!DB.E) return [];
@@ -79,9 +96,10 @@
         box.innerHTML = items.length ? items.map((a,j)=>`<div class="pa-res" role="option" id="${input.id}O${j}" data-j="${j}" aria-selected="${j===0}"><div class="top"><span class="nm">${esc(a.n)}</span>${posb(a.p)}<span class="meta">${esc(a.tm||"")}</span><span class="num" style="margin-left:auto">${fmt(a.v)}</span></div></div>`).join("")
           : `<div class="none">No player or 2027 pick matches.</div>`;
       } else {
-        items = match(DB, q); const S = window.PALeague.load();
-        box.innerHTML = items.length ? items.map((p,j)=>card(DB, p, S, root, mode, j)).join("") + (mode==="site" ? `<div class="hint">Grade = rank within position. Value = worth in your league (${esc(window.PALeague.short(S))}), 100,000-point scale.</div>` : "")
-          : `<div class="none">No player or prospect matches “${esc(q)}”.</div>`;
+        const S = window.PALeague.load(); items = match(DB, q);
+        if (mode==="site") { const pk = pickRows(DB, q, S, root); items = (pk.length && /\d\.\d/.test(q) ? pk.concat(items) : items.concat(pk)).slice(0, 9); }
+        box.innerHTML = items.length ? items.map((p,j)=>p.pick ? pickCard(p, j) : card(DB, p, S, root, mode, j)).join("") + (mode==="site" ? `<div class="hint">Grade = rank within position. Value = worth in your league (${esc(window.PALeague.short(S))}), 100,000-point scale.</div>` : "")
+          : `<div class="none">No player, prospect or rookie pick matches “${esc(q)}”.</div>`;
       }
       sel = 0; box.hidden = false; input.setAttribute("aria-expanded","true"); mark();
     }

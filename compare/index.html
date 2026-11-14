@@ -70,7 +70,9 @@ function setUrl(){ try { const u = new URL(location.href); if (ids.length) u.sea
 function draw(){
   setUrl(); $("count").textContent = ids.length >= MAX ? `${MAX} players (the most). Remove one to add another.` : ids.length ? `${ids.length} of ${MAX}` : "";
   $("addQ").disabled = ids.length >= MAX;
-  if (!ids.length) { $("out").innerHTML = `<p class="empty">Search above to add a player. Tip: the Compare button on any player profile starts a comparison with him.</p>`; return; }
+  if (!ids.length) { $("out").innerHTML = /[?&]for=prospects/.test(location.search)
+    ? `<p class="empty">Search above to add prospects, for example two 2027 receivers. Prospects are compared on their grades and tier odds (within position) and their projected value in your league. Tip: the Compare button on any profile starts a comparison with that player.</p>`
+    : `<p class="empty">Search above to add a player. Tip: the Compare button on any player profile starts a comparison with him.</p>`; return; }
   const P = ids.map(id=>{ const p = DB.byId[id], R = DB.rows(p), V = DB.values(p, S); return {p, R, V, pr: R.post || R.mock, pre: R.pre}; });
   const samePos = new Set(P.map(x=>x.p.pos)).size === 1;
   // rows: [label, cells[], numeric values for "best" highlight or null]
