@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About | Prospect Actuary</title>
+<meta name="description" content="Why an actuary's toolkit suits fantasy football: probabilities, credibility, present value and honest testing.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f5f6f3;--panel:#ffffff;--ink:#18201c;--muted:#5d6862;--line:#d9ddd6;--accent:#1f6b4f;--accent-soft:#e2efe8;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:40px 16px 64px;display:flex;flex-direction:column;gap:36px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.1}
+h1{font-size:3rem} h2{font-size:1.9rem} h3{font-size:1.45rem}
+.group{display:flex;flex-direction:column;gap:14px}
+.ghead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+p{margin:0;max-width:66ch}
+a{color:var(--accent)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);transition:border-color .15s}
+.card:hover{border-color:var(--accent)}
+.card .go{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);margin-top:auto}
+.muted{color:var(--muted);font-size:.9rem}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:66ch}
+@media (max-width:520px){h1{font-size:2.3rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body><div class="wrap">
+<header style="display:flex;flex-direction:column;gap:16px">
+  <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">Why "actuary"</div>
+  <h1>About the Approach</h1>
+  <p>An actuary's job is to put a fair price on an uncertain future: how likely something is, how much it is worth if it happens, and how sure we can be. A draft prospect and a dynasty trade are the same kind of problem. This site borrows the insurance toolkit and applies it to fantasy football.</p>
+</header>
+
+<section class="group">
+  <h2>Four ideas the site is built on</h2>
+  <ul>
+    <li><b>Chances, not verdicts.</b> No one knows whether a rookie will hit. A grade here is a probability, and it is judged the way a forecast should be: when we say 3 in 10, do about 3 in 10 hit? <a href="../guide/#calibration">The guide shows the answer.</a></li>
+    <li><b>Credibility.</b> Insurers blend a customer's own short history with what is typical for people like them, leaning on the history more as it grows. The trade values do the same with a player's season: after about five games this season counts as much as everything before it, and his past seasons and draft slot fill the gap until then.</li>
+    <li><b>Present value.</b> A pension is worth the sum of its future payments, each weighted by the chance it is collected and discounted for time. A dynasty value is the same sum: each future season, weighted by the chance the player is still producing, with later seasons counting less. Tap any player on the <a href="../trade-values/">Trade Values</a> page to see his value split by season.</li>
+    <li><b>Value over the alternative.</b> What matters is not how many points a player scores but how many more than the player you could start instead. That is why every value depends on your league's lineup and scoring.</li>
+  </ul>
+</section>
+
+<section class="group">
+  <h2>How it is kept honest</h2>
+  <ul>
+    <li><b>Simple models win until proven otherwise.</b> Every model is compared with a plain benchmark, usually "just use the draft pick". Fancier methods were tried and dropped when they did not beat it on players the model had never seen.</li>
+    <li><b>Tested forward in time.</b> The strict tests train only on draft classes whose results were already known, then grade the next class, the way the model has to work in real life.</li>
+    <li><b>A public record.</b> Grades for the 2024 to 2026 classes were frozen on November 13, 2026 and are scored as seasons come in on the <a href="../track-record/">Track record</a> page, misses included.</li>
+    <li><b>Stated limits.</b> What the models rely on and what they cannot see is written down in <a href="../guide/#limits">Limits and what we rely on</a>.</li>
+  </ul>
+</section>
+
+<section class="group">
+  <h2>What this site will not tell you</h2>
+  <p>It will not tell you a player is a sure thing, and it does not watch film. The numbers come from public data: college production, age, recruiting, draft position, NFL stats, depth charts and injury reports. Treat them as a well-tested second opinion beside your own judgment.</p>
+  <p class="muted">The methods follow the Society of Actuaries' predictive analytics coursework. The research code and results are public in the <a href="https://github.com/KyleMSchyma/Football">Football repository</a>.</p>
+</section>
+<p class="pa-tip" style="margin:0;font-size:.9rem;color:var(--muted);max-width:72ch">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: college stats, team stats and recruiting ratings from <a href="https://collegefootballdata.com">CollegeFootballData.com</a> (via the <a href="https://cfbfastr.sportsdataverse.org">cfbfastR</a> package). NFL draft picks, player stats and combine results from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Draft and combine data originally from <a href="https://www.pro-football-reference.com">Pro Football Reference</a> (Sports Reference LLC). Grades and models by Prospect Actuary. Not affiliated with the NFL or any team.</footer>
+</div></body></html>

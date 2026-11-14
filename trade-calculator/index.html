@@ -85,7 +85,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:14px">
   <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
-  <div class="dev" role="note"><b>IN DEVELOPMENT</b><span>The trade values behind this calculator are still being built and tested. Expect the numbers and methods to change.</span></div>
+  <div class="dev" role="note"><b>KNOWN LIMITS</b><span>Values are estimates, shown to the nearest 100. When the two sides are within 10% the calculator calls the trade too close to call. Rookie pick values are rougher than player values. Not valued yet: Jayden Higgins, Travis Hunter and Brandon Aiyuk.</span></div>
   <div class="eyebrow">Fantasy trade calculator · your league's scoring and lineup · players and 2027 rookie picks</div>
   <h1>Trade Calculator</h1>
   <p class="small muted st-legend">Status tags: <span class="st">IR</span> reserve list (injured reserve, PUP, suspended) · <span class="st">Out</span> / <span class="st">Doubtful</span> / <span class="st">Q</span> last game's injury report · <span class="st">Backup</span> not first on the team's depth chart. Values already account for the status.</p>
@@ -140,6 +140,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
   <h2>How to read it</h2>
   <ul class="notes">
     <li><b>Values add.</b> Every player is on one 100,000-point scale built from fantasy points per game over replacement, so two players together are worth the sum of their values. A trade is fair when the totals are close.</li>
+    <li><b>Too close to call.</b> The values are estimates, not exact prices. When the two totals are within 10% of each other, the calculator does not name a winner. The 10% band is a rule of thumb taken from how far the values have missed in backtests.</li>
     <li>There is no "consolidation" bonus for the side getting the single best player. Roster spots matter in deep leagues, so if you are giving up depth you can't replace, lean a little toward the side with the best player.</li>
     <li><b>Redraft</b> counts the rest of the 2026 season only. <b>Dynasty</b> adds 2027-2031 with draft-slot potential, aging and the chance of staying in the league. Rookie picks only count in dynasty.</li>
     <li>A value of 0 means the player is not expected to beat a replacement-level starter in your league over that window.</li>
@@ -160,7 +161,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ST_T = {IR:"Reserve list (injured reserve, PUP or suspended)", Out:"Out on the last injury report", Doubtful:"Doubtful on the last injury report", Q:"Questionable on the last injury report", Backup:"Not first on the team depth chart"};
 const stTag = a => a.st ? ` <span class="st" title="${ST_T[a.st]||""}">${esc(a.st)}</span>` : "";   // status tag (optional data field st)
-const fmt = x => Math.round(x).toLocaleString("en-US");
+const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");   // shown to the nearest 100: the values are estimates
 const f1 = x => x==null ? "" : Number(x).toFixed(1);
 const pchip = p => `<span class="pos" style="color:var(--${p})">${p==="PICK"?"Pick":p}</span>`;
 $("asof").textContent = D.asof;
@@ -308,7 +309,7 @@ function render(){
   } else {
     const d = tb - ta, mx = Math.max(ta, tb), pct = mx>0 ? Math.abs(d)/mx : 0;
     if (mx===0) { big.textContent = "Both sides are worth 0"; sub.textContent = `Nobody here is expected to beat replacement in your league (${w}).`; }
-    else if (pct < 0.05) { big.textContent = "About even"; sub.textContent = `The totals are within 5% of each other (${fmt(Math.abs(d))} points apart on the ${w} scale).`; }
+    else if (pct < 0.10) { big.textContent = "Too close to call"; sub.textContent = `The totals are within 10% of each other (about ${fmt(Math.abs(d))} apart on the ${w} scale, leaning ${d>0?"your way":"the other way"}). The values are estimates, and a gap this small is inside their normal error. Let team needs decide.`; }
     else { big.innerHTML = d>0 ? `You win by <span class="num">${fmt(d)}</span>` : `You lose by <span class="num">${fmt(-d)}</span>`;
       sub.textContent = `${d>0?"You get":"You give"} ${Math.round(100*pct)}% more ${w} value. To even it up, the ${d>0?"other side would need to add":"you would need to get back"} about ${fmt(Math.abs(d))} in value.`; }
   }

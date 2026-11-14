@@ -26,6 +26,15 @@ ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 .contents div{display:flex;flex-direction:column;gap:4px;font-size:.9rem}
 .contents .lbl,.part{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .part{border-top:2px solid var(--accent);padding-top:10px;color:var(--accent);margin-bottom:-18px}
+.calib{display:grid;grid-template-columns:auto minmax(80px,1fr) auto auto auto;gap:6px 12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:.85rem;max-width:620px}
+.calib .ch{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;display:flex;flex-wrap:wrap;gap:4px 14px}
+.calib .cn{text-align:right;justify-content:flex-end;font-variant-numeric:tabular-nums}
+.calib .cg{font-weight:600}
+.calib .ct{position:relative;height:14px;border-left:1px solid var(--line)}
+.calib .ct i{position:absolute;left:0;top:2px;height:10px;border-radius:0 4px 4px 0;background:var(--accent)}
+.calib .ct b{position:absolute;top:-2px;width:3px;height:18px;margin-left:-1px;background:var(--ink);border-radius:1px;box-shadow:0 0 0 1px var(--panel)}
+.calib .key{display:inline-flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;font-weight:500}
+.calib .key i{width:14px;height:8px;border-radius:2px;background:var(--accent)} .calib .key b{width:3px;height:14px;background:var(--ink);border-radius:1px}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
 table{border-collapse:collapse;width:100%;font-size:.9rem}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -38,12 +47,12 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
   <div class="eyebrow">How everything works</div>
   <h1>Plain-English Guide</h1>
-  <p class="lead">What each Prospect Actuary model predicts, what the final model is, what drives it, and how to explain it to someone who doesn't do statistics. It covers the <a href="../pre-draft/">Pre-Draft Player Grades</a> , the <a href="../post-draft/">Post-Draft Player Grades</a> and the <a href="../trade-values/">Trade Values</a> (Redraft and Dynasty sheets, in development).</p>
+  <p class="lead">What each Prospect Actuary model predicts, what the final model is, what drives it, and how to explain it to someone who doesn't do statistics. It covers the <a href="../pre-draft/">Pre-Draft Player Grades</a> , the <a href="../post-draft/">Post-Draft Player Grades</a> and the <a href="../trade-values/">Trade Values</a> (Redraft and Dynasty sheets).</p>
   <nav class="contents" aria-label="Contents">
     <div><span class="lbl">Start here</span><a href="#short">The short version</a><a href="#ideas">Shared ideas</a></div>
     <div><span class="lbl">Rookie grades</span><a href="#model">The pre-draft model</a><a href="#pre">Pre-draft grades</a><a href="#post">Post-draft grades</a><a href="#value">The Value column</a></div>
     <div><span class="lbl">Trade</span><a href="#redraft">Redraft values</a><a href="#dynasty">Dynasty values and 2027 picks</a><a href="#market">Market check</a></div>
-    <div><span class="lbl">Background</span><a href="#actuarial">Actuarial ideas behind it</a></div>
+    <div><span class="lbl">Background</span><a href="#calibration">Do the odds hold up?</a><a href="#limits">Limits and what we rely on</a><a href="#actuarial">Actuarial ideas behind it</a></div>
   </nav>
 </header>
 
@@ -72,6 +81,7 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   <h2>The pre-draft (college-only) model</h2>
   <p><b>What it predicts.</b> Before anyone is drafted, each college player's chance of a top, top-two and any-tier season in his first three NFL years. It's trained on every draft-eligible college player (about 900 to 2,800 per position), so "never made the NFL" counts as a miss. Uses no draft pick and no combine.</p>
   <h3>Final model in plain words</h3>
+  <p class="explain"><b>How to explain it:</b> "It's a scouting report built only from the box score and recruiting rankings. It finds real signal (it ranks future hits well above average) but the NFL draft still knows more."</p>
   <ul>
     <li>QB, RB: an elastic net on college production, age, recruiting and conference level.</li>
     <li>TE: the average of an elastic net, a random forest and xgboost on the same inputs (the elastic net was the TE choice until the TE tiers moved to 6/12/18 on 2026-11-12).</li>
@@ -81,53 +91,53 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
   <p><b>Key drivers.</b> Youth (fewer years out of high school), recruiting rating, Power 5, and the position's production: QB accuracy, TD rate and low INT rate; RB touchdown share and receiving; WR receiving yards and dominator share; TE career receiving yards and recruiting rating.</p>
   <p><b>FCS adjustment.</b> FCS stats are shrunk toward an FBS scale. Players who transferred from FCS to FBS saw their production share drop more than FBS-to-FBS transfers, which gives a factor of about 0.69 for receiving and rushing and 0.79 for passing. Conference labels were tested as extra inputs (including a credibility-weighted conference effect) and did not help.</p>
   <p><b>Class grades.</b> Add up the expected tier hits of each class's top prospects (QB 12, RB 20, WR 32, TE 15) and grade against 2010-2023 (A = top 10%, F = bottom 10%). Current: 2027 projected A− overall, 2026 F, 2025 A, 2024 C. Class grades track reality modestly (correlation about 0.5 for the overall grade), so trust the overall grade more than any single position's.</p>
-  <p class="explain"><b>How to explain it:</b> "It's a scouting report built only from the box score and recruiting rankings. It finds real signal (it ranks future hits well above average) but the NFL draft still knows more."</p>
 </section>
 
 <section id="pre">
   <div class="eyebrow">2</div>
   <h2>Pre-draft player grades</h2>
+  <p class="explain"><b>How to explain it:</b> "An A means the college résumé looks like past hits. It's a strong flag at the top, not a guarantee, and a low grade doesn't rule a player out."</p>
   <p><b>What it is.</b> A letter grade (A+ to F) for every drafted QB, RB, WR and TE from 2010-2026, plus the top 2027 prospects, from the college-only model. Historical grades are scored by a model that never saw that class (it did see later classes, so the hit rates below are slightly optimistic next to the rolling-origin test).</p>
   <p><b>The result.</b> A-range players hit about 59% of the time, B about 28%, C and below about 13%. The grade separates the top well but not the bottom (C, D and F hit at similar rates). Draft slot is still more accurate, and the grade only adds to draft slot for QBs. Famous misses: Johnny Manziel (A+), N'Keal Harry (A+); famous low grades that hit: Josh Allen (F), Cooper Kupp (F), Tyreek Hill (D), George Kittle (D).</p>
-  <p class="explain"><b>How to explain it:</b> "An A means the college résumé looks like past hits. It's a strong flag at the top, not a guarantee, and a low grade doesn't rule a player out."</p>
   <p><a href="../pre-draft/">Open the Pre-Draft Player Grades →</a></p>
 </section>
 
 <section id="post">
   <div class="eyebrow">3</div>
   <h2>Post-draft player grades</h2>
+  <p class="explain"><b>How to explain it:</b> "The pre-draft grade is what the college stats say. The post-draft grade adds what the NFL said with its pick. When they disagree, history sides with the pick more often, which is why a pre-draft A who goes in round 6 usually fades."</p>
   <p><b>What it is.</b> The same A+ to F board for every drafted player from 2010-2026, but built from the post-draft model: the college profile plus draft pick and landing spot (how much target, touch or attempt share the new team has open, and how good the incumbents are). It sits next to the pre-draft grade, so you can see how much draft capital moved each player and each class. 2027 isn't on it because nobody has been drafted.</p>
   <p><b>Final model in plain words.</b> An ordered model: picture a ladder with rungs at top 8, top 16 and top 24 (top 6, 12 and 18 for TEs; top 12, 24 and 36 for WRs). One score per player says how high up the ladder he's likely to climb. It's fit as an elastic net, and the biggest single input is the draft pick (as its log, because the gap between picks 1 and 10 matters far more than between 150 and 160).</p>
   <p><b>The result.</b> Post-draft A-range players hit 66% of the time, B 34%, C 10% and D/F 4%. Unlike the pre-draft grade, it separates the bottom too. It also ranks players within a class better (average rank correlation 0.49-0.61 vs 0.31-0.45). For QBs it beats draft slot alone; for RBs, WRs and TEs it's about the same as draft slot. Big risers include Carson Wentz (F to A-), Doug Martin (D to A) and Travis Kelce (C to A-); big fallers are mostly late picks with strong college numbers, such as Alex Collins (A- to D).</p>
-  <p class="explain"><b>How to explain it:</b> "The pre-draft grade is what the college stats say. The post-draft grade adds what the NFL said with its pick. When they disagree, history sides with the pick more often, which is why a pre-draft A who goes in round 6 usually fades."</p>
   <h3 id="value">Comparing across positions: the Value column</h3>
+  <p class="explain"><b>How to explain it:</b> "The grade tells you how good a prospect is for his position. Value tells you what he's worth on a dynasty trade market, so you can line up a running back against a quarterback."</p>
   <p><b>Why.</b> A grade is a rank <i>within</i> a position, so an A tight end and an A quarterback aren't worth the same. Both grade boards show <b>Value</b>: each player's expected dynasty trade value on the same 100,000-point scale as the Trade Values page, for the league you set on the Trade Values page (it follows every setting there: teams, scoring, TE premium, superflex, starters, flex, first-down bonus), or the default league (12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex) if you haven't set one. The All tab is sorted by it.</p>
   <p><b>How it's built.</b> Take his chance of each fantasy tier (top, middle, bottom, none), and for each tier what past drafted players in it actually scored over their first five seasons: games, points per game above the replacement starter, discounted 15% a year and adjusted for his age. Add those up, weighted by the chances, then apply one calibration multiplier (1.11, fit so that past round-1 rookie picks come out at what those players actually produced). It's the same math that prices the 2027 rookie picks, so a 2027 prospect's Value is exactly his rookie-pick value.</p>
   <p><b>Which chances.</b> Post-draft probabilities for drafted players and for 2027 players in the mock draft. For other 2027 prospects, the pre-draft probabilities after a fix: the college-only model is trained on every college player, so its chances include the risk of never being drafted, and among players who were drafted they ran about a third too low (expected any-tier rate 16% vs 25% actual, 2010-2023). A small logistic recalibration per position and tier, fit on drafted players' out-of-class predictions, fixes the level without changing anyone's order within a position. The original pre-draft grades and probabilities are unchanged. For past classes, Value is what the player looked like at draft time in today's league, not what he's worth now.</p>
-  <p class="explain"><b>How to explain it:</b> "The grade tells you how good a prospect is for his position. Value tells you what he's worth on a dynasty trade market, so you can line up a running back against a quarterback."</p>
   <p><a href="../post-draft/">Open the Post-Draft Player Grades →</a></p>
 </section>
 
 <div class="part">Trade</div>
 <section id="redraft">
-  <div class="eyebrow">4 · In development</div>
+  <div class="eyebrow">4</div>
   <h2>Redraft Trade Values</h2>
+  <p class="explain"><b>How to explain it:</b> "How many more points will this player give me than a waiver pickup, for the rest of the year? Add up both sides of a trade and the bigger number wins."</p>
   <p><b>What it is.</b> A trade value for every QB, RB, WR and TE for the rest of the 2026 season only, on a 100,000-point scale where values add up: two players together are worth the sum of their values.</p>
   <p><b>The formula.</b> Value = (credible points per game − replacement points per game) × expected games left. The best player is set to 100,000 and everyone else is scaled to match.</p>
   <ul>
     <li><b>Points over replacement.</b> The replacement player is the last starter at his position in your league, the player you could start instead. Working per game, not in season totals, means QBs don't rise to the top just because they score more points: the replacement QB scores a lot too.</li>
     <li><b>Your league's settings.</b> Pick teams (8-14), half or full PPR, a TE premium, 4-6 point passing TDs, a first-down bonus for each position (0 to 1 point per rushing or receiving first down; passing first downs never count), superflex, and how many RB, WR, TE and FLEX spots start. Scoring changes the points themselves, so each scoring setting gets its own fitted model. Lineup settings set the replacement line: every team fills its position slots, then FLEX, then SUPERFLEX, each with the best player left, and the last starter at each position is the line. The default (12 teams, superflex, 2 RB, 3 WR, 1 TE, no flex) gives the QB24, RB24, WR36 and TE12.</li>
-    <li><b>Credible points per game.</b> A blend of this season and the player's last three seasons, using the actuarial credibility formula Z = games ÷ (games + k). The more games he has played this year, the more this year counts. k was fit for each position by testing on 2016-2025 (weeks 1-9 predicting weeks 10-18); a full-time player's first 4 to 6 games count as much as his history. A player with little history leans on what his draft slot usually produces.</li>
+    <li><b>Credible points per game</b> (shown on the site as "Expected PPG"). A blend of this season and the player's last three seasons, using the actuarial credibility formula Z = games ÷ (games + k). The more games he has played this year, the more this year counts. k was fit for each position by testing on 2016-2025 (weeks 1-9 predicting weeks 10-18); a full-time player's first 4 to 6 games count as much as his history. A player with little history leans on what his draft slot usually produces.</li>
     <li><b>Injury and role.</b> Expected games = team games left × his chance of playing each game. That chance is two parts: his role (the share of healthy games he plays, blending this season with the average for his depth-chart spot) and his health (injury-only missed games over this season and the last three, blended with his position's average). Games missed while healthy, because of the depth chart or a benching, do not count against his health. A player on injured reserve or listed Out, Doubtful or Questionable on the last injury report gets the average share of remaining games that players with that status went on to play. Depth charts, the injury report and weekly roster status all come from nflverse.</li>
   </ul>
   <p><b>The result.</b> On 2016-2025, the credible points per game beat both "this season only" and "history only" at every position, and the full value ranked weeks 10-18 better than "current pace × games left" (rank correlation 0.55-0.68 vs 0.47-0.63) with about a third less error. That held for every scoring setting at every position (all 110 position-and-scoring combinations, including every first-down bonus), and for five different league setups from 8-team 1-QB to 14-team superflex (0.61-0.70 vs 0.54-0.66).</p>
-  <p class="explain"><b>How to explain it:</b> "How many more points will this player give me than a waiver pickup, for the rest of the year? Add up both sides of a trade and the bigger number wins."</p>
   <p><a href="../trade-values/#redraft">Open the Redraft Trade Values →</a></p>
 </section>
 
 <section id="dynasty">
-  <div class="eyebrow">5 · In development</div>
+  <div class="eyebrow">5</div>
   <h2>Dynasty Trade Values</h2>
+  <p class="explain"><b>How to explain it:</b> "It's how an insurer values a pension. Each future season is a payment, weighted by the chance he's still producing to collect it. Young players earn value from their runway, older stars from what they're doing now."</p>
   <p><b>What it is.</b> The same idea stretched over the rest of 2026 and the next five seasons (2027-2031), on the same adding-up 100,000-point scale.</p>
   <p><b>The formula.</b> Value = the sum over each season of: discount × chance he is still playing × expected games × expected points per game over replacement. It is built like an actuarial annuity: each season is a "payment", weighted by the chance he is still around to collect it, and each later season counts 15% less.</p>
   <ul>
@@ -139,17 +149,41 @@ th{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-sp
     <li><b>Does one star equal two good players?</b> These values add with no extra "consolidation" curve, because the replacement line already handles it: in a shallow league the 40th-best player barely beats the waiver wire, so two mid players add up to little. For the default league the values nearly match the trade anchors the site started from (#1 ≈ #8 + #20, #8 ≈ #20 + #40, #20 ≈ #45 + #80): the two-player side comes out 0.99 to 1.12 times the single player.</li>
   </ul>
   <p><b>The result.</b> Starting from week 9 of each season 2016-2020, with models fit only on earlier seasons, the values ranked the next five seasons better than "his current pace continues" (rank correlation 0.70 vs 0.63), at every position and for players in their first three years. That held for every scoring setting and for all five league setups tested (0.61-0.74 vs 0.55-0.67). Predicted totals came out at 0.95 to 1.01 times what players actually produced across the five league setups (counting each past season at its real 16 or 17 games), so players and picks are now on the same footing.</p>
-  <p class="explain"><b>How to explain it:</b> "It's how an insurer values a pension. Each future season is a payment, weighted by the chance he's still producing to collect it. Young players earn value from their runway, older stars from what they're doing now."</p>
   <p><a href="../trade-values/#dynasty">Open the Dynasty Trade Values →</a></p>
 </section>
 
 <section id="market">
   <h2>Market check</h2>
-  <p>The <a href="../value-research/">Market check</a> page ranks every player by our trade values and by a market source, then shows where the two lists disagree. Our side is the Trade Values page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs and 2 RB, 3 WR, 1 TE starters. The market side is either Dynasty Daddy (dynasty and redraft trade values from its public API, saved once a week) or DynastyProcess (dynasty values built from FantasyPros expert consensus rankings). Only ranks are shown.</p>
   <p class="explain"><b>How to explain it:</b> "It's a second opinion. When our numbers and the market agree, that's reassuring. When they disagree by a lot, one side knows something the other doesn't: a role change, an injury, or production the market hasn't priced in yet. Those are the players worth a closer look."</p>
+  <p>The <a href="../value-research/">Market check</a> page ranks every player by our trade values and by a market source, then shows where the two lists disagree. Our side is the Trade Values page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs and 2 RB, 3 WR, 1 TE starters. The market side is either Dynasty Daddy (dynasty and redraft trade values from its public API, saved once a week) or DynastyProcess (dynasty values built from FantasyPros expert consensus rankings). Only ranks are shown.</p>
 </section>
 
 <div class="part">Background</div>
+<section id="calibration">
+  <h2>Do the odds hold up?</h2>
+  <p class="explain"><b>How to explain it:</b> "When the model said a group of players had about a 3 in 10 chance, about 3 in 10 of them hit. That is the test a forecast has to pass."</p>
+  <p>The chart puts every post-draft grade to that test. The bar is the share of players with that grade who had a top-tier season in their first three years. The black line is the chance the model gave them beforehand. This is the strict test: for each draft class from 2016 to 2023, the model was trained only on classes that had already finished their first three seasons (635 players, all four positions together).</p>
+  <div class="calib" role="img" aria-label="Predicted chance and actual hit rate by post-draft grade. The numbers are in the columns beside the bars.">
+    <div class="ch"></div><div class="ch"><span class="key"><i></i>Actually hit</span><span class="key"><b></b>What we said</span></div><div class="ch cn">Said</div><div class="ch cn">Hit</div><div class="ch cn">Players</div>
+    <div class="cg">A+</div><div class="ct" title="Grade A+: we said 81%, 93% hit (28 players)"><i style="width:92.8%"></i><b style="left:80.9%"></b></div><div class="cn">81%</div><div class="cn">93%</div><div class="cn" style="color:var(--muted)">28</div><div class="cg">A</div><div class="ct" title="Grade A: we said 62%, 73% hit (26 players)"><i style="width:73.1%"></i><b style="left:62.3%"></b></div><div class="cn">62%</div><div class="cn">73%</div><div class="cn" style="color:var(--muted)">26</div><div class="cg">A-</div><div class="ct" title="Grade A-: we said 47%, 62% hit (34 players)"><i style="width:61.8%"></i><b style="left:46.6%"></b></div><div class="cn">47%</div><div class="cn">62%</div><div class="cn" style="color:var(--muted)">34</div><div class="cg">B+</div><div class="ct" title="Grade B+: we said 36%, 30% hit (61 players)"><i style="width:29.5%"></i><b style="left:36.1%"></b></div><div class="cn">36%</div><div class="cn">30%</div><div class="cn" style="color:var(--muted)">61</div><div class="cg">B</div><div class="ct" title="Grade B: we said 28%, 30% hit (78 players)"><i style="width:29.5%"></i><b style="left:27.8%"></b></div><div class="cn">28%</div><div class="cn">30%</div><div class="cn" style="color:var(--muted)">78</div><div class="cg">B-</div><div class="ct" title="Grade B-: we said 21%, 32% hit (63 players)"><i style="width:31.7%"></i><b style="left:20.7%"></b></div><div class="cn">21%</div><div class="cn">32%</div><div class="cn" style="color:var(--muted)">63</div><div class="cg">C+</div><div class="ct" title="Grade C+: we said 17%, 11% hit (56 players)"><i style="width:10.7%"></i><b style="left:16.8%"></b></div><div class="cn">17%</div><div class="cn">11%</div><div class="cn" style="color:var(--muted)">56</div><div class="cg">C</div><div class="ct" title="Grade C: we said 14%, 11% hit (54 players)"><i style="width:11.1%"></i><b style="left:14.1%"></b></div><div class="cn">14%</div><div class="cn">11%</div><div class="cn" style="color:var(--muted)">54</div><div class="cg">C-</div><div class="ct" title="Grade C-: we said 12%, 4% hit (52 players)"><i style="width:3.8%"></i><b style="left:11.9%"></b></div><div class="cn">12%</div><div class="cn">4%</div><div class="cn" style="color:var(--muted)">52</div><div class="cg">D</div><div class="ct" title="Grade D: we said 9%, 16% hit (67 players)"><i style="width:16.4%"></i><b style="left:9.0%"></b></div><div class="cn">9%</div><div class="cn">16%</div><div class="cn" style="color:var(--muted)">67</div><div class="cg">F</div><div class="ct" title="Grade F: we said 4%, 5% hit (116 players)"><i style="width:5.2%"></i><b style="left:4.1%"></b></div><div class="cn">4%</div><div class="cn">5%</div><div class="cn" style="color:var(--muted)">116</div>
+  </div>
+  <p>The order is right from top to bottom, and the middle grades land close to what was said. The A grades did better than promised (about 3 in 4 hit, against 6 in 10 said), and single grades bounce around because each one holds only 26 to 116 players. Read a grade as "roughly this chance", not as an exact number. The <a href="../track-record/">Track record</a> page follows the 2024 to 2026 classes the same way as their seasons come in.</p>
+</section>
+
+<section id="limits">
+  <h2>Limits and what we rely on</h2>
+  <p class="explain"><b>How to explain it:</b> "It is a careful estimate from public data, with known blind spots. Use it to inform a decision, not to make it for you."</p>
+  <ul>
+    <li><b>What it is for.</b> Comparing players and picks for fantasy football: who is more likely to become a starter, and roughly what a player is worth in a trade in your league. It is not betting advice and it is not a prediction of any single game.</li>
+    <li><b>Data relied on.</b> College stats and recruiting ratings from CollegeFootballData.com; NFL stats, draft picks, rosters, depth charts and injury reports from nflverse. We use them as published and do not audit them. A wrong birth date, position or depth chart flows straight into the numbers.</li>
+    <li><b>Main assumptions.</b> Later seasons are discounted 15% a year. Dynasty values count the rest of 2026 through 2031 for everyone. Replacement is the last starter when every team fills its lineup. Until the 2027 draft, a mock draft stands in for real draft slots, and every prospect on the board is assumed to enter the draft, which overstates underclassmen who may stay in school.</li>
+    <li><b>What the models do not see.</b> Scheme, coaching changes, contracts, trades that have not happened, off-field issues, and anything a scout sees on film. Role is seen only through the weekly depth chart and injury report, so a change between updates is missed until the next Tuesday.</li>
+    <li><b>How exact the numbers are.</b> Values are shown to the nearest 100 and are estimates. Two totals within about 10% of each other are too close to call. Rookie pick values are rougher than player values: their calibration multiplier is 1.13 with a 95% range of about 0.80 to 1.47.</li>
+    <li><b>Small samples.</b> The models learn from the 2010 to 2023 draft classes, and that is not many players: only 24 quarterbacks and 30 tight ends have earned an A-range post-draft grade. Hit rates for a single grade can move several points with one more class.</li>
+    <li><b>Not valued yet.</b> Jayden Higgins, Travis Hunter and Brandon Aiyuk are missing from the trade values. A missing name is a gap, not a zero.</li>
+  </ul>
+</section>
+
 <section id="actuarial">
   <h2>Actuarial concepts behind it</h2>
   <p>The methods come from the Society of Actuaries' predictive analytics exams (ATPA and PA).</p>

@@ -139,7 +139,7 @@ Value is the value at draft time in today's league, not what the player is worth
 tells you what he's worth on a dynasty trade market, so you can line up a running back against
 a quarterback."
 
-## 4. Redraft Trade Values (in development)
+## 4. Redraft Trade Values
 
 A trade value for every QB, RB, WR and TE for the rest of the 2026 season, on a 100,000-point
 scale where values add up, so two players together are worth the sum of their values.
@@ -165,7 +165,7 @@ Out / Doubtful / Questionable (depth charts, injury report and roster status fro
 That held for every scoring setting (incl. every first-down bonus) at every position and for five league setups from 8-team 1-QB to
 14-team superflex (0.61-0.70 vs 0.54-0.66).
 
-## 5. Dynasty Trade Values (in development)
+## 5. Dynasty Trade Values
 
 The same scale over the rest of 2026 plus 2027-2031, built like an actuarial annuity: each season's
 expected points over replacement x expected games x the chance he is still playing, discounted 15% a year.

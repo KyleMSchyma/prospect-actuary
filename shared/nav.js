@@ -14,7 +14,7 @@
   const GROUPS = [
     ["Rookies", [["pre-draft","Pre-draft grades"],["post-draft","Post-draft grades"],["buy-sell","Buy / Sell"]]],
     ["Trade",   [["trade-values","Trade values"],["trade-calculator","Trade calculator"],["value-research","Market check"]]],
-    ["",        [["track-record","Track record"],["guide","Guide"]]]];
+    ["",        [["track-record","Track record"],["guide","Guide"],["about","About"]]]];
   const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";
   const LEAGUE_PAGE = here === "trade-values" || here === "trade-calculator";
 
