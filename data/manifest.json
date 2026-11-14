@@ -1,0 +1,37 @@
+{
+ "built": "2026-11-14T14:01Z",
+ "values": {
+  "asof": "2026 stats through week 9. Updated November 13, 2026.",
+  "players": 566,
+  "scale": "100,000 = most valuable player on each sheet; values add",
+  "model": "Trade values: credibility-weighted PPG over replacement x expected games; dynasty through 2031 with aging, survival, stop-loss upside and 15%/yr discount; status-based expected games (injury report, depth chart). Weekly R build with 6 output gates.",
+  "projected": "Projections for the rest of 2026 and 2027-2031; 2026 games played so far are actual."
+ },
+ "prospects": {
+  "pre_classes": "2010-2027",
+  "pre_rows": 1385,
+  "pre_projected_2027": 96,
+  "post_rows": 1351,
+  "mock_2027": 30,
+  "pre_model": [
+   "final model (trained 2010-2023)",
+   "final model, 2026 season in progress",
+   "out-of-class (LOCO)"
+  ],
+  "post_model": [
+   "final model (trained 2010-2023)",
+   "out-of-class (LOCO)"
+  ],
+  "projected": "2027 prospects are projections from 2026 college stats (pro-rated to 12 games); the mock pick stands in for draft capital."
+ },
+ "ids": {
+  "players": 1602,
+  "with_nfl_id": 1492,
+  "unmatched_value_players": []
+ },
+ "limits": [
+  "No combine data and no draft capital in the pre-draft model, on purpose.",
+  "Grades rank within position; Value is the cross-position measure.",
+  "Players are joined across files by official NFL id where one exists, else by name, position and class."
+ ]
+}

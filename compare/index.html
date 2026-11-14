@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compare Players | Prospect Actuary</title>
+<meta name="description" content="Put up to four players or prospects side by side: prospect grades, tier odds, NFL results so far, and dynasty and redraft value in your league.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+.wrap{max-width:1120px}
+.addrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.addrow .pa-search{flex:1 1 320px;max-width:440px}
+.addrow .pa-results{left:0;right:auto}
+table.cmp{min-width:560px}
+table.cmp th.who{vertical-align:top;text-transform:none;letter-spacing:0;font-size:.95rem;color:var(--ink);min-width:150px}
+table.cmp th.who a{color:var(--ink)}
+table.cmp th.who .sub{display:block;font-size:.74rem;color:var(--muted);font-weight:400;margin-top:2px}
+table.cmp th.who .x{float:right;background:none;border:0;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 2px}
+table.cmp th.who .x:hover{color:var(--down)}
+table.cmp td.lab{color:var(--muted);font-size:.8rem;white-space:nowrap}
+table.cmp tr.grp td{background:var(--bg);font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);padding-top:12px}
+table.cmp td.best{color:var(--up);font-weight:600}
+.verdict{border-left:3px solid var(--accent);padding:10px 14px;background:var(--panel);border-radius:0 6px 6px 0;font-size:.92rem}
+.empty{padding:28px 0;color:var(--muted)}
+.note{font-size:.8rem;color:var(--muted);max-width:none}
+.addrow{margin-top:6px}
+@media (max-width:620px){ table.cmp{min-width:0} table.cmp td.lab{white-space:normal;min-width:96px;max-width:112px} table.cmp th.who{min-width:128px} table.cmp td{font-size:.8rem} }
+</style></head>
+<body><div class="wrap">
+<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+<main>
+<div class="page-head"><div class="eyebrow">Player profiles · Compare</div><h1>Compare players</h1>
+<p class="lede">Up to four players or prospects side by side. Grades rank a player within his own position, so compare grades only between players at the same position; use Value to compare across positions.</p></div>
+<div class="addrow"><div class="pa-search"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+<input type="search" id="addQ" placeholder="Add a player or prospect" aria-label="Add a player or prospect" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="addRes" aria-autocomplete="list"><div class="pa-results" id="addRes" role="listbox" hidden></div></div>
+<span class="small muted" id="count"></span></div>
+<div class="datastrip" id="ds" style="margin-top:14px"></div>
+<div id="out" style="margin-top:14px"><p class="empty">Loading…</p></div>
+</main>
+<p class="pa-tip">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer>Grades from the pre-draft and post-draft prospect models; values from the trade-value models, computed for your league in the browser. Player ids from <a href="https://nflverse.com">nflverse</a> (CC BY 4.0). Not affiliated with the NFL or any team.</footer>
+</div>
+<script src="../trade-values/data/tv.js"></script>
+<script src="../trade-values/data/agetab.js"></script>
+<script src="../shared/league.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/data.js"></script>
+<script src="../shared/search.js"></script>
+<script>
+(async function(){
+const $ = id => document.getElementById(id), L = window.PALeague, MAX = 4;
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
+const f1 = x => x==null ? "–" : Number(x).toFixed(1);
+const pct = x => x==null ? "–" : Math.round(100*x)+"%";
+const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+const chip = g => g ? `<span class="chip ${chipCls(g)}">${esc(g)}</span>` : "–";
+const posb = p => `<span class="posb" style="color:var(--${p})">${p}</span>`;
+const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
+const S = L.load(), lgp = L.param(S), amp = lgp ? "&"+lgp : "";
+const DB = await PAData.load("../");
+let ids = (new URLSearchParams(location.search).get("ids")||"").split(",").map(s=>s.trim()).filter(id=>DB.byId[id]);
+ids = [...new Set(ids)].slice(0, MAX);
+const ds = [];
+if (DB.D) ds.push(`Values: <b>${esc(DB.D.asof)}</b>`);
+ds.push(`League: <b>${esc(L.short(S))}</b> <a href="../trade-values/?open=league">change</a>`);
+if (DB.manifest) ds.push(`Player ids built <b>${esc(DB.manifest.built.slice(0,10))}</b>`);
+$("ds").innerHTML = ds.map(s=>`<span>${s}</span>`).join("");
+
+function setUrl(){ try { const u = new URL(location.href); if (ids.length) u.searchParams.set("ids", ids.join(",")); else u.searchParams.delete("ids"); history.replaceState(null, "", u); } catch(e){} }
+function draw(){
+  setUrl(); $("count").textContent = ids.length >= MAX ? `${MAX} players (the most). Remove one to add another.` : ids.length ? `${ids.length} of ${MAX}` : "";
+  $("addQ").disabled = ids.length >= MAX;
+  if (!ids.length) { $("out").innerHTML = `<p class="empty">Search above to add a player. Tip: the Compare button on any player profile starts a comparison with him.</p>`; return; }
+  const P = ids.map(id=>{ const p = DB.byId[id], R = DB.rows(p), V = DB.values(p, S); return {p, R, V, pr: R.post || R.mock, pre: R.pre}; });
+  const samePos = new Set(P.map(x=>x.p.pos)).size === 1;
+  // rows: [label, cells[], numeric values for "best" highlight or null]
+  const rows = [];
+  const grp = t => rows.push({grp:t});
+  const row = (lab, cells, nums) => rows.push({lab, cells, nums});
+  grp("Who");
+  row("Position", P.map(x=>posb(x.p.pos)));
+  row("NFL team", P.map(x=>esc(x.p.team||"–")));
+  row("College", P.map(x=>esc(x.p.college||"–")));
+  row("Draft", P.map(x=>x.p.proj ? `${x.p.cls} prospect${x.R.mock?` (mock pick ${x.R.mock.pick})`:""}` : x.p.pk ? `${x.p.cls}, round ${x.p.rd||"?"} pick ${x.p.pk}` : x.p.cls ? `${x.p.cls}, undrafted` : "–"));
+  const ages = P.map(x=>{ const t = x.R.tv!=null ? DB.D.players[x.R.tv] : null; return t && t.a!=null ? +t.a : x.p.birth ? (Date.now()-Date.parse(x.p.birth))/31557600000 : null; });
+  row("Age", ages.map(f1));
+  grp("Value in your league");
+  const dv = P.map(x=>x.V ? x.V.d : null), rv = P.map(x=>x.V && x.V.kind==="nfl" ? x.V.r : null);
+  row("Dynasty value", P.map((x,i)=>!x.V ? `<span class="muted">${x.p.proj ? "no projection" : "not valued"}</span>` : x.V.kind==="prospect" ? `${fmt(x.V.d)} <span class="muted small">projected${x.V.slot?`, ≈ pick ${x.V.slot}`:""}</span>` : x.V.d<50 ? `<span class="muted">below replacement</span>` : `${fmt(x.V.d)} <span class="muted small">${x.V.rd||""}</span>`), dv.map(x=>x==null?null:Math.round(x/100)));
+  row("Redraft value", P.map(x=>x.V && x.V.kind==="nfl" ? (x.V.r<50 ? `<span class="muted">below replacement</span>` : `${fmt(x.V.r)} <span class="muted small">${x.V.rr||""}</span>`) : `<span class="muted">${x.p.proj ? "not in the NFL yet" : "–"}</span>`), rv.map(x=>x==null?null:Math.round(x/100)));
+  const pp = P.map(x=>x.V && x.V.row ? x.V.row.cppg : null);
+  row("Expected PPG (rest of 2026)", pp.map(f1), samePos ? pp.map(x=>x==null?null:Math.round(10*x)) : null);
+  grp("Prospect profile (within position)");
+  row("Pre-draft grade", P.map(x=>x.pre ? `${chip(x.pre.grade)} <span class="muted small">${x.p.pos} #${x.pre.pos_rank_class} in class</span>` : "–"));
+  row("Post-draft grade", P.map(x=>x.R.post ? `${chip(x.R.post.post_grade)} <span class="muted small">${x.p.pos} #${x.R.post.post_rank_class} in class</span>` : x.R.mock ? `${chip(x.R.mock.post_grade)} <span class="muted small">with mock pick</span>` : "–"));
+  const odds = (k, j) => P.map(x=>{ const r = x.pr || x.pre; return r && r[k]!=null ? r[k] : null; });
+  [["p_top",0],["p_top2",1],["p_any",2]].forEach(([k,j])=>{ const v = odds(k);
+    row(["Odds of a tier-1 season, yrs 1-3","Odds of tier 2 or better","Odds of any tier season"][j], P.map((x,i)=>v[i]==null ? "–" : `${pct(v[i])} <span class="muted small">top ${x.p.pos}${TIER[x.p.pos][j]}</span>`), samePos ? v.map(x=>x==null?null:Math.round(100*x)) : null); });
+  row("NFL so far", P.map(x=>{ const r = x.R.post || x.pre; return r && r.nfl_outcome ? esc(r.nfl_outcome) : x.p.proj ? "not yet drafted" : "–"; }));
+  // highlight the best numeric cell in a row when the row is comparable
+  const html = `<div class="tablebox"><table class="cmp stick1"><thead><tr><th></th>${P.map(x=>`<th class="who"><button class="x" data-rm="${esc(x.p.id)}" aria-label="Remove ${esc(x.p.name)}" title="Remove">×</button><a href="../player/?id=${encodeURIComponent(x.p.id)}${amp}">${esc(x.p.name)}</a><span class="sub">${x.p.pos}${x.p.team?" · "+esc(x.p.team):""}${x.p.proj?" · 2027 prospect":""}</span></th>`).join("")}</tr></thead><tbody>` +
+    rows.map(r=>{ if (r.grp) return `<tr class="grp"><td colspan="${P.length+1}">${r.grp}</td></tr>`;
+      let best = -1; if (r.nums && P.length>1) { let m = -Infinity; r.nums.forEach((v,i)=>{ if (v!=null && v>m){ m=v; best=i; } }); if (r.nums.filter(v=>v===m).length>1) best=-1; }
+      return `<tr><td class="lab">${r.lab}</td>${r.cells.map((c,i)=>`<td class="${i===best?"best":""}">${c}</td>`).join("")}</tr>`; }).join("") + `</tbody></table></div>`;
+  let notes = "";
+  // the 10% rule from the trade calculator, applied to dynasty value, for exactly two players with values
+  if (P.length===2 && dv[0]!=null && dv[1]!=null && dv[0]>=50 && dv[1]>=50) {
+    const hi = Math.max(...dv), lo = Math.min(...dv), w = dv[0]>=dv[1] ? 0 : 1, gap = (hi-lo)/hi;
+    notes += `<p class="verdict">${gap < 0.10 ? `<b>Too close to call</b> in dynasty: the values are within 10% of each other (${Math.round(100*gap)}% apart), which is inside the models' margin of error.` : `<b>${esc(P[w].p.name)}</b> has the higher dynasty value in your league, by ${fmt(hi-lo)} (${Math.round(100*gap)}%).`}</p>`; }
+  if (!samePos) notes += `<p class="note">These players play different positions. Grades and tier odds are within-position measurements (each position has its own tiers), so they are shown but not ranked against each other. Value is the cross-position measure.</p>`;
+  notes += `<p class="note">Green marks the highest value in a row where the numbers are comparable. Values are for your league (${esc(L.label(S))}); 100,000 = the most valuable player on each sheet, and values add. Prospect values are projections priced like rookie picks and are rougher than values for NFL players.</p>`;
+  $("out").innerHTML = html + `<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">${notes}</div>`;
+}
+$("out").addEventListener("click", e=>{ const b = e.target.closest("[data-rm]"); if (!b) return; ids = ids.filter(x=>x!==b.dataset.rm); draw(); });
+window.PASearch.attach($("addQ"), $("addRes"), {root:"../", mode:"person", onPick:p=>{ if (!ids.includes(p.id) && ids.length < MAX) ids.push(p.id); draw(); }});
+draw();
+})();
+</script>
+</body></html>

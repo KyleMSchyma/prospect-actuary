@@ -186,9 +186,9 @@ Promise.all([getText("pre-draft/data/rookie_board_values.csv"), getText("pre-dra
 .then(([bv, pg, mk, mv])=>{
   // prospects
   const norm = window.PASearch.norm, grade = {}, mock = {};
-  csv(pg).filter(r=>r.class==="2027").forEach(r=>grade[norm(r.name)+"|"+r.position] = r);
+  csv(pg).filter(r=>String(r.class)==="2027").forEach(r=>grade[norm(r.name)+"|"+r.position] = r);
   csv(mk).forEach(r=>mock[norm(r.board_name||r.name)+"|"+r.position] = r);
-  const pros = csv(bv).filter(r=>r.board==="pre" && r.class==="2027").map(r=>{
+  const pros = csv(bv).filter(r=>r.board==="pre" && String(r.class)==="2027").map(r=>{
     const v = E.prospectValue(S, r.position, [+r.p_top, +r.p_top2, +r.p_any], +r.age), k = norm(r.name)+"|"+r.position;
     return {n:r.name, p:r.position, col:r.college, v, g:grade[k], m:mock[k]}; }).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v).slice(0, 10);
   const mx = pros.length ? pros[0].v : 1;
