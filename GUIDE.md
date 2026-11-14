@@ -178,7 +178,7 @@ with the spread for each future season measured from how far past projections mi
 post-draft model (mock pick = draft capital, mock team = landing spot); everyone else from the pre-draft model (no capital).
 Value = sum over tiers of P(tier) x what past drafted players in that tier did in seasons 1-5 = 2027-2031, the same window as players (2010-2022 classes:
 games, PPG, PPG spread), valued against your league's replacement line with the stop-loss upside and discounted from
-2027, times one calibration multiplier (1.13; 95% range about 0.80-1.47 from 84 players in 7 classes) fit so past round-1 picks match what they produced, measured the same way as players. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
+2027, times one calibration multiplier (1.03 as of November 13; 95% range about 0.73-1.34 from 84 players in 7 classes) fit so past round-1 picks match what they produced, measured the same way as players. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
 about 18.6 + years out of high school). Prospects are ranked for your league: 1.01 = the best value, 1.02 the second,
 and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #12 asset (57,000), the rest
 of round 1 about 19,000-34,000, round 3 about 12,000-14,000.
