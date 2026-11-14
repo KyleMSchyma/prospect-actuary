@@ -24,17 +24,24 @@ Five sections share one menu (`shared/nav.js`). Folder URLs did not change when 
 | Prospect Lab | `pre-draft/`, `post-draft/` (two stages of the same 2010-2026 players, plus the 2027 class) |
 | Player Values | `trade-values/` (dynasty default, redraft, rookie picks, league settings) |
 | Trade Center | `trade-calculator/`, `value-research/` (Market Check), `buy-sell/` |
-| Research | `research/` (hub), `guide/`, `track-record/`, `about/` |
+| Research | `research/` (hub, with the Data status table), `guide/`, `track-record/`, `about/` |
+| Player profiles | `player/?id=` (one page per person), `compare/?ids=a,b` (up to four side by side) |
 
 Shared code in `shared/`: `theme.css` (the one design), `nav.js` (menu), `search.js` (site-wide player search),
 `league.js` (league settings, saved as `pa-tv-league` and shared as `?league=`), `engine.js` (the one copy of the
-trade-value math every page uses), `league-value.js` (grade boards' Value column). The models run in R
+trade-value math every page uses), `league-value.js` (grade boards' Value column), `data.js` (loads every file and joins them by player id).
+Named leagues are saved in the browser as `pa-leagues`. The models run in R
 ([Football repo](https://github.com/KyleMSchyma/Football)); this site only displays their output.
 
 Weekly refresh: `trade-values/index.html` is rebuilt from `Trade_Values/tv_page_template.html` (Football repo, and the
 copy in Football2_Dynasty on the PC), so edit that template for any change to the Player Values page. The grade pages
 keep exactly one `window.PD=` line (and `window.MOCK27=` on post-draft), which the refresh replaces. `data/movers.csv`
 is the latest week-over-week movers file.
+
+Player ids: `data/players.json` gives every graded prospect and valued player one permanent id, built by
+`scripts/build_players.py` (Python standard library only; joins to nflverse ids). It checks the data first and writes
+nothing if a check fails. The `Player ids` GitHub Action reruns it when a grade or value file changes, on Wednesdays and
+by hand, and commits only real changes. `data/manifest.json` (same build) feeds the Data status table.
 
 How the models work, in plain English: the [Guide page](https://kylemschyma.github.io/prospect-actuary/guide/)
 (also in this repo as [GUIDE.md](GUIDE.md)).

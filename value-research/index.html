@@ -124,6 +124,8 @@ const $ = id => document.getElementById(id);
 if (!D) { $("asof").textContent = "Our trade values didn't load. Refresh the page to try again."; return; }
 const POS = ["QB","RB","WR","TE"], V = D.v;
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// a profile link only for players in our values (market-only rows have no profile)
+const nm = r => !r.miss ? `<a class="pl" href="../player/?key=${encodeURIComponent("tv:"+r.n+"|"+r.p)}">${esc(r.n)}</a>` : esc(r.n);
 const fmt = x => Math.round(x).toLocaleString("en-US");
 
 // ---------- our values: shared/engine.js (the same math as Player Values), fixed to 12-team SF 0.5 PPR to match the market sources ----------
@@ -220,8 +222,6 @@ function summary(){
     const rh = spearman(g.map(r=>[r.up, r.tp])), md = median(g.map(r=>Math.abs(r.dp)));
     return `<tr><td><span class="pos" style="color:var(--${p})">${p}</span> <span class="meta">top ${N}</span></td><td class="num">${rh==null?"–":rh.toFixed(2)}</td><td class="num">${md==null?"–":md}</td><td class="num">${both} of ${N}</td></tr>`; });
   $("posTbl").innerHTML = `<thead><tr><th>Position</th><th>Rank correlation</th><th>Typical gap</th><th>In both top groups</th></tr></thead><tbody>${posRows.join("")}</tbody>`;
-  // a profile link only for players in our values (market-only rows have no profile)
-  const nm = r => !r.miss ? `<a class="pl" href="../player/?key=${encodeURIComponent("tv:"+r.n+"|"+r.p)}">${esc(r.n)}</a>` : esc(r.n);
   const li = r => `<li><b>${nm(r)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span> <span class="d">us ${r.uo}, market ${r.to} (${r.d>0?"+":""}${r.d})</span></li>`;
   const pool = top.filter(r=>r.uo<=150 || r.to<=150);
   $("hi").innerHTML = [...pool].sort((a,b)=>b.d-a.d).slice(0,10).filter(r=>r.d>0).map(li).join("");
