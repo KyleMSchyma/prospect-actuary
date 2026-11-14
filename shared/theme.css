@@ -77,12 +77,11 @@ details.fold,details.lgwrap,details.note{background:var(--panel);border:1px soli
 .tablebox{overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-size:.86rem}
 th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--panel-2);position:sticky;top:0;z-index:1}
+th{font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--panel-2)}
 tbody tr:hover td{background:var(--hover)}
 td.r,th.r{text-align:right}
 tr:last-child td{border-bottom:none}
 /* keep the player column in view while a wide table scrolls sideways on a phone */
-@media (max-width:720px){ table.stick1 td:nth-child(2),table.stick1 th:nth-child(2){position:sticky;left:0;background:var(--panel);z-index:1;box-shadow:1px 0 0 var(--line)} table.stick1 th:nth-child(2){z-index:2;background:var(--panel-2)} }
 
 /* ---------- chips and tags ---------- */
 .chip{display:inline-block;min-width:2.2em;text-align:center;padding:1px 6px;border-radius:4px;font-family:var(--f-mono);font-size:.78rem;font-weight:600;color:var(--chipfg)}
