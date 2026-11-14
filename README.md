@@ -12,6 +12,7 @@ real NFL results sit beside his grade, so you can check the model yourself.
 | Post-Draft Player Grades | The same college profile plus draft slot and landing spot. | [post-draft](https://kylemschyma.github.io/prospect-actuary/post-draft/) | [`post-draft/data`](post-draft/data) |
 | Trade Values | Redraft sheet (rest of 2026) and Dynasty sheet (rest of 2026 plus 2027-2031): points per game over replacement x expected games, with credibility-blended PPG, an injury factor, draft-slot potential and aging. Set to your league (teams, PPR, TE premium, passing TD, superflex, starters, flex), with 2027 rookie picks on the Dynasty sheet. One 100,000-point scale that adds up. | [trade-values](https://kylemschyma.github.io/prospect-actuary/trade-values/) | [`trade-values/data`](trade-values/data) |
 | Trade Calculator | Add players and 2027 rookie picks to each side of a trade and compare the totals, redraft or dynasty, for your league. Uses the same values as the Trade Values page (`trade-values/data/tv.js`, refreshed weekly). | [trade-calculator](https://kylemschyma.github.io/prospect-actuary/trade-calculator/) | [`trade-values/data`](trade-values/data) |
+| Sleeper League | Type a Sleeper username or league ID: league settings are filled in, every roster and draft pick is priced, teams are ranked, and the Trade Calculator loads your roster and a trade partner's. Reads Sleeper's public read-only API in the browser; Sleeper ids are matched through `data/sleeper_ids.json` (`scripts/build_sleeper_ids.py`, DynastyProcess open ids + nflverse gsis ids). | [league](https://kylemschyma.github.io/prospect-actuary/league/) | [`data/sleeper_ids.json`](data/sleeper_ids.json) |
 | Market Check (folder value-research) | Our trade values (12-team superflex, 0.5 PPR) ranked against market values: [Dynasty Daddy](https://dynasty-daddy.com/help/api-documentation) (dynasty and redraft, from its public API, snapshot refreshed weekly in `value-research/data/dd.js`) and [DynastyProcess](https://github.com/dynastyprocess/data) (dynasty, loaded live with a saved copy as fallback). Overall and positional rank gaps, agreement by position, biggest disagreements. | [value-research](https://kylemschyma.github.io/prospect-actuary/value-research/) | [`value-research/data`](value-research/data) |
 
 ## How the site is organized
@@ -23,7 +24,7 @@ Five sections share one menu (`shared/nav.js`). Folder URLs did not change when 
 | Dashboard | `index.html`: search, top dynasty values, quick trade, risers and fallers, 2027 prospects and pick values |
 | Prospect Lab | `pre-draft/`, `post-draft/` (two stages of the same 2010-2026 players, plus the 2027 class) |
 | Player Values | `trade-values/` (dynasty default, redraft, rookie picks, league settings) |
-| Trade Center | `trade-calculator/`, `value-research/` (Market Check), `buy-sell/` |
+| Trade Center | `trade-calculator/`, `league/` (Sleeper league), `value-research/` (Market Check), `buy-sell/` |
 | Research | `research/` (hub, with the Data status table), `guide/`, `track-record/`, `about/` |
 | Player profiles | `player/?id=` (one page per person), `compare/?ids=a,b` (up to four side by side) |
 

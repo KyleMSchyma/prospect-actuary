@@ -1,0 +1,213 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sleeper League | Prospect Actuary</title>
+<meta name="description" content="Load your Sleeper league: settings filled in for you, every roster and draft pick priced with Prospect Actuary dynasty and redraft values, team rankings, and one-tap trades with any team.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+.load{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.load input{width:320px;max-width:100%;padding:8px 12px;font-size:.95rem}
+.load .btn{padding:8px 16px}
+.status{min-height:1.4em}
+.status.err{color:var(--down)}
+.lglist{display:flex;flex-wrap:wrap;gap:8px}
+.lglist button{display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;padding:8px 12px;max-width:100%}
+.lglist button .t{font-size:.75rem;color:var(--muted)}
+.lglist button[aria-pressed="true"] .t{color:inherit}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--ink-2);max-width:80ch}
+.ok{color:var(--up);font-weight:600}
+.lab{display:inline-block;font-family:var(--f-mono);font-size:.7rem;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid currentColor}
+.lab.Contender{color:var(--up)} .lab.Rebuilder{color:var(--down)} .lab.Middle{color:var(--muted)}
+tr.me td{background:var(--accent-soft)}
+td .bar{display:inline-block;height:6px;border-radius:2px;background:var(--accent);vertical-align:middle;margin-right:6px}
+.teamhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between}
+.two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.list li:last-child{border-bottom:none}
+.list .nm{font-weight:600;overflow-wrap:anywhere}
+.list .meta{font-size:.8rem;color:var(--muted)}
+.list .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.grp{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding-top:10px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+@media (max-width:520px){h1{font-size:1.8rem}}
+</style></head>
+<body><div class="wrap">
+<header class="page-head">
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">Trade Center · Sleeper league</div>
+  <h1>Your Sleeper league</h1>
+  <p class="lede">Type your Sleeper username or paste a league ID. We fill in your league's settings, price every roster and draft pick with our values, rank the teams, and let you open a trade with any team in one tap.</p>
+  <div class="dev" role="note"><b>HOW IT WORKS</b><span>This page reads Sleeper's public, read-only API straight from your browser. No login, nothing sent to us, and nothing can change in Sleeper. Kickers, defenses and IDP are left out. 2027 rookie picks are valued (rounds 1-3); 2028 and later picks are listed but not valued yet.</span></div>
+</header>
+
+<section aria-label="Load a league">
+  <form class="load" id="form">
+    <input type="text" id="who" placeholder="Sleeper username or league ID" aria-label="Sleeper username or league ID" autocomplete="off" spellcheck="false">
+    <button type="submit" class="btn primary" id="go">Load</button>
+    <button type="button" class="linkbtn" id="forget" hidden>Forget this league</button>
+  </form>
+  <p class="small status" id="status" role="status"></p>
+  <div class="lglist" id="lglist" hidden></div>
+</section>
+
+<div id="main" hidden style="display:flex;flex-direction:column;gap:36px">
+<section aria-labelledby="hSet">
+  <h2 id="hSet">League settings</h2>
+  <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <p id="setSum"></p>
+    <p class="small" id="setMsg"></p>
+    <ul class="notes" id="setNotes"></ul>
+    <div class="row"><button type="button" class="linkbtn" id="undo" hidden>Go back to my previous settings</button><a class="small" href="../trade-values/?open=league">Fine-tune the settings</a></div>
+  </div>
+</section>
+
+<section aria-labelledby="hRank">
+  <div class="teamhead"><h2 id="hRank">Team rankings</h2>
+    <div class="tabs seg mode" id="mode" role="group" aria-label="Value type"><button type="button" data-v="d">Dynasty</button><button type="button" data-v="r">Redraft</button></div></div>
+  <div class="row"><label class="small" for="me">Your team</label><select id="me" aria-label="Your team"></select><span class="small muted" id="meHint"></span></div>
+  <div class="tablebox"><table><thead><tr><th class="r">#</th><th>Team</th><th>Outlook</th><th class="r">Total value</th><th class="r">Starters now</th><th class="r">QB</th><th class="r">RB</th><th class="r">WR</th><th class="r">TE</th><th class="r" id="thPick">Picks</th></tr></thead><tbody id="rank"></tbody></table></div>
+  <p class="small muted" id="rankNote"></p>
+</section>
+
+<section aria-labelledby="hTeam">
+  <div class="teamhead"><h2 id="hTeam">Roster</h2><div class="row"><select id="team" aria-label="Show this team's roster"></select><a class="btn primary" id="tradeBtn" href="../trade-calculator/">Trade with this team</a></div></div>
+  <div class="cards" id="tiles"></div>
+  <div class="two">
+    <div class="panel"><h3>Players</h3><ul class="list" id="plist"></ul></div>
+    <div class="panel"><h3>Draft picks</h3><ul class="list" id="klist"></ul></div>
+  </div>
+</section>
+</div>
+
+<section>
+  <h2>How to read it</h2>
+  <ul class="notes" style="font-size:.92rem">
+    <li><b>Total value</b> adds every player's value and, in dynasty, every valued draft pick. Values are on our 100,000-point scale, so they add up.</li>
+    <li><b>Starters now</b> is the redraft value of the team's best possible starting lineup this week, using your league's lineup. Taxi-squad players are left out of it.</li>
+    <li><b>Outlook:</b> the top third of teams on Starters now are <b>Contenders</b>, the bottom third <b>Rebuilders</b>, everyone else <b>Middle</b>. A rebuilder with a big dynasty total is set up for later.</li>
+    <li><b>Draft picks:</b> a 2027 pick is valued at its exact slot once your league sets the 2027 draft order. Until then it gets the average value of its round. Our values cover rounds 1 to 3.</li>
+    <li>Players we don't value yet (very deep backups, a few new signings) show a value of 0 and are counted on the roster as "not valued".</li>
+  </ul>
+</section>
+
+<footer>Data: league settings and rosters from <a href="https://docs.sleeper.com">Sleeper's public API</a>, read in your browser. Player id matching from <a href="https://github.com/dynastyprocess/data">DynastyProcess</a> open data and <a href="https://nflverse.com">nflverse</a> (CC BY 4.0). Values and models by Prospect Actuary. Not affiliated with Sleeper, the NFL or any team.</footer>
+</div>
+<script src="../trade-values/data/tv.js"></script>
+<script src="../shared/league.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/sleeper.js"></script>
+<script>
+(function(){
+const D = window.TV, L = window.PALeague, SL = window.PASleeper, POS = ["QB","RB","WR","TE"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
+const pchip = p => `<span class="pos" style="color:var(--${p||"muted"})">${p||"?"}</span>`;
+if (!D) { $("status").textContent = "The trade values didn't load. Refresh the page to try again."; return; }
+const E = window.PAEngine(D);
+let X = null, RAW = null, M = null, S = L.load(), MODE = L.loadMode(), ME = null, VIEW = null, PREV = null;
+const status = (t, err) => { const s = $("status"); s.textContent = t; s.classList.toggle("err", !!err); };
+
+async function loadUser(name){
+  status("Looking up " + name + "…"); $("lglist").hidden = true;
+  try {
+    const r = await SL.leagues(name);
+    if (!r.leagues.length) { status(`${r.user.name} has no Sleeper leagues for ${r.season}.`, true); return; }
+    status(`${r.user.name}: ${r.leagues.length} league${r.leagues.length>1?"s":""} for ${r.season}. Pick one.`);
+    const box = $("lglist");
+    box.innerHTML = r.leagues.map(l=>`<button type="button" class="btn" data-id="${esc(l.id)}"><span>${esc(l.name)}</span><span class="t">${l.teams} teams · ${l.dynasty?"dynasty":l.keeper?"keeper":"redraft"}</span></button>`).join("");
+    box.hidden = false;
+    box.onclick = e=>{ const b = e.target.closest("button[data-id]"); if (!b) return; box.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); loadLeague(b.dataset.id, r.user.id); };
+    if (r.leagues.length===1) box.querySelector("button").click();
+  } catch(e){ status(e.message.includes("No Sleeper user") ? e.message + "." : "Couldn't reach Sleeper. Check the name and try again.", true); }
+}
+async function loadLeague(id, userId, keepSettings){
+  status("Loading the league from Sleeper…");
+  try {
+    [X, RAW] = await Promise.all([SL.crosswalk("../"), SL.fetchLeague(id)]);
+    M = SL.build(RAW, X);
+    const mine = userId ? M.teams.find(t=>t.owner===userId || (RAW.rosters.find(r=>r.roster_id===t.rid).co_owners||[]).includes(userId)) : null;
+    const old = SL.recall();
+    ME = mine ? mine.rid : (old && old.league===M.id ? old.me : null);
+    // settings: fill in the shared league, remember the old one so it can be undone
+    const st = SL.settings(RAW.league);
+    if (!keepSettings) { const cur = L.load();
+      PREV = L.serialize(cur)!==L.serialize(st.S) ? cur : null; S = Object.assign({}, st.S); L.save(S); L.saveNamed("Sleeper · " + M.name, S); }
+    $("setSum").innerHTML = L.long(S);
+    $("setMsg").innerHTML = keepSettings ? `<span class="muted">Using the league settings saved in this browser. Load the league again to refill them from Sleeper.</span>`
+      : (st.exact ? `<span class="ok">Matched exactly.</span> ` : `<span class="ok">Filled in from Sleeper.</span> `) + `Every value on the site now uses these settings, and they're saved under "My leagues" as <b>Sleeper · ${esc(M.name)}</b>.` + (st.notes.length ? ` Where Sleeper's settings don't match an option we support:` : "");
+    $("setNotes").innerHTML = keepSettings ? "" : st.notes.map(n=>`<li>${esc(n)}</li>`).join("");
+    $("undo").hidden = !PREV;
+    SL.remember({league:M.id, name:M.name, me:ME});
+    $("forget").hidden = false;
+    VIEW = ME || M.teams[0].rid;
+    status(`${M.name}: ${M.teams.length} teams${M.dynasty?", dynasty":""}.`);
+    $("main").hidden = false; draw();
+  } catch(e){ status("Couldn't load that league from Sleeper. Check the league ID and try again.", true); }
+}
+
+function draw(){
+  const C = E.compute(S);
+  SL.price(M, C, D, S, MODE);
+  $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===MODE));
+  $("thPick").hidden = MODE!=="d";
+  const opts = [...M.teams].sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<option value="${t.rid}">${esc(t.name)}${t.user && t.user!==t.name ? " ("+esc(t.user)+")" : ""}</option>`).join("");
+  $("me").innerHTML = `<option value="">Choose your team</option>` + opts; $("me").value = ME || "";
+  $("meHint").textContent = ME ? "" : "Pick your team to trade from it.";
+  $("team").innerHTML = opts; $("team").value = VIEW;
+  const top = Math.max(...M.teams.map(t=>t.total), 1), w = MODE==="d" ? "dynasty" : "redraft";
+  $("rank").innerHTML = [...M.teams].sort((a,b)=>a.rk-b.rk).map(t=>`<tr class="${t.rid===ME?"me":""}">
+    <td class="r num">${t.rk}</td><td><a href="#hTeam" data-team="${t.rid}">${esc(t.name)}</a>${t.rid===ME?' <span class="tag">You</span>':""}<div class="small muted">${esc(t.user)} · ${t.wins}-${t.losses}</div></td>
+    <td><span class="lab ${t.label}">${t.label}</span></td>
+    <td class="r num"><span class="bar" style="width:${(48*t.total/top).toFixed(0)}px"></span>${fmt(t.total)}</td>
+    <td class="r num">${fmt(t.now)} <span class="muted small">#${t.rkNow}</span></td>
+    ${POS.map(p=>`<td class="r num">${fmt(t.pos[p])} <span class="muted small">#${t["rk"+p]}</span></td>`).join("")}
+    ${MODE==="d" ? `<td class="r num">${fmt(t.pickTotal)} <span class="muted small">#${t.rkPick}</span></td>` : ""}</tr>`).join("");
+  $("rankNote").textContent = `${w[0].toUpperCase()+w.slice(1)} values for ${L.label(S)}. Small numbers are each team's rank in that column.`;
+  drawTeam();
+}
+function drawTeam(){
+  const t = M.byRid[VIEW]; if (!t) return;
+  const tiles = [["Total value", fmt(t.total), `#${t.rk} of ${M.teams.length}`], ["Starters now", fmt(t.now), `#${t.rkNow} · ${t.label}`]]
+    .concat(POS.map(p=>[p, fmt(t.pos[p]), `#${t["rk"+p]}`]));
+  if (MODE==="d") tiles.push(["Picks", fmt(t.pickTotal), `#${t.rkPick}`]);
+  $("tiles").innerHTML = tiles.map(([l,v,s])=>`<div class="stat"><span class="lbl">${l}</span><span class="big">${v}</span><span class="small muted">${s}</span></div>`).join("");
+  const starters = new Set(t.lineup.map(x=>x.sid));
+  const row = p => `<li><div><div class="nm">${pchip(p.pos)} ${p.i!=null ? `<a href="../player/?key=${encodeURIComponent("tv:"+p.key)}">${esc(p.name)}</a>` : esc(p.name || "Unknown player")}${p.st?` <span class="st">${esc(p.st)}</span>`:""}${p.taxi?' <span class="tag">Taxi</span>':""}${p.ir?' <span class="tag">IR slot</span>':""}</div>
+    <div class="meta">${p.i!=null ? [p.tm||"FA", p.rank, p.a!=null?"age "+p.a.toFixed(1):""].filter(Boolean).join(" · ") : (p.pos ? "Not valued yet" : "Not matched to our player list")}</div></div><span class="v">${p.i!=null ? fmt(p.v) : "–"}</span></li>`;
+  const valued = t.players.filter(p=>POS.includes(p.pos) || !p.pos);
+  const st = valued.filter(p=>starters.has(p.sid)), bench = valued.filter(p=>!starters.has(p.sid));
+  const skipped = t.players.length - valued.length;
+  $("plist").innerHTML = (st.length ? `<li class="grp" style="display:block;border:none">Best lineup now</li>` + st.map(row).join("") : "") +
+    (bench.length ? `<li class="grp" style="display:block;border:none">Bench, taxi and reserve</li>` + bench.map(row).join("") : "") +
+    (skipped ? `<li class="meta" style="display:block;border:none">${skipped} kicker, defense or IDP player${skipped>1?"s":""} left out.</li>` : "");
+  $("klist").innerHTML = t.picks.length ? t.picks.map(p=>`<li><div><div class="nm">${pchip("PICK").replace(">PICK<",">Pick<")} ${esc(p.name)}</div><div class="meta">${p.from ? "From "+esc(p.from)+" · " : "Own pick · "}${esc(p.note)}</div></div><span class="v">${p.valued ? fmt(p.v) : "–"}</span></li>`).join("")
+    : `<li class="meta" style="display:block">No draft picks owned.</li>`;
+  const tb = $("tradeBtn");
+  if (ME && VIEW!==ME) { tb.textContent = "Trade with this team"; tb.href = `../trade-calculator/?sleeper=${M.id}&me=${ME}&with=${VIEW}`; tb.removeAttribute("aria-disabled"); }
+  else if (ME) { tb.textContent = "Open the trade calculator"; tb.href = `../trade-calculator/?sleeper=${M.id}&me=${ME}`; }
+  else { tb.textContent = "Pick your team to trade"; tb.href = "#hRank"; }
+}
+
+$("form").addEventListener("submit", e=>{ e.preventDefault(); const v = $("who").value.trim(); if (!v) return;
+  SL.isLeagueId(v) ? loadLeague(v) : loadUser(v); });
+$("mode").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; MODE = b.dataset.v; L.saveMode(MODE); draw(); });
+$("me").addEventListener("change", ()=>{ ME = Number($("me").value) || null; if (ME) VIEW = ME; SL.remember({league:M.id, name:M.name, me:ME}); draw(); });
+$("team").addEventListener("change", ()=>{ VIEW = Number($("team").value); drawTeam(); });
+$("rank").addEventListener("click", e=>{ const a = e.target.closest("a[data-team]"); if (!a) return; VIEW = Number(a.dataset.team); drawTeam(); $("team").value = VIEW; });
+$("undo").addEventListener("click", ()=>{ if (!PREV) return; S = PREV; PREV = null; L.save(S); $("undo").hidden = true;
+  $("setSum").innerHTML = L.long(S); $("setMsg").innerHTML = `<span class="muted">Back to your previous settings. The Sleeper settings are still saved under "My leagues".</span>`; $("setNotes").innerHTML = ""; draw(); });
+$("forget").addEventListener("click", ()=>{ SL.forget(); location.href = location.pathname; });
+
+// ?league_id= or ?u= in the address, else the league remembered in this browser (with the settings already saved)
+let qs = null; try { qs = new URLSearchParams(location.search); } catch(e){}
+const qId = qs && (qs.get("sleeper") || qs.get("league_id")), qU = qs && qs.get("u"), old = SL.recall();
+if (qId && SL.isLeagueId(qId)) { $("who").value = qId; loadLeague(qId); }
+else if (qU) { $("who").value = qU; loadUser(qU); }
+else if (old) { $("who").value = old.league; loadLeague(old.league, null, true); }
+})();
+</script>
+</body></html>
