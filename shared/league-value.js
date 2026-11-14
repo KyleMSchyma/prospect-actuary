@@ -46,7 +46,7 @@
   let top = 0;
   D.players.forEach(pl=>{ const key = keyOf(pl.p), x = pl.k[key]; if (!x || x.length<4+2*(D.nf||4)) return;
     const sd = D.sd[key], r = rep[pl.p]; let v = x[2]*stoploss(x[1], r, sd[0]);
-    for (let t=1; t<=(D.nf||4); t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd[1]*Math.sqrt(t));
+    for (let t=1; t<=(D.nf||4); t++) v += Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd.length>2 ? sd[1+t] : sd[1]*Math.sqrt(t));
     if (v > top) top = v; });
   // q = cumulative [P(top tier), P(top two), P(any tier)]; age on the 0.1 grid of the age table
   function value(pos, q, age){

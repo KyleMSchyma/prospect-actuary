@@ -78,10 +78,9 @@ still knows more."
 
 **What it is.** A letter grade (A+ to F) for every drafted QB, RB, WR and TE from 2010-2026,
 plus the top 2027 prospects, from the college-only model. Historical grades are scored by
-a model that never saw that class, so they're honest.
+a model that never saw that class (it did see later classes, so the hit rates below are slightly optimistic next to the rolling-origin test).
 
-**The result.** A-range players hit about 59% of the time, B about 31%, C and below about
-14%. The grade separates the top well but not the bottom (C, D and F hit at similar
+**The result.** A-range players hit about 59% of the time, B about 28%, C and below about 13%. The grade separates the top well but not the bottom (C, D and F hit at similar
 rates). Draft slot is still more accurate, and the grade only adds to draft slot for QBs.
 Famous misses: Johnny Manziel (A+), N'Keal Harry (A+); famous low grades that hit: Josh
 Allen (F), Cooper Kupp (F), Tyreek Hill (D), George Kittle (D).
@@ -140,7 +139,7 @@ Value is the value at draft time in today's league, not what the player is worth
 tells you what he's worth on a dynasty trade market, so you can line up a running back against
 a quarterback."
 
-## 4. Redraft Trade Values (in development)
+## 4. Redraft Trade Values
 
 A trade value for every QB, RB, WR and TE for the rest of the 2026 season, on a 100,000-point
 scale where values add up, so two players together are worth the sum of their values.
@@ -159,23 +158,27 @@ slots, then FLEX, then SUPERFLEX, each with the best player left; the last start
 line. The default (12 teams, superflex, 2 RB, 3 WR, 1 TE, no flex) gives QB24 / RB24 / WR36 / TE12.
 
 **Result.** The credible points per game beat "this season only" and "history only" at every position, and
-the value ranked weeks 10-18 better than "current pace x games left" (rank correlation 0.54-0.68 vs 0.47-0.64).
+the value ranked weeks 10-18 better than "current pace x games left" (rank correlation 0.55-0.68 vs 0.47-0.63).
+Expected games use current status: role (share of healthy games played vs the average for his depth-chart spot) x health
+(injury-only misses, so a benching is not an injury), and the average remaining share for players on IR or listed
+Out / Doubtful / Questionable (depth charts, injury report and roster status from nflverse).
 That held for every scoring setting (incl. every first-down bonus) at every position and for five league setups from 8-team 1-QB to
 14-team superflex (0.61-0.70 vs 0.54-0.66).
 
-## 5. Dynasty Trade Values (in development)
+## 5. Dynasty Trade Values
 
 The same scale over the rest of 2026 plus 2027-2031, built like an actuarial annuity: each season's
 expected points over replacement x expected games x the chance he is still playing, discounted 15% a year.
 Draft slot sets a young player's potential until production takes over; aging, staying in the league and
-availability are fit by position from past seasons; and a player just under replacement keeps a little value
-from his chance of beating it (the insurance stop-loss formula).
+availability are fit by position from past seasons (for QBs with depth-chart spot and share of games started); and a
+player just under replacement keeps a little value from his chance of beating it (the insurance stop-loss formula),
+with the spread for each future season measured from how far past projections missed 1-5 seasons out.
 
 **2027 rookie picks.** Until the class is drafted: the 30 skill players in the 2027 mock (Renner) are priced from the
 post-draft model (mock pick = draft capital, mock team = landing spot); everyone else from the pre-draft model (no capital).
 Value = sum over tiers of P(tier) x what past drafted players in that tier did in seasons 1-5 = 2027-2031, the same window as players (2010-2022 classes:
 games, PPG, PPG spread), valued against your league's replacement line with the stop-loss upside and discounted from
-2027, times one calibration multiplier (1.11) fit so past round-1 picks match what they produced. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
+2027, times one calibration multiplier (1.03 as of November 13; 95% range about 0.73-1.34 from 84 players in 7 classes) fit so past round-1 picks match what they produced, measured the same way as players. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
 about 18.6 + years out of high school). Prospects are ranked for your league: 1.01 = the best value, 1.02 the second,
 and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #12 asset (57,000), the rest
 of round 1 about 19,000-34,000, round 3 about 12,000-14,000.
@@ -187,8 +190,8 @@ times the single player.
 
 **Result.** From week-9 snapshots of 2016-2020 with models fit only on earlier seasons, the values ranked
 the next five seasons better than "current pace continues" (rank correlation 0.70 vs 0.63), for every scoring
-setting and all five league setups tested (0.61-0.73 vs 0.55-0.68). Totals ran 13-21% high, so read them
-mainly as a ranking.
+setting and all five league setups tested (0.61-0.74 vs 0.55-0.67). Predicted totals were 0.95-1.01 times what
+players produced across the five setups (each past season at its real 16 or 17 games).
 
 ## Actuarial concepts behind it (SOA ATPA / PA exams)
 
