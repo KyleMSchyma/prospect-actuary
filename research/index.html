@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Research and Methodology | Prospect Actuary</title>
+<meta name="description" content="How Prospect Actuary's prospect grades and dynasty values are built, how well they hold up in backtests, where the data comes from, and what the models cannot see.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+.wrap{max-width:1080px}
+.lvl{display:flex;flex-direction:column;gap:14px}
+#dsTbl td{white-space:normal;vertical-align:top}
+.lvl>header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.lvl>header .tag{margin:0}
+.card h3{font-size:1.02rem}
+.card p{font-size:.88rem;color:var(--muted)}
+ul.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:76ch}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:14px}
+</style></head>
+<body><div class="wrap">
+<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+
+<header class="page-head">
+  <div class="eyebrow">Research &amp; Methodology</div>
+  <h1>How the numbers are built, and how well they hold up</h1>
+  <p class="lede">Prospect Actuary treats a prospect, a player and a draft pick as uncertain future cash flows, the way an actuary prices a policy. Everything here is written twice: a plain-English version first, and the technical detail behind it.</p>
+</header>
+
+<section class="lvl" aria-labelledby="l1">
+  <header><h2 id="l1">Start here</h2><span class="small muted">Five minutes, no statistics needed</span></header>
+  <div class="cards">
+    <a class="card" href="../about/"><div class="eyebrow">Why "actuary"</div><h3>About the approach</h3><p>Four ideas the site is built on, how it is kept honest, and what it will not tell you.</p><span class="go">Read →</span></a>
+    <a class="card" href="../guide/#short"><div class="eyebrow">Plain English</div><h3>The one-paragraph version</h3><p>What each model predicts and how to explain it to someone who doesn't do statistics.</p><span class="go">Read →</span></a>
+    <a class="card" href="../guide/#limits"><div class="eyebrow">Read before trading</div><h3>Assumptions and limits</h3><p>What the models rely on and what they cannot see: scheme, coaching, contracts, injuries not yet reported.</p><span class="go">Read →</span></a>
+  </div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <h3>Two different measurements</h3>
+    <ul class="plain">
+      <li><b>A prospect grade</b> ranks a player's expected outcome and risk <i>within his position</i>: an A quarterback and an A tight end are both near the top of their own position, not worth the same.</li>
+      <li><b>A value</b> is what a player or pick is worth as a fantasy asset in <i>your</i> league, on one 100,000-point scale that adds up across positions. It moves with your scoring and lineup; grades do not.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="lvl" aria-labelledby="l2">
+  <header><h2 id="l2">Methodology</h2><span class="small muted">How each model works</span></header>
+  <div class="two">
+    <div class="card"><div class="eyebrow">Prospect Lab</div><h3>Prospect models</h3>
+      <ul class="plain small">
+        <li><a href="../guide/#model">The pre-draft model</a>: college production, age, recruiting and conference level. No combine and no draft capital, on purpose.</li>
+        <li><a href="../guide/#pre">Pre-draft grades</a> and <a href="../guide/#post">post-draft grades</a> (adds draft slot and landing spot).</li>
+        <li><a href="../guide/#value">The Value column</a>: comparing prospects across positions.</li>
+      </ul></div>
+    <div class="card"><div class="eyebrow">Player Values</div><h3>Valuation models</h3>
+      <ul class="plain small">
+        <li><a href="../guide/#redraft">Redraft values</a>: points per game over replacement times expected games, with credibility-weighted PPG.</li>
+        <li><a href="../guide/#dynasty">Dynasty values and rookie picks</a>: aging curves, chance of staying in the league, upside as a stop-loss, discounting.</li>
+        <li><a href="../guide/#market">Market check</a>: how and why we compare against market values at fixed, disclosed settings.</li>
+        <li><a href="../guide/#actuarial">The actuarial concepts</a> behind all of it.</li>
+      </ul></div>
+  </div>
+</section>
+
+<section class="lvl" aria-labelledby="l3">
+  <header><h2 id="l3">Backtesting and validation</h2><span class="small muted">Does it work?</span></header>
+  <div class="cards">
+    <a class="card" href="../track-record/"><div class="eyebrow">Untouched holdout</div><h3>Track record</h3><p>2024-2026 grades frozen on November 13, 2026 and scored as their careers play out, plus a log of market disagreements.</p><span class="go">Open →</span></a>
+    <a class="card" href="../pre-draft/#does-it-work"><div class="eyebrow">Prospect Lab</div><h3>Hit rates by grade</h3><p>How often each pre-draft and post-draft grade produced a top-tier fantasy season, with intervals and the biggest misses.</p><span class="go">Open →</span></a>
+    <a class="card" href="../guide/#calibration"><div class="eyebrow">Calibration</div><h3>Do the odds hold up?</h3><p>Predicted chances against what happened, and value backtests against "his current pace continues."</p><span class="go">Open →</span></a>
+  </div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:8px">
+    <h3>What to take from the grades</h3>
+    <ul class="plain small">
+      <li>A "hit" means at least one top-tier fantasy season (top 24 at QB and RB, top 18 at TE, top 36 at WR) in a player's first three NFL years.</li>
+      <li>Pre-draft A-range players hit about 59% of the time (roughly 3 in 5), B about 28%, C and below about 13%. Post-draft A-range players hit 66% (2 in 3), and D/F players almost never (4%, or 1 in 25).</li>
+      <li>Every historical grade comes from a model that never saw that draft class. It did learn from later classes, so the hit rates are a little kinder than a true forecast would have been; the stricter test is in the guide.</li>
+      <li>The draft pick still knows more than college stats alone. Treat the grade as a strong flag, not a guarantee.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="lvl" aria-labelledby="l35" id="data-status">
+  <header><h2 id="l35">Data status</h2><span class="small muted">What is on the site right now, how current it is, and what it does not cover</span></header>
+  <div class="tablebox"><table id="dsTbl" style="min-width:640px"><tbody><tr><td class="muted">Loading data status…</td></tr></tbody></table></div>
+  <div class="grid2" id="dsMore"></div>
+</section>
+
+<section class="lvl" aria-labelledby="l4">
+  <header><h2 id="l4">Data sources</h2></header>
+  <ul class="plain">
+    <li>College stats, team stats and recruiting ratings: <a href="https://collegefootballdata.com">CollegeFootballData.com</a>, via <a href="https://cfbfastr.sportsdataverse.org">cfbfastR</a>.</li>
+    <li>NFL draft picks, weekly stats, rosters, injuries and depth charts: <a href="https://nflverse.com">nflverse</a>, via <a href="https://nflreadr.nflverse.com">nflreadr</a> (CC BY 4.0). Draft and combine data originally from <a href="https://www.pro-football-reference.com">Pro Football Reference</a>.</li>
+    <li>Market values for comparison only: <a href="https://dynasty-daddy.com">Dynasty Daddy</a> (cached weekly snapshot) and <a href="https://github.com/dynastyprocess/data">DynastyProcess</a> open data.</li>
+    <li>Updates: values refresh every Tuesday during the season after automatic output checks; a failed check publishes nothing, so the last good values stay up.</li>
+    <li>Every grade and value file is in the <a href="https://github.com/KyleMSchyma/prospect-actuary">site repository</a> as CSV.</li>
+  </ul>
+</section>
+
+<section class="lvl" aria-labelledby="l5">
+  <header><h2 id="l5">Technical documentation</h2><span class="small muted">For readers who want the model code and the full numbers</span></header>
+  <ul class="plain">
+    <li><a href="https://github.com/KyleMSchyma/Football/blob/main/MODELS_GUIDE.md">Models guide</a>: every model, its target and its results.</li>
+    <li><a href="https://github.com/KyleMSchyma/Football/blob/main/MODELS_TECHNICAL_REFERENCE.md">Technical reference</a>: variables, model comparison, interpretation (variable importance, partial dependence, SHAP).</li>
+    <li><a href="https://github.com/KyleMSchyma/Football/blob/main/FABLE_REVIEW.md">Independent review</a> of the whole process and what changed because of it.</li>
+    <li><a href="https://github.com/KyleMSchyma/Football">Research repository</a>: all R code, from data pulls to the weekly refresh.</li>
+  </ul>
+</section>
+
+<p class="pa-tip">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer>Grades, values and models by Prospect Actuary. Not affiliated with the NFL or any team.</footer>
+</div>
+<script src="../value-research/data/dd.js"></script>
+<script>
+(async function(){
+const esc = t => String(t==null?"":t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const get = u => fetch(u).then(r=>r.ok ? r.text() : null).catch(()=>null);
+const [mt, mv] = await Promise.all([get("../data/manifest.json"), get("../data/movers.csv")]);
+let M = null; try { M = JSON.parse(mt); } catch(e){}
+const tbl = document.getElementById("dsTbl");
+if (!M) { tbl.innerHTML = `<tbody><tr><td class="muted">The data manifest didn't load. The pages still work; this table just can't describe them.</td></tr></tbody>`; return; }
+const v = M.values||{}, p = M.prospects||{}, ids = M.ids||{}, F = M.files||{};
+const ver = path => F[path] ? `<span class="num muted small" title="Fingerprint of the published file: it changes whenever the data changes">v ${esc(F[path].sha)}</span>` : "";
+const movers = mv ? mv.trim().split(/\r?\n/).length - 1 : 0;
+const rows = [
+  ["Player values", `<b>${esc(v.asof)}</b>`, `${v.players} NFL players + 2027 rookie picks`, esc(v.projected), ver("trade-values/data/tv.js")],
+  ["Pre-draft grades", `Classes ${esc(p.pre_classes)}`, `${p.pre_rows} prospects, ${p.pre_projected_2027} of them 2027 projections`, esc(p.projected), ver("pre-draft/data/pd_player_grades.csv")],
+  ["Post-draft grades", "Drafted classes 2010-2026", `${p.post_rows} drafted players`, "Actual draft slot and team; NFL results so far are actual.", ver("post-draft/data/pd_post_player_grades.csv")],
+  ["2027 mock grades", "Renner mock", `${p.mock_2027} skill-position picks`, "Mock picks stand in for draft capital until the real draft.", ver("post-draft/data/pd_post_2027_mock_grades.csv")],
+  ["Market comparison", `Dynasty Daddy snapshot ${esc((window.DD&&window.DD.asof)||"–")}`, "Fixed 12-team superflex 0.5 PPR", "Comparison only; never used in our values.", ""],
+  ["Risers and fallers", movers ? `${movers} rows` : "Not published yet", "Week-over-week value changes", movers ? "Actual changes between two weekly value builds." : "Appears after the next weekly refresh.", ""],
+  ["Player ids", `Built ${esc(String(M.built).slice(0,10))}`, `${ids.players} people, ${ids.with_nfl_id} with an official NFL id`, ids.unmatched_value_players && ids.unmatched_value_players.length ? `${ids.unmatched_value_players.length} valued players matched by name only` : "Every valued player matched to an NFL id.", ""]];
+tbl.innerHTML = `<thead><tr><th>Data</th><th>Updated</th><th>Coverage</th><th>Projected or actual</th><th>Version</th></tr></thead><tbody>` +
+  rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td class="small">${r[2]}</td><td class="small">${r[3]}</td><td>${r[4]}</td></tr>`).join("") + `</tbody>`;
+const models = [...new Set([...(p.pre_model||[]).map(x=>"Pre-draft: "+x), ...(p.post_model||[]).map(x=>"Post-draft: "+x)])];
+document.getElementById("dsMore").innerHTML = `<div class="card"><h3>Model versions in use</h3><ul class="plain small">${models.map(x=>`<li>${esc(x)}</li>`).join("")}<li>${esc(v.model)}</li></ul>
+  <p class="small muted">"Out-of-class (LOCO)" means the grade came from a model that never saw that player's draft class, the honest way to grade the past.</p></div>
+  <div class="card"><h3>Known limits</h3><ul class="plain small">${(M.limits||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+  <h3 style="margin-top:12px">Checks before anything is published</h3><ul class="plain small">${(M.checks||[]).map(x=>`<li>${esc(x)}</li>`).join("")}<li>Weekly values pass six output checks on the build machine; if any fails, nothing is published and the last good values stay up.</li></ul></div>`;
+})();
+</script>
+</body></html>

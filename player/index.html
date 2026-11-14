@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Player Profile | Prospect Actuary</title>
+<meta name="description" content="One player in one place: prospect grades before and after the draft, historical comparables, dynasty value in your league, and how our value compares with the market.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+.wrap{max-width:1120px}
+.ph{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:flex-end;justify-content:space-between}
+.ph h1{font-size:2.3rem}
+.facts{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.9rem;color:var(--ink-2)}
+.facts span b{color:var(--muted);font-weight:500;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;margin-right:6px}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-width:0}
+.sec>header{padding:14px 16px 10px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.sec>header h2{font-size:1.08rem}
+.sec>header .sub{font-size:.78rem;color:var(--muted)}
+.sec .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kv .stat .big{font-size:1.2rem}
+.kv .stat .sm{font-size:.76rem;color:var(--muted)}
+.prob{display:grid;grid-template-columns:110px 1fr 56px;gap:6px 10px;align-items:center;font-size:.84rem}
+.prob .bar{height:9px;background:var(--bg);border-radius:3px;position:relative;overflow:hidden}
+.prob .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.dist{display:flex;height:16px;border-radius:4px;overflow:hidden;background:var(--bg)}
+.dist i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--ink-2)}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:var(--c)}
+.note{font-size:.8rem;color:var(--muted);max-width:none}
+.seas{display:grid;grid-template-columns:auto auto auto 1fr;gap:4px 14px;align-items:center;font-size:.82rem}
+.seas .h{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.seas .r{text-align:right}
+.seas .sb{display:flex;align-items:center;gap:8px}
+.seas .sb i{display:block;height:7px;border-radius:2px;background:var(--accent)}
+.move{font-family:var(--f-mono);font-size:.82rem}
+.big-missing{padding:40px 0;color:var(--muted)}
+.tabs.sm button{font-size:.78rem;padding:3px 10px}
+@media (max-width:860px){ .cols{grid-template-columns:1fr} }
+@media (max-width:520px){ .ph h1{font-size:1.8rem} .prob{grid-template-columns:90px 1fr 48px} }
+</style></head>
+<body><div class="wrap">
+<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+<main id="main"><p class="big-missing">Loading player…</p></main>
+<p class="pa-tip">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer>Grades from the pre-draft and post-draft prospect models; values from the trade-value models, computed for your league in the browser; market values from Dynasty Daddy (cached weekly snapshot). Player ids and birth dates from <a href="https://nflverse.com">nflverse</a> (CC BY 4.0). Not affiliated with the NFL or any team.</footer>
+</div>
+<script src="../trade-values/data/tv.js"></script>
+<script src="../trade-values/data/agetab.js"></script>
+<script src="../value-research/data/dd.js"></script>
+<script src="../shared/league.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/data.js"></script>
+<script>
+(async function(){
+const $ = id => document.getElementById(id), L = window.PALeague, POS = ["QB","RB","WR","TE"];
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
+const f1 = x => x==null ? "–" : Number(x).toFixed(1), f2 = x => x==null ? "–" : Number(x).toFixed(2);
+const pct = x => x==null ? "–" : Math.round(100*x)+"%";
+const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+const chip = g => g ? `<span class="chip ${chipCls(g)}">${esc(g)}</span>` : "–";
+const posb = p => `<span class="posb" style="color:var(--${p})">${p}</span>`;
+const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
+const GR = ["A+","A","A-","B+","B","B-","C+","C","C-","D","F"];
+const S = L.load(), lgp = L.param(S), amp = lgp ? "&"+lgp : "";
+const DB = await PAData.load("../");
+const qs = new URLSearchParams(location.search);
+// ?id= (canonical) or ?key=src:value (links from pages that only know a source key, e.g. tv:Name|POS); the address is then rewritten to ?id=
+let p = DB.byId[qs.get("id")];
+if (!p && qs.get("key")) { const [src, ...rest] = qs.get("key").split(":"), kv = rest.join(":"); p = DB.players.find(x=>x.keys[src]===kv); }
+// fallback for a key whose spelling differs from the canonical list: same normalized name and position (and class, when the key has one)
+if (!p && qs.get("key")) { const kv = qs.get("key").split(":").slice(1).join(":").split("|"), nk = PAData.norm(kv[0]), cl = kv[2] ? +kv[2] : null;
+  const hits = DB.players.filter(x=>x.k===nk && x.pos===kv[1] && (cl==null || x.cls===cl)); if (hits.length===1) p = hits[0]; }
+if (!p) { $("main").innerHTML = `<div class="page-head"><div class="eyebrow">Player profile</div><h1>Player not found</h1><p class="lede">Search for him with the box at the top of the page.</p></div>`; return; }
+try { const u = new URL(location.href); u.searchParams.delete("key"); u.searchParams.set("id", p.id); history.replaceState(null, "", u); } catch(e){}
+document.title = `${p.name} | Prospect Actuary`;
+const R = DB.rows(p), V = DB.values(p, S), tvp = R.tv!=null ? DB.D.players[R.tv] : null;
+const age = tvp && tvp.a!=null ? tvp.a : (p.birth ? (Date.now() - Date.parse(p.birth)) / 31557600000 : null);
+const T = TIER[p.pos];
+
+// ---------- header ----------
+const facts = [];
+facts.push(["Position", p.pos]);
+if (p.team) facts.push(["NFL team", p.team + (tvp && tvp.st ? ` (${tvp.st})` : "")]);
+if (p.college) facts.push(["College", p.college]);
+if (p.cls) facts.push([p.proj ? "Draft class" : "Draft class", p.proj ? `${p.cls} (projected, not yet drafted)` : p.cls]);
+if (p.pk) facts.push(["Draft capital", `Round ${p.rd||"?"}, pick ${p.pk}${p.dteam ? " by "+p.dteam : ""}`]);
+else if (!p.proj && p.cls) facts.push(["Draft capital", "Undrafted"]);
+if (R.mock) facts.push(["2027 mock", `Pick ${R.mock.pick}, ${R.mock.team_abbr||""} (Renner mock)`]);
+if (age!=null) facts.push(["Age", f1(age) + (tvp ? "" : p.birth ? "" : " (est.)")]);
+if (R.pre && R.pre.recruit_stars) facts.push(["Recruiting", `${R.pre.recruit_stars}-star`]);
+if (R.pre && R.pre.yrs_out_of_hs!=null) facts.push(["Years out of HS", R.pre.yrs_out_of_hs]);
+const acts = [`<a class="btn" href="../compare/?ids=${encodeURIComponent(p.id)}${amp}">Compare</a>`];
+if (R.pre || R.post) acts.push(`<a class="btn" href="../${R.post && !p.proj ? "post" : "pre"}-draft/?q=${encodeURIComponent(p.name)}&pos=${p.pos}">Prospect board</a>`);
+if (R.tv!=null) acts.push(`<a class="btn" href="../trade-values/?q=${encodeURIComponent(p.name)}${amp}">Player Values</a>`, `<a class="btn primary" href="../trade-calculator/?mode=dynasty&get=${encodeURIComponent(p.keys.tv)}${amp}">+ Add to trade</a>`);
+let html = `<header class="ph"><div class="page-head"><div class="eyebrow">Player profile · ${p.pos}${p.proj ? " · 2027 prospect" : ""}</div><h1>${esc(p.name)}</h1>
+  <div class="facts">${facts.map(([k,v])=>`<span><b>${k}</b>${esc(v)}</span>`).join("")}</div></div><div class="acts">${acts.join("")}</div></header>
+  <div class="datastrip" id="ds"></div>
+  <p class="note" style="font-size:.86rem">Two different measurements on this page: a <b>prospect grade</b> ranks his expected outcome and risk within his position; <b>value</b> is what he is worth as a fantasy asset in your league. A high grade does not mean a high value, and the reverse.</p>
+  <div class="cols"><div style="display:flex;flex-direction:column;gap:18px;min-width:0" id="left"></div><div style="display:flex;flex-direction:column;gap:18px;min-width:0" id="right"></div></div>`;
+$("main").innerHTML = html;
+const ds = [];
+if (DB.D) ds.push(`Values: <b>${esc(DB.D.asof)}</b>`);
+ds.push(`League: <b>${esc(L.short(S))}</b> <a href="../trade-values/?open=league">change</a>`);
+if (R.pre) ds.push(`Pre-draft: <b>${esc(R.pre.score_source||"")}</b>`);
+if (R.post) ds.push(`Post-draft: <b>${esc(R.post.score_source||"")}</b>`);
+if (DB.manifest) ds.push(`Player ids built <b>${esc(DB.manifest.built.slice(0,10))}</b>`);
+ds.push(`<a href="../research/#data-status">Data status and limits</a>`);
+$("ds").innerHTML = ds.map(s=>`<span>${s}</span>`).join("");
+const sec = (where, title, sub, body) => { const el = document.createElement("section"); el.className = "sec";
+  el.innerHTML = `<header><h2>${title}</h2>${sub?`<span class="sub">${sub}</span>`:""}</header><div class="body">${body}</div>`; $(where).appendChild(el); return el; };
+const probRows = (rows) => rows.map(([lab, v, c, cmp])=>`<span>${lab}</span><span class="bar">${cmp!=null?`<i style="width:${100*cmp}%;background:var(--line-2)"></i>`:""}<i style="width:${100*(v||0)}%;background:${c}"></i></span><span class="num r" style="text-align:right">${pct(v)}</span>`).join("");
+
+// ---------- prospect evaluation ----------
+if (R.pre || R.post || R.mock) {
+  const pre = R.pre, post = R.post, m = R.mock;
+  let b = `<div class="kv">`;
+  if (pre) b += `<div class="stat"><span class="lbl">Pre-draft grade</span><span class="big">${chip(pre.grade)}</span><span class="sm">score ${f2(pre.score)} · ${pre.position} #${pre.pos_rank_class} in class</span></div>`;
+  if (post) b += `<div class="stat"><span class="lbl">Post-draft grade</span><span class="big">${chip(post.post_grade)}</span><span class="sm">score ${f2(post.post_score)} · ${post.position} #${post.post_rank_class} in class</span></div>`;
+  if (m) b += `<div class="stat"><span class="lbl">Post-draft grade (mock)</span><span class="big">${chip(m.post_grade)}</span><span class="sm">with mock pick ${m.pick} as draft capital</span></div>`;
+  if (pre && pre.p_declare!=null) b += `<div class="stat"><span class="lbl">P(declare)</span><span class="big">${pct(pre.p_declare)}</span><span class="sm">rough flag; understates elite juniors</span></div>`;
+  b += `</div>`;
+  const pr = post || m, pp = pre;
+  b += `<div><div class="small" style="margin-bottom:6px"><b>Chance of a fantasy tier season in years 1-3</b> <span class="muted">(${pr ? "post-draft model; grey = pre-draft" : "pre-draft model"})</span></div><div class="prob">` +
+    probRows([[`Top ${p.pos}${T[0]}`, (pr||pp).p_top, "var(--accent)", pr&&pp ? pp.p_top : null],
+              [`Top ${p.pos}${T[1]}`, (pr||pp).p_top2, "var(--accent)", pr&&pp ? pp.p_top2 : null],
+              [`Top ${p.pos}${T[2]}`, (pr||pp).p_any, "var(--accent)", pr&&pp ? pp.p_any : null]]) + `</div></div>`;
+  if (pre && pre.data_flag) b += `<p class="note">Data note: ${esc(pre.data_flag)}</p>`;
+  const nfl = (post || pre);
+  if (nfl && nfl.nfl_outcome) b += `<p class="small"><b>NFL so far:</b> ${esc(nfl.nfl_outcome)}${nfl.nfl_ppr_pts!=null ? ` · ${Math.round(nfl.nfl_ppr_pts)} PPR points in years 1-3` : ""}</p>`;
+  sec("left", "Prospect evaluation", "Within-position grades and tier odds", b);
+}
+
+// ---------- how the draft changed the evaluation ----------
+if ((R.pre && (R.post || R.mock))) {
+  const pre = R.pre, post = R.post || R.mock, mv = post.grade_move!=null ? post.grade_move : (GR.indexOf(pre.grade) - GR.indexOf(post.post_grade));
+  const d = (a, b2) => { const x = Math.round(100*(b2-a)); return `<span class="move ${x>0?"up":x<0?"down":""}">${x>0?"+":""}${x} pts</span>`; };
+  let b = `<p class="small">Pre-draft ${chip(pre.grade)} → post-draft ${chip(post.post_grade)} <span class="move ${mv>0?"up":mv<0?"down":""}">${mv>0?"up "+mv:mv<0?"down "+(-mv):"no change"}${mv?" grade step"+(Math.abs(mv)>1?"s":""):""}</span>${R.mock ? " (using the mock pick)" : ""}</p>
+    <div class="tablebox"><table><thead><tr><th>Tier odds</th><th class="r">Pre-draft</th><th class="r">Post-draft</th><th class="r">Change</th></tr></thead><tbody>` +
+    [["p_top", `Top ${p.pos}${T[0]}`], ["p_top2", `Top ${p.pos}${T[1]}`], ["p_any", `Top ${p.pos}${T[2]}`]].map(([k,l])=>`<tr><td>${l}</td><td class="r num">${pct(pre[k])}</td><td class="r num">${pct(post[k])}</td><td class="r">${d(pre[k], post[k])}</td></tr>`).join("") + `</tbody></table></div>
+    <p class="note">What the draft added: ${p.pk ? `round ${p.rd}, pick ${p.pk}${p.dteam?` to ${esc(p.dteam)}`:""}` : R.mock ? `mock pick ${R.mock.pick} to ${esc(R.mock.team_abbr||"")}` : "draft slot"}. The post-draft model adds draft capital and landing spot together, so the change above is their combined effect; the model does not split it between them. The pre-draft model never sees draft capital or combine results.</p>`;
+  sec("left", "How the draft changed his evaluation", "Same player, two stages", b);
+}
+
+// ---------- historical comparables ----------
+if (R.pre) {
+  const box = sec("left", "Historical comparables", "Players with similar prospect profiles, 2010-2023 classes", `<div class="tabs sm" id="cmpMode" role="group" aria-label="Comparable basis"><button type="button" data-v="pre" aria-pressed="true">College profile</button>${p.pk||R.mock?`<button type="button" data-v="post" aria-pressed="false">Profile + draft capital</button>`:""}</div><div id="cmpBody"></div>`);
+  const hist = DB.preRows.filter(r=>r.position===p.pos && r.status==="drafted" && r.class<=2023 && r.nfl_tier!=null && !(r.name===R.pre.name && r.class===R.pre.class));
+  const postBy = {}; DB.postRows.forEach(r=>postBy[`${r.name}|${r.position}|${r.class}`] = r);
+  const sd = a => { const m = a.reduce((s,x)=>s+x,0)/a.length; return [m, Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/a.length) || 1]; };
+  const zS = sd(hist.map(r=>r.score)), zY = sd(hist.filter(r=>r.yrs_out_of_hs!=null).map(r=>r.yrs_out_of_hs)), zR = sd(hist.filter(r=>r.recruit_stars!=null).map(r=>r.recruit_stars));
+  const lp = x => Math.log(x||300), zP = sd(hist.filter(r=>r.pick).map(r=>lp(r.pick)));
+  const mePick = p.pk || (R.mock && R.mock.pick) || null;
+  function draw(mode){
+    const me = R.pre;
+    const dist = r => { let d = ((r.score - me.score)/zS[1])**2;
+      if (r.yrs_out_of_hs!=null && me.yrs_out_of_hs!=null) d += 0.5*((r.yrs_out_of_hs - me.yrs_out_of_hs)/zY[1])**2;
+      if (r.recruit_stars!=null && me.recruit_stars!=null) d += 0.35*((r.recruit_stars - me.recruit_stars)/zR[1])**2;
+      if (r.level !== me.level) d += 0.25;
+      if (mode==="post" && mePick) d += 1.0*((lp(r.pick) - lp(mePick))/zP[1])**2;
+      return Math.sqrt(d); };
+    const near = hist.map(r=>({r, d:dist(r)})).sort((a,b)=>a.d-b.d).slice(0, 20);
+    const share = arr => { const c = [0,0,0,0]; arr.forEach(x=>c[Math.min(4,x.r ? x.r.nfl_tier : x.nfl_tier)-1]++); return c.map(x=>x/arr.length); };
+    const sh = share(near), base = share(hist.map(r=>({r})));
+    const COL = ["var(--up)","var(--bar)","var(--warn)","var(--line-2)"], LAB = [`Top ${p.pos}${T[0]}`, `${p.pos}${T[0]+1}-${T[1]}`, `${p.pos}${T[1]+1}-${T[2]}`, "No tier season"];
+    const bar = s => `<div class="dist">${s.map((x,i)=>`<i style="width:${100*x}%;background:${COL[i]}" title="${LAB[i]}: ${pct(x)}"></i>`).join("")}</div>`;
+    $("cmpBody").innerHTML = `<div style="display:flex;flex-direction:column;gap:6px"><div class="small"><b>Best season in years 1-3 of his 20 closest comparables</b></div>${bar(sh)}
+      <div class="small muted" style="margin-top:4px">All drafted ${p.pos}s, 2010-2023 (base rate)</div>${bar(base)}
+      <div class="legend">${LAB.map((l,i)=>`<span style="--c:${COL[i]}">${l}: <b>${pct(sh[i])}</b> of comparables vs ${pct(base[i])} of all</span>`).join("")}</div></div>
+      <div class="tablebox" style="max-height:330px"><table><thead><tr><th>Player</th><th>Class</th><th class="r">Pick</th><th>Pre grade</th><th>Best result</th></tr></thead><tbody>` +
+      near.slice(0, 12).map(({r})=>`<tr><td><a href="./?key=${encodeURIComponent("pre:"+r.name+"|"+r.position+"|"+r.class)}${amp}" style="color:var(--ink)">${esc(r.name)}</a></td><td class="num">${r.class}</td><td class="r num">${r.pick||"–"}</td><td>${chip(r.grade)}</td><td class="small">${r.nfl_best_finish!=null ? `${p.pos}${r.nfl_best_finish}` : "no tier season"}</td></tr>`).join("") + `</tbody></table></div>
+      <p class="note">Similarity uses the pre-draft model score (which summarizes college production), years out of high school, recruiting stars and conference level${mode==="post"?", plus draft slot":""}. No combine data. Read the spread, not any one name: a comparable is a reference point, not a forecast of this player's career. Outcomes are best fantasy finish in years 1-3, for classes whose first three seasons are complete.</p>`;
+  }
+  box.querySelector("#cmpMode").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; box.querySelectorAll("#cmpMode button").forEach(x=>x.setAttribute("aria-pressed", x===b)); draw(b.dataset.v); });
+  draw("pre");
+}
+
+// ---------- dynasty valuation ----------
+if (V && V.kind==="nfl") {
+  const row = V.row, rr = V.rrow, C = V.C;
+  let b = `<div class="kv"><div class="stat"><span class="lbl">Dynasty value</span><span class="big">${V.d<50?"below repl.":fmt(V.d)}</span><span class="sm">${row ? `#${row.r} overall · ${row.rp}` : ""}</span></div>
+    <div class="stat"><span class="lbl">Redraft value</span><span class="big">${V.r<50?"below repl.":fmt(V.r)}</span><span class="sm">${rr ? `#${rr.r} overall · ${rr.rp}` : "rest of 2026"}</span></div>
+    <div class="stat"><span class="lbl">Expected PPG</span><span class="big">${f1(row ? row.cppg : null)}</span><span class="sm">replacement ${p.pos}: ${f1(C.RD.rep[p.pos])}</span></div></div>`;
+  if (row && row.parts) { const tot = row.parts.reduce((s,x)=>s+x.v,0)||1, mx = Math.max(...row.parts.map(x=>x.v))||1;
+    b += `<div class="seas"><span class="h">Season</span><span class="h r">Proj. PPG</span><span class="h r">Exp. games</span><span class="h">Share of his value</span>` +
+      row.parts.map(x=>`<span>${x.y===0?"Rest of 2026":2026+x.y}</span><span class="r num">${f1(x.ppg)}</span><span class="r num">${f1(x.g)}</span><span class="sb"><i style="width:${Math.max(1,Math.round(80*x.v/mx))}px"></i><span class="num">${Math.round(100*x.v/tot)}%</span></span>`).join("") + `</div>`; }
+  // rookie class comparison: his value rank among valued players from his draft class
+  if (p.cls) { const mates = DB.players.filter(x=>x.cls===p.cls && x.keys.tv && DB.tvIdx[x.keys.tv]!=null).map(x=>({x, v:C.d[DB.tvIdx[x.keys.tv]]})).filter(z=>z.v>=50).sort((a,b)=>b.v-a.v);
+    const k = mates.findIndex(z=>z.x.id===p.id);
+    if (k>=0) b += `<p class="small"><b>${p.cls} class:</b> #${k+1} of ${mates.length} valued players. Ahead of him: ${mates.slice(Math.max(0,k-2),k).map(z=>`<a href="./?id=${encodeURIComponent(z.x.id)}${amp}">${esc(z.x.name)}</a>`).join(", ")||"nobody"}. Behind: ${mates.slice(k+1,k+3).map(z=>`<a href="./?id=${encodeURIComponent(z.x.id)}${amp}">${esc(z.x.name)}</a>`).join(", ")||"nobody"}.</p>`; }
+  b += `<p class="note">Your league: ${esc(L.label(S))}. 100,000 = the most valuable player on each sheet; values add. Players within about 10% of each other are too close to call.</p>`;
+  sec("right", "Dynasty valuation", "Your league", b);
+} else if (V && V.kind==="prospect") {
+  sec("right", "Projected dynasty value", "Your league", `<div class="kv"><div class="stat"><span class="lbl">Projected value</span><span class="big">${fmt(V.d)}</span><span class="sm">${V.slot ? `about the value of 2027 pick ${V.slot}` : ""}</span></div></div>
+    <p class="note">Priced like a 2027 rookie pick: his chance of each fantasy tier (${esc(V.src||"")}) times what past players in that tier scored over their first seasons, above your league's replacement level, adjusted for age. Your league: ${esc(L.label(S))}. Rookie pick values are rougher than player values.</p>`);
+} else if (!p.proj) {
+  sec("right", "Dynasty valuation", "", `<p class="small muted">He is not in the current trade values (retired, unsigned, or not valued yet).</p>`);
+}
+
+// ---------- market ----------
+if (V && V.kind==="nfl" && window.DD) {
+  const MS = {teams:12, ppr:0.5, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:0, fdQB:0, fdRB:0, fdWR:0, fdTE:0};
+  const C = DB.E.compute(MS), ours = C.dynAll.filter(x=>!x.pick && x.v>0), me = ours.find(x=>x.i===V.i);
+  const ALIAS = {chigoziemokonkwote:"Chig Okonkwo", zonovanknightrb:"Bam Knight", kennethgainwellrb:"Kenny Gainwell"};
+  const key = (n, pos) => PAData.norm(n).replace(/ /g,"") + pos.toLowerCase(), keyRaw = (n, pos) => String(n).toLowerCase().normalize("NFD").replace(/[^a-z]/g,"") + pos.toLowerCase();
+  const inv = {}; Object.keys(ALIAS).forEach(k=>inv[key(ALIAS[k], k.slice(-2).toUpperCase())] = k);
+  const mk = arr => { const o = arr.slice().sort((a,b)=>b[3]-a[3]), pc = {}, out = {}; o.forEach((r,k)=>{ pc[r[1]]=(pc[r[1]]||0)+1; out[r[0]] = {ro:k+1, rp:r[1]+pc[r[1]], v:r[3]}; }); return out; };
+  const dd = mk(window.DD.dynasty||[]), k1 = key(p.name, p.pos);
+  const t = dd[inv[k1]||k1] || dd[keyRaw(p.name, p.pos)];
+  let b;
+  if (!me && !t) b = `<p class="small muted">Neither we nor the market rank him at these settings.</p>`;
+  else { const gap = me && t ? t.ro - me.r : null;
+    b = `<div class="kv"><div class="stat"><span class="lbl">Our rank</span><span class="big">${me?"#"+me.r:"–"}</span><span class="sm">${me?me.rp:"not ranked"}</span></div>
+      <div class="stat"><span class="lbl">Dynasty Daddy</span><span class="big">${t?"#"+t.ro:"–"}</span><span class="sm">${t?t.rp:"not ranked"}</span></div>
+      <div class="stat"><span class="lbl">Gap</span><span class="big ${gap>0?"up":gap<0?"down":""}">${gap==null?"–":(gap>0?"+":"")+gap}</span><span class="sm">${gap==null?"":gap>0?"we rank him higher":gap<0?"the market ranks him higher":"same rank"}</span></div></div>`; }
+  b += `<p class="note">Fixed settings for a fair comparison: 12 teams, superflex, 0.5 PPR, 4-pt passing TD, 2 RB / 3 WR / 1 TE, no flex, matching Dynasty Daddy's superflex values (snapshot ${esc(window.DD.asof||"")}). This is not customized to your league. A disagreement is not by itself a reason to buy or sell. <a href="../value-research/">Full market check →</a></p>`;
+  sec("right", "Market comparison", "Ours vs Dynasty Daddy, ranks", b);
+}
+})();
+</script>
+</body></html>

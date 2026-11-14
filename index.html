@@ -1,106 +1,209 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Prospect Actuary</title>
-<meta name="description" content="Letter grades for every drafted NFL QB, RB, WR and TE since 2010, from college-only and post-draft prediction models.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<title>Prospect Actuary · Dynasty fantasy football analytics</title>
+<meta name="description" content="Dynasty fantasy football decision support built with actuarial modeling: prospect grades checked against history, player values on one additive 100,000-point scale set to your league, and a trade calculator.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="shared/theme.css">
 <style>
-:root{--bg:#f5f6f3;--panel:#ffffff;--ink:#18201c;--muted:#5d6862;--line:#d9ddd6;--accent:#1f6b4f;--accent-soft:#e2efe8;
-  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#121815;--panel:#1a221e;--ink:#e7ece8;--muted:#9aa69f;--line:#2c3732;--accent:#5cc497;--accent-soft:#1f3229;color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
-.wrap{max-width:880px;margin:0 auto;padding:40px 16px 64px;display:flex;flex-direction:column;gap:36px}
-.eyebrow{font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
-h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.1}
-h1{font-size:3rem} h2{font-size:1.9rem} h3{font-size:1.45rem}
-.group{display:flex;flex-direction:column;gap:14px}
-.ghead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
-p{margin:0;max-width:66ch}
-a{color:var(--accent)}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);transition:border-color .15s}
-.card:hover{border-color:var(--accent)}
-.card .go{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);margin-top:auto}
-.muted{color:var(--muted);font-size:.9rem}
-ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:66ch}
-@media (max-width:520px){h1{font-size:2.3rem}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:end;padding-top:8px}
+.hero h1{font-size:2.6rem;letter-spacing:-.03em}
+.hero h1 span{color:var(--accent)}
+.hero .lede{font-size:1.02rem;max-width:58ch}
+.bigsearch{position:relative}
+.bigsearch input{width:100%;font-size:1rem;padding:12px 14px 12px 40px;border-radius:8px;border:1px solid var(--line-2);background:var(--panel)}
+.bigsearch input:focus{border-color:var(--accent)}
+.bigsearch .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.bigsearch .pa-results{left:0;right:auto;width:100%}
+.qs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.q{display:flex;flex-direction:column;gap:6px;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--ink)}
+.q:hover{border-color:var(--accent);color:var(--ink)}
+.q .k{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.q b{font-size:1.08rem}
+.q span.d{font-size:.86rem;color:var(--muted)}
+.dash{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-width:0}
+.box>header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.box>header h2{font-size:1.05rem}
+.box>header .sub{font-size:.78rem;color:var(--muted)}
+.box>header .more{margin-left:auto;font-size:.8rem;border:none;background:none;padding:0;color:var(--accent-2);text-decoration:none}
+.box .body{padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.box .tablebox{border:none;border-radius:0;background:none}
+.box table th{background:var(--panel)}
+.tabs.sm button{font-size:.78rem;padding:3px 10px}
+.vbar{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.vbar i{display:block;height:6px;border-radius:2px;background:var(--accent);opacity:.85}
+td .meta{color:var(--muted);font-size:.76rem}
+.movers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.movers ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:.86rem}
+.movers h3{font-size:.8rem;font-family:var(--f-mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.empty{color:var(--muted);font-size:.86rem;line-height:1.5}
+.trade{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.trade .side{display:flex;flex-direction:column;gap:6px;min-width:0}
+.trade .side .lbl{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase}
+.trade .pick{position:relative}
+.trade .pick input{width:100%}
+.trade .pick .pa-results{left:0;right:auto;width:min(380px,calc(100vw - 32px))}
+.trade ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:.84rem}
+.trade li{display:flex;gap:6px;align-items:center;justify-content:space-between;background:var(--panel-2);border-radius:5px;padding:4px 8px}
+.trade li button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 2px}
+.picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}
+.picks div{background:var(--panel-2);border-radius:6px;padding:6px 8px;display:flex;flex-direction:column}
+.picks .s{font-family:var(--f-mono);font-size:.7rem;color:var(--muted)}
+.picks .v{font-family:var(--f-mono);font-size:.92rem}
+@media (max-width:900px){ .hero,.dash{grid-template-columns:1fr} .qs{grid-template-columns:1fr} }
+@media (max-width:520px){ .hero h1{font-size:2rem} .movers,.trade{grid-template-columns:1fr} .hm{display:none} .vbar i{display:none} td .meta.hm2{display:none} th,td{padding:7px 6px} .box td:nth-child(2){white-space:normal} .box .body{padding:10px 10px 14px} }
 </style></head>
 <body><div class="wrap">
-<header style="display:flex;flex-direction:column;gap:16px">
-  <nav class="pa-brand" data-root="" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="./" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="pre-draft/">Pre-draft</a><a href="post-draft/">Post-draft</a><a href="trade-values/">Trade values</a><a href="trade-calculator/">Trade calculator</a><a href="value-research/">Market check</a><a href="guide/">Guide</a></span></nav><script src="shared/nav.js"></script>
-  <div class="eyebrow">Fantasy football · built with actuarial modeling</div>
-  <h1>Prospect Actuary</h1>
-  <p>Two things, built the way an actuary prices risk: letter grades for every drafted QB, RB, WR and TE since 2010 (plus the 2027 class), each shown beside his real NFL results so you can check the model, and trade values for every NFL player and 2027 rookie pick, set to your league.</p>
-</header>
+<nav class="pa-brand" data-root=""><a href="./">Prospect Actuary</a> · <a href="">Dashboard</a> · <a href="pre-draft/">Prospect Lab</a> · <a href="trade-values/">Player Values</a> · <a href="trade-calculator/">Trade Center</a> · <a href="research/">Research</a></nav><script src="shared/nav.js"></script>
 
-<section class="group" aria-labelledby="g-rookies">
-  <div class="ghead"><h2 id="g-rookies">Rookies</h2><span class="muted">How good is this prospect, before and after the draft?</span></div>
-  <div class="cards">
-    <a class="card" href="pre-draft/">
-      <div class="eyebrow">College-only model</div>
-      <h3>Pre-Draft Player Grades</h3>
-      <p class="muted">College production, age, recruiting and conference level. No combine and no draft pick. Includes the top 2027 prospects as projections.</p>
-      <span class="go">Open the board →</span>
-    </a>
-    <a class="card" href="post-draft/">
-      <div class="eyebrow">Post-draft model</div>
-      <h3>Post-Draft Player Grades</h3>
-      <p class="muted">The same players with draft slot and landing spot added, plus the 2027 class graded from a mock draft.</p>
-      <span class="go">Open the board →</span>
-    </a>
+<section class="hero" aria-labelledby="h">
+  <div class="page-head">
+    <div class="eyebrow">Dynasty fantasy football · priced like risk</div>
+    <h1 id="h">Evaluate. Value. <span>Decide.</span></h1>
+    <p class="lede">Prospect grades checked against 17 draft classes, player values on one 100,000-point scale that adds up and follows your league's settings, and a trade calculator that says when a deal is too close to call.</p>
+  </div>
+  <div class="bigsearch">
+    <span class="ico"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m11 11 3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    <input type="search" id="heroQ" placeholder="Search any player or prospect" aria-label="Search any player or prospect" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="heroRes" aria-autocomplete="list">
+    <div class="pa-results" id="heroRes" role="listbox" hidden></div>
   </div>
 </section>
 
-<section class="group" aria-labelledby="g-trade">
-  <div class="ghead"><h2 id="g-trade">Trade</h2><span class="muted">What is every player worth in my league?</span></div>
-  <div class="cards">
-    <a class="card" href="trade-values/">
-      <div class="eyebrow">Redraft and dynasty</div>
-      <h3>Trade Values</h3>
-      <p class="muted">Every QB, RB, WR and TE, plus 2027 rookie picks, on one 100,000-point scale that adds up. Switch between the rest of 2026 and dynasty (through 2031).</p>
-      <span class="go">Open the values →</span>
-    </a>
-    <a class="card" href="trade-calculator/">
-      <div class="eyebrow">Redraft and dynasty</div>
-      <h3>Trade Calculator</h3>
-      <p class="muted">Type in the players and picks on each side of a trade and see which side comes out ahead.</p>
-      <span class="go">Open the calculator →</span>
-    </a>
-    <a class="card" href="value-research/">
-      <div class="eyebrow">Superflex · vs. the market</div>
-      <h3>Market Check</h3>
-      <p class="muted">Our values ranked against Dynasty Daddy and DynastyProcess, with the players we like more and less than the market.</p>
-      <span class="go">See the comparison →</span>
-    </a>
+<div class="datastrip" id="status" aria-label="Data status"><span>Loading data status…</span></div>
+
+<nav class="qs" aria-label="Three questions">
+  <a class="q" href="pre-draft/"><span class="k">Prospect Lab</span><b>Who should I believe in?</b><span class="d">Pre- and post-draft grades for every QB, RB, WR and TE since 2010, the 2027 class, and how often each grade hit.</span></a>
+  <a class="q" href="trade-values/"><span class="k">Player Values</span><b>What is a player worth?</b><span class="d">Dynasty and redraft values for every player and 2027 rookie pick, set to your league's scoring and lineup.</span></a>
+  <a class="q" href="trade-calculator/"><span class="k">Trade Center</span><b>What should I do with my assets?</b><span class="d">Add up both sides of a trade, compare our values with the market, and see buy and sell signals.</span></a>
+</nav>
+
+<div class="dash">
+  <section class="box" aria-labelledby="h-top">
+    <header><h2 id="h-top">Top dynasty values</h2><span class="sub" id="topLg"></span><a class="more" href="trade-values/?mode=dynasty">Full rankings →</a></header>
+    <div class="body">
+      <div class="tabs sm" id="topTabs" role="group" aria-label="Position"></div>
+      <div class="tablebox"><table id="topTbl"></table></div>
+    </div>
+  </section>
+
+  <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+    <section class="box" aria-labelledby="h-trade">
+      <header><h2 id="h-trade">Quick trade</h2><span class="sub">Dynasty, your league</span></header>
+      <div class="body">
+        <div class="trade">
+          <div class="side"><span class="lbl" style="color:var(--sideA)">You give</span><div class="pick"><input type="search" id="tgA" placeholder="Add player or pick" aria-label="Add a player or pick you give" autocomplete="off"><div class="pa-results" id="trA" hidden></div></div><ul id="tlA"></ul></div>
+          <div class="side"><span class="lbl" style="color:var(--sideB)">You get</span><div class="pick"><input type="search" id="tgB" placeholder="Add player or pick" aria-label="Add a player or pick you get" autocomplete="off"><div class="pa-results" id="trB" hidden></div></div><ul id="tlB"></ul></div>
+        </div>
+        <div class="row"><a class="btn primary" id="tGo" href="trade-calculator/">Open in trade calculator →</a><span class="small muted" id="tMsg"></span></div>
+      </div>
+    </section>
+
+    <section class="box" aria-labelledby="h-mov">
+      <header><h2 id="h-mov">Risers and fallers</h2><span class="sub" id="movSub">Dynasty values, week over week</span></header>
+      <div class="body" id="movers"><p class="empty">Loading…</p></div>
+    </section>
   </div>
-</section>
+</div>
 
-<a class="card" href="about/" style="max-width:none">
-  <div class="eyebrow">Why "actuary"</div>
-  <h3>About the Approach</h3>
-  <p class="muted">A prospect is a risk to be priced. Why the tools insurers use for uncertain futures fit fantasy football, and what this site will and will not claim.</p>
-  <span class="go">Read about it →</span>
-</a>
+<div class="dash">
+  <section class="box" aria-labelledby="h-pros">
+    <header><h2 id="h-pros">Featured prospects: 2027 class</h2><span class="sub">Top projected prospects by Value in your league</span><a class="more" href="pre-draft/?pos=All#class-2027">2027 board →</a></header>
+    <div class="body">
+      <div class="tablebox"><table id="prosTbl"></table></div>
+      <p class="small muted">Grade ranks a prospect within his position on the college-only pre-draft model. Value is a separate measure: what he is worth as a dynasty asset in your league, priced from his tier odds the same way as the 2027 rookie picks (post-draft model with the Renner mock pick where he is in the mock).</p>
+    </div>
+  </section>
+  <section class="box" aria-labelledby="h-picks">
+    <header><h2 id="h-picks">2027 rookie pick values</h2><span class="sub" id="pickSub"></span><a class="more" href="trade-values/?mode=dynasty&amp;pos=PICK">All picks →</a></header>
+    <div class="body"><div class="picks" id="picks"></div><p class="small muted">Pick 1.01 is worth the best 2027 prospect for your league, 1.02 the second best, and so on. Rookie pick values are rougher than player values.</p></div>
+  </section>
+</div>
 
-<a class="card" href="guide/" style="max-width:none">
-  <div class="eyebrow">How it works</div>
-  <h3>Plain-English Guide</h3>
-  <p class="muted">What each model predicts, what drives it, how well it holds up, and how to explain it to someone who doesn't do statistics.</p>
-  <span class="go">Read the guide →</span>
-</a>
+<p class="pa-tip">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer>Data: college stats, team stats and recruiting ratings from <a href="https://collegefootballdata.com">CollegeFootballData.com</a> (via the <a href="https://cfbfastr.sportsdataverse.org">cfbfastR</a> package). NFL draft picks, player stats and combine results from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Draft and combine data originally from <a href="https://www.pro-football-reference.com">Pro Football Reference</a> (Sports Reference LLC). Market values from <a href="https://dynasty-daddy.com">Dynasty Daddy</a> and <a href="https://github.com/dynastyprocess/data">DynastyProcess</a>. Grades, values and models by Prospect Actuary. Not affiliated with the NFL or any team.</footer>
+</div>
+<script src="trade-values/data/tv.js"></script>
+<script src="trade-values/data/agetab.js"></script>
+<script src="shared/league.js"></script>
+<script src="shared/engine.js"></script>
+<script>
+(function(){
+const $ = id => document.getElementById(id), D = window.TV, L = window.PALeague, POS = ["QB","RB","WR","TE"];
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
+const posb = p => `<span class="posb" style="color:var(--${p})">${p}</span>`;
+const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+const S = L.load(), lgp = L.param(S), amp = lgp ? "&"+lgp : "";
+const E = D ? window.PAEngine(D, window.TVAGE) : null, C = E ? E.compute(S) : null;
+const getText = url => fetch(url).then(r=>r.ok ? r.text() : null).catch(()=>null);
+const csv = t => t ? window.PASearch.parseCSV(t) : [];
 
-<section style="display:flex;flex-direction:column;gap:12px">
-  <h2>What to take from the grades</h2>
-  <ul>
-    <li>A "hit" means at least one top-tier fantasy season (top 24 at QB and RB, top 18 at TE, top 36 at WR) in a player's first three NFL years.</li>
-    <li>Pre-draft A-range players hit about 59% of the time (roughly 3 in 5), B about 28% (a little over 1 in 4), C and below about 13% (1 in 8). Post-draft A-range players hit 66% (2 in 3), and D/F players almost never (4%, or 1 in 25).</li>
-    <li>Every historical grade comes from a model that never saw that draft class. It did learn from later classes, so the hit rates are a little kinder than a true forecast would have been; the stricter no-peeking test is in the guide.</li>
-    <li>The draft pick still knows more than college stats alone. Treat the grade as a strong flag, not a guarantee.</li>
-  </ul>
-  <p class="muted">How the models work, in plain English: <a href="guide/">the guide</a>. The data behind each page is in the <a href="https://github.com/KyleMSchyma/prospect-actuary">repository</a> as CSV files.</p>
-</section>
-<p class="pa-tip" style="margin:0;font-size:.9rem;color:var(--muted);max-width:72ch">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
-<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: college stats, team stats and recruiting ratings from <a href="https://collegefootballdata.com">CollegeFootballData.com</a> (via the <a href="https://cfbfastr.sportsdataverse.org">cfbfastR</a> package). NFL draft picks, player stats and combine results from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Draft and combine data originally from <a href="https://www.pro-football-reference.com">Pro Football Reference</a> (Sports Reference LLC). Grades and models by Prospect Actuary. Not affiliated with the NFL or any team.</footer>
-</div></body></html>
+// ---------- search box ----------
+function withSearch(fn){ if (window.PASearch) fn(); else setTimeout(()=>withSearch(fn), 50); }
+withSearch(()=>window.PASearch.attach($("heroQ"), $("heroRes"), {root:""}));
+
+// ---------- data status ----------
+const status = [];
+if (D) status.push(`Values: <b>${esc(D.asof)}</b>`);
+status.push(`Prospect grades: <b>2010-2026 classes + 2027 projected</b>`);
+status.push(`League: <b>${esc(L.short(S))}</b>${L.isDefault(S) ? " (default)" : ""} <a href="trade-values/?open=league">change</a>`);
+status.push(`<a href="research/#data-status">Data status and limits</a>`);
+$("status").innerHTML = status.map(s=>`<span>${s}</span>`).join("");
+if (!C) { $("topTbl").innerHTML = `<tbody><tr><td class="muted">The values didn't load. Refresh the page to try again.</td></tr></tbody>`; return; }
+
+// ---------- top dynasty values ----------
+$("topLg").textContent = L.short(S);
+let tPos = "ALL";
+$("topTabs").innerHTML = [["ALL","All"],...POS.map(p=>[p,p])].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${v==="ALL"}">${l}</button>`).join("");
+$("topTabs").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; tPos = b.dataset.v;
+  $("topTabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); drawTop(); });
+function drawTop(){
+  const rows = C.dyn.filter(r=>tPos==="ALL" ? true : (!r.pick && r.p===tPos)).slice(0, 12), mx = rows.length ? rows[0].v : 1;   // picks stay in All, so ranks match Player Values
+  $("topTbl").innerHTML = `<thead><tr><th class="r">#</th><th>Player</th><th>Pos</th><th class="r hm">Age</th><th class="r">Value</th></tr></thead><tbody>` +
+    rows.map(r=>r.pick ? `<tr><td class="r num">${r.r}</td><td><a href="trade-values/?mode=dynasty&pos=PICK${amp}" style="color:var(--ink);text-decoration:none">${esc(r.n)}</a></td><td><span class="posb" style="color:var(--PICK)">PICK</span></td><td class="hm"></td><td class="r num"><span class="vbar">${fmt(r.v)}<i style="width:${Math.max(3,Math.round(56*r.v/mx))}px;background:var(--PICK)"></i></span></td></tr>` : `<tr><td class="r num">${r.r}</td><td><a href="player/?key=${encodeURIComponent("tv:"+r.n+"|"+r.p)}${amp}" style="color:var(--ink);text-decoration:none">${esc(r.n)}</a>${r.st?` <span class="st">${esc(r.st)}</span>`:""} <span class="meta hm2">${esc(r.tm||"FA")}</span></td><td>${posb(r.p)} <span class="meta num">${r.rp}</span></td><td class="r num hm">${r.a==null?"":Number(r.a).toFixed(1)}</td><td class="r num"><span class="vbar">${fmt(r.v)}<i style="width:${Math.max(3,Math.round(56*r.v/mx))}px"></i></span></td></tr>`).join("") + "</tbody>";
+}
+drawTop();
+
+// ---------- 2027 rookie picks ----------
+$("pickSub").textContent = `${S.teams}-team draft`;
+$("picks").innerHTML = C.picks.slice(0, Math.min(12, S.teams)).map(p=>`<div><span class="s">${p.slot}</span><span class="v">${fmt(p.v)}</span></div>`).join("");
+
+// ---------- quick trade ----------
+const T = {A:[], B:[]};
+function drawTrade(){
+  ["A","B"].forEach(k=>{ $("tl"+k).innerHTML = T[k].map((a,i)=>`<li><span>${posb(a.p)} ${esc(a.n)}</span><span class="num small">${fmt(a.v)}<button type="button" data-k="${k}" data-i="${i}" aria-label="Remove ${esc(a.n)}">×</button></span></li>`).join(""); });
+  const enc = arr => arr.map(a=>a.id).join("~");
+  const u = `trade-calculator/?mode=dynasty${T.A.length?"&give="+encodeURIComponent(enc(T.A)):""}${T.B.length?"&get="+encodeURIComponent(enc(T.B)):""}${amp}`;
+  $("tGo").href = u;
+  const a = T.A.reduce((s,x)=>s+x.v,0), b = T.B.reduce((s,x)=>s+x.v,0), m = Math.max(a,b);
+  $("tMsg").textContent = (T.A.length && T.B.length && m>0) ? (Math.abs(b-a)/m < 0.10 ? "Too close to call (within 10%)" : (b>a ? `You get ${Math.round(100*(b-a)/m)}% more` : `You give ${Math.round(100*(a-b)/m)}% more`)) : "";
+}
+["A","B"].forEach(k=>{ $("tl"+k).addEventListener("click", e=>{ const b = e.target.closest("button[data-i]"); if (!b) return; T[k].splice(+b.dataset.i,1); drawTrade(); });
+  withSearch(()=>window.PASearch.attach($("tg"+k), $("tr"+k), {root:"", mode:"asset", onPick:a=>{ if (!T.A.concat(T.B).some(x=>x.id===a.id)) T[k].push(a); drawTrade(); }})); });
+drawTrade();
+
+// ---------- featured prospects (2027) and risers / fallers: loaded after the page draws ----------
+Promise.all([getText("pre-draft/data/rookie_board_values.csv"), getText("pre-draft/data/pd_player_grades.csv"), getText("post-draft/data/pd_post_2027_mock_grades.csv"), getText("data/movers.csv"), new Promise(ok=>withSearch(ok))])
+.then(([bv, pg, mk, mv])=>{
+  // prospects
+  const norm = window.PASearch.norm, grade = {}, mock = {};
+  csv(pg).filter(r=>String(r.class)==="2027").forEach(r=>grade[norm(r.name)+"|"+r.position] = r);
+  csv(mk).forEach(r=>mock[norm(r.board_name||r.name)+"|"+r.position] = r);
+  const pros = csv(bv).filter(r=>r.board==="pre" && String(r.class)==="2027").map(r=>{
+    const v = E.prospectValue(S, r.position, [+r.p_top, +r.p_top2, +r.p_any], +r.age), k = norm(r.name)+"|"+r.position;
+    return {n:r.name, p:r.position, col:r.college, v, g:grade[k], m:mock[k]}; }).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v).slice(0, 10);
+  const mx = pros.length ? pros[0].v : 1;
+  $("prosTbl").innerHTML = pros.length ? `<thead><tr><th class="r">#</th><th>Prospect</th><th>Pos</th><th title="Pre-draft grade: rank within position, college stats only">Grade</th><th class="hm">Mock pick</th><th class="r" title="Expected dynasty value in your league, 100k scale">Value</th></tr></thead><tbody>` +
+    pros.map((x,i)=>`<tr><td class="r num">${i+1}</td><td><a href="player/?key=${encodeURIComponent("pre:"+x.n+"|"+x.p+"|2027")}${amp}" style="color:var(--ink);text-decoration:none">${esc(x.n)}</a> <span class="meta hm2">${esc(x.col||"")}</span></td><td>${posb(x.p)}</td><td>${x.g&&x.g.grade?`<span class="chip ${chipCls(x.g.grade)}">${esc(x.g.grade)}</span>`:""}</td><td class="num small hm">${x.m?`${x.m.pick} <span class="meta">${esc(x.m.team_abbr||"")}</span>`:'<span class="meta">not in mock</span>'}</td><td class="r num"><span class="vbar">${fmt(x.v)}<i style="width:${Math.max(3,Math.round(56*x.v/mx))}px"></i></span></td></tr>`).join("") + "</tbody>"
+    : `<tbody><tr><td class="muted">The 2027 prospect file didn't load.</td></tr></tbody>`;
+  // movers: written by the weekly refresh (rf_04_archive.R) once two weekly snapshots exist; default league
+  const M = csv(mv).filter(r=>r.sheet==="dynasty" && r.value_change!=null);
+  if (!M.length) { $("movers").innerHTML = `<p class="empty">Weekly snapshots of every value started on November 13, 2026. Risers and fallers appear here once two weekly updates have been published, with the date each one compares against. Until then there is nothing to compare, so nothing is shown.</p>`; return; }
+  const up = M.filter(r=>+r.value_change>0).sort((a,b)=>b.value_change-a.value_change).slice(0,6), dn = M.filter(r=>+r.value_change<0).sort((a,b)=>a.value_change-b.value_change).slice(0,6);
+  const li = r => `<li>${esc(r.name)} ${posb(r.pos)} <span class="num ${+r.value_change>0?"up":"down"}">${+r.value_change>0?"+":"−"}${fmt(Math.abs(+r.value_change))}</span></li>`;
+  $("movSub").textContent = `Dynasty, default league, vs ${M[0].compared_with ? M[0].compared_with.replace(/_week(\d+)/," (week $1)") : "last week"}`;
+  $("movers").innerHTML = `<div class="movers"><div><h3 class="up">Risers</h3><ol>${up.map(li).join("")}</ol></div><div><h3 class="down">Fallers</h3><ol>${dn.map(li).join("")}</ol></div></div>`;
+});
+})();
+</script>
+</body></html>

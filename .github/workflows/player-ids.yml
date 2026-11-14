@@ -1,0 +1,45 @@
+# Rebuilds the canonical player list (data/players.json) and data manifest (data/manifest.json)
+# whenever a grade or value file changes, every Wednesday (new nflverse rosters), or by hand.
+# scripts/build_players.py validates first: if a check fails the job fails, nothing is written,
+# and the site keeps the last good files. If nothing changed, nothing is committed.
+name: Player ids
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pre-draft/data/pd_player_grades.csv"
+      - "post-draft/data/pd_post_player_grades.csv"
+      - "post-draft/data/pd_post_2027_mock_grades.csv"
+      - "trade-values/data/tv.js"
+      - "scripts/build_players.py"
+  schedule:
+    - cron: "0 15 * * 3"   # Wednesdays, the day after the Tuesday refresh
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: player-ids
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build and validate player ids
+        run: python3 scripts/build_players.py
+      - name: Commit if changed
+        run: |
+          git add data/players.json data/manifest.json
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Rebuild player ids and data manifest"
+          git pull --rebase origin main
+          git push origin HEAD:main

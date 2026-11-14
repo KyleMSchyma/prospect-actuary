@@ -1,20 +1,9 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Buy / Sell | Prospect Actuary</title>
 <meta name="description" content="Year-2 and year-3 buys and sells from the Prospect Actuary usage models: young RBs, WRs and TEs whose usage says more than their fantasy points">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
 <style>
-:root{
-  --bg:#f5f6f3; --panel:#ffffff; --ink:#18201c; --muted:#5d6862; --line:#d9ddd6; --accent:#1f6b4f; --accent-soft:#e2efe8;
-  --warn:#8a5a00; --warn-soft:#fbf0d9; --bar:#2f6d8f; --sideA:#2f6d8f; --sideB:#c4502f;
-  --QB:#c4502f; --RB:#1d7a50; --WR:#2f6d8f; --TE:#9b4f8a; --PICK:#8a5a00;
-  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif; --f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#121815; --panel:#1a221e; --ink:#e7ece8; --muted:#9aa69f; --line:#2c3732; --accent:#5cc497; --accent-soft:#1f3229;
-  --warn:#f0c46a; --warn-soft:#3a2f17; --bar:#5b9cc0; --sideA:#5b9cc0; --sideB:#e2754f; --QB:#e2754f; --RB:#3fb07c; --WR:#5b9cc0; --TE:#c27bb3; --PICK:#f0c46a; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#121815; --panel:#1a221e; --ink:#e7ece8; --muted:#9aa69f; --line:#2c3732; --accent:#5cc497; --accent-soft:#1f3229;
-  --warn:#f0c46a; --warn-soft:#3a2f17; --bar:#5b9cc0; --sideA:#5b9cc0; --sideB:#e2754f; --QB:#e2754f; --RB:#3fb07c; --WR:#5b9cc0; --TE:#c27bb3; --PICK:#f0c46a; color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
 .wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:36px}
@@ -64,7 +53,7 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:14px">
-    <nav class="pa-brand" data-root="../" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em"><a href="../" style="color:var(--ink);text-decoration:none;font-weight:600">Prospect Actuary</a><span style="display:flex;gap:14px;flex-wrap:wrap"><a href="../pre-draft/">Pre-draft</a><a href="../post-draft/">Post-draft</a><a href="../trade-values/">Trade values</a><a href="../trade-calculator/">Trade calculator</a><a href="../value-research/">Market check</a><a href="../guide/">Guide</a></span></nav><script src="../shared/nav.js"></script>
+    <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
   <h1>Buy / Sell</h1>
   <p class="lede" style="max-width:72ch">After a player's first NFL season, how he was used (snaps, targets, touches, his share of the offense, and the late-season trend) says more about his next two years than his fantasy points did. These lists come from our year-2 and year-3 usage models, tested class by class on every drafted RB, WR and TE since 2010 with each class scored by a model that never saw it.</p>
   <p class="small muted" style="max-width:72ch"><b>A sell does not mean the player is bad.</b> It means his points ran ahead of the role behind them, so his price may be higher than what players with that usage usually go on to do. A buy is the reverse. "Chance of a starter season" is the model's chance of at least one top-24 RB, top-36 WR or top-18 TE season in the next two years. The lists were made after the 2025 season for the 2025 class (year 2 in 2026) and the 2024 class (year 3 in 2026); they are not updated during the season. Quarterbacks are not listed.</p>
