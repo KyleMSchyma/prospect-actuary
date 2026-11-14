@@ -68,7 +68,7 @@
     // scoring we don't model (the values assume standard yardage and no milestone bonuses)
     const std = {pass_yd:0.04, rush_yd:0.1, rec_yd:0.1};
     Object.entries(std).forEach(([k,v])=>{ if (sc[k]!=null && q(sc[k])!==v) notes.push(`${k.replace("_yd"," yards").replace("pass","Passing").replace("rush","Rushing").replace("rec","Receiving")} score ${q(sc[k])} a yard; our values assume ${v}.`); });
-    const extra = Object.keys(sc).filter(k=>/^(bonus_(pass|rush|rec|rush_rec)_yd_|bonus_pass_cmp|bonus_rush_att|rush_att$|pass_cmp$|pass_att$|rec_\d|rec_40p|rush_40p|pass_td_40p|rec_td_40p|rush_td_40p|bonus_rush_td_qb)/.test(k) && q(sc[k])!==0);
+    const extra = Object.keys(sc).filter(k=>/^(bonus_(pass|rush|rec|rush_rec)_yd_|bonus_pass_cmp|bonus_rush_att|rush_att$|pass_cmp$|pass_att$|rec_\d+_\d+|rec_40p|rush_40p|pass_td_40p|rec_td_40p|rush_td_40p|bonus_rush_td_qb)/.test(k) && q(sc[k])!==0);
     if (extra.length) notes.push(`Not in our values: ${extra.length} bonus${extra.length>1?"es":""} such as ${extra.slice(0,3).join(", ")}.`);
     // lineup
     let qb = n.QB||0, rb = n.RB||0, wr = n.WR||0, te = n.TE||0, flex = n.FLEX||0, sf = n.SUPER_FLEX||0;
