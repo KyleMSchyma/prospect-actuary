@@ -68,6 +68,22 @@ details.lgwrap summary .lbl{font-family:var(--f-mono);font-size:.72rem;text-tran
 .fill{height:100%}
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+.slp{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:.9rem}
+.slp label{display:flex;gap:8px;align-items:center}
+.slp select{max-width:220px}
+details.rost{border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+details.rost summary{padding:7px 10px;font-size:.85rem;color:var(--ink-2)}
+details.rost ul{list-style:none;margin:0;padding:0 6px 6px;max-height:300px;overflow-y:auto}
+details.rost li button{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:baseline;font:inherit;font-size:.85rem;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);padding:6px 4px;cursor:pointer;color:var(--ink)}
+details.rost li button:hover{background:var(--accent-soft)}
+details.rost li button:disabled{opacity:.4;cursor:default;background:none}
+details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sugg2{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.sugg2 h4{margin:0;font-size:.95rem}
+.sugg2 ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sugg2 li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+.sugg2 .after{font-size:.8rem;color:var(--muted)}
+.sugg2 .fair{color:var(--up);font-weight:600}
 @media (max-width:720px){.sides{grid-template-columns:1fr}}
 @media (max-width:520px){h1{font-size:2.1rem} .league{grid-template-columns:1fr 1fr;gap:12px} .cmprow{grid-template-columns:70px 1fr 70px}}
 </style></head>
@@ -100,15 +116,25 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
 </section>
 
 <section aria-label="Trade">
+  <div class="slp" id="slp">
+    <span id="slpNone">Play on Sleeper? <a href="../league/">Load your league</a> to fill in its settings and trade from real rosters.</span>
+    <span id="slpOn" hidden style="display:contents"><b id="slpName"></b>
+      <label>Your team <select id="slpMe"></select></label>
+      <label>Trade partner <select id="slpWith"></select></label>
+      <a class="small" id="slpPage" href="../league/">League rankings</a></span>
+    <span class="small muted" id="slpMsg" role="status"></span>
+  </div>
   <div class="sides">
     <div class="side" style="--c:var(--sideA)" id="sideA">
       <div class="head"><h3>You give</h3><span class="total" id="totA">0</span></div>
       <div class="search"><input type="search" id="qA" placeholder="Add a player or pick" aria-label="Add a player or pick to the side you give" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sgA" aria-autocomplete="list"><ul class="sugg" id="sgA" role="listbox" hidden></ul></div>
+      <details class="rost" id="rsA" hidden><summary></summary><ul></ul></details>
       <ul class="assets" id="lsA"></ul>
     </div>
     <div class="side" style="--c:var(--sideB)" id="sideB">
       <div class="head"><h3>You get</h3><span class="total" id="totB">0</span></div>
       <div class="search"><input type="search" id="qB" placeholder="Add a player or pick" aria-label="Add a player or pick to the side you get" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sgB" aria-autocomplete="list"><ul class="sugg" id="sgB" role="listbox" hidden></ul></div>
+      <details class="rost" id="rsB" hidden><summary></summary><ul></ul></details>
       <ul class="assets" id="lsB"></ul>
     </div>
   </div>
@@ -117,6 +143,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
     <div class="big" id="vBig">Add players to both sides</div>
     <p class="small muted" id="vSub">Type a name in either box. Values update the moment you change the league or switch between redraft and dynasty.</p>
     <div class="cmp" id="cmp"></div>
+    <div class="sugg2" id="fill" hidden></div>
     <div class="actions">
       <button type="button" class="btn" id="share">Copy link to this trade</button>
       <button type="button" class="btn" id="swap">Swap sides</button>
@@ -144,6 +171,7 @@ ul.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;m
 <script src="../trade-values/data/tv.js"></script>
 <script src="../shared/league.js"></script>
 <script src="../shared/engine.js"></script>
+<script src="../shared/sleeper.js"></script>
 <script>
 (function(){
 const D = window.TV;
@@ -167,9 +195,16 @@ const compute = () => E.compute(S);
 let C = null;
 
 // ---------- assets ----------
-const isPick = id => id.startsWith("k:");
+const isPick = id => id.startsWith("k:") || id.startsWith("s:");
 const pickLabel = id => `2027 Pick ${id.slice(2)}`;
+// Sleeper league (shared/sleeper.js): M = league with rosters and owned picks, ME / WITH = roster ids. Owned picks are "s:<season>.<round>.<original roster>"
+const SL = window.PASleeper; let M = null, ME = null, WITH = null;
+const sleeperPick = id => { if (!M) return null; for (const t of M.teams) { const p = t.picks.find(x=>x.id===id); if (p) return {p, t}; } return null; };
 function asset(id){
+  if (id.startsWith("s:")) { const f = sleeperPick(id);
+    if (!f) return {id, name:"Draft pick", p:"PICK", meta:"Load the Sleeper league to value this pick", v:0, note:""};
+    const pv = SL.pickValue(f.p, C, S, MODE), from = M.byRid[f.p.orig];
+    return {id, name: SL.pickName(f.p), p:"PICK", meta: (from && from.rid!==f.t.rid ? "From "+from.name+" · " : from ? from.name+"'s own · " : "") + pv.note, v: pv.v, note: pv.valued ? "" : ""}; }
   if (isPick(id)) { const pk = C.picks.find(p=>p.id===id);
     return {id, name:pickLabel(id), p:"PICK", meta: pk ? "2027 rookie pick" : `Not in a ${S.teams}-team draft`,
             v: MODE==="d" ? (pk ? pk.v : 0) : 0, note: MODE==="r" ? "Picks count in dynasty only" : ""}; }
@@ -231,6 +266,7 @@ function list(side, ids){
   return tot;
 }
 function render(){
+  if (M) SL.price(M, C, D, S, MODE);     // values every Sleeper roster player for this league and mode
   $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===MODE));
   panel.mark();
   const per = ["1 QB", `${S.rb} RB`, `${S.wr} WR`, `${S.te} TE`]; if (S.flex) per.push(`${S.flex} FLEX`); if (S.sf) per.push("SF");
@@ -251,15 +287,75 @@ function render(){
   }
   const scale = Math.max(ta, tb, 1);
   cmp.innerHTML = [["You give", ta, "--sideA"], ["You get", tb, "--sideB"]].map(([l,v,c])=>`<div class="cmprow"><span class="small">${l}</span><div class="track"><div class="fill" style="width:${(100*v/scale).toFixed(1)}%;background:var(${c})"></div></div><span class="num small" style="text-align:right">${fmt(v)}</span></div>`).join("");
+  drawFill(ta, tb); drawRosters();
   saveState(); boxes.forEach(b=>b.refresh());
 }
+// ---------- uneven trade: suggest assets close to the gap ----------
+// The side getting less needs more. If you get more, the suggestions come from your roster (add to "You give");
+// if you get less, from your trade partner's roster (add to "You get"). Without a Sleeper league: from the whole board.
+function teamAssets(rid){ const t = M && M.byRid[rid]; if (!t) return null;
+  return t.players.filter(p=>p.i!=null).map(p=>"p:"+p.i).concat(MODE==="d" ? t.picks.map(p=>p.id) : []); }
+function drawFill(ta, tb){
+  const box = $("fill"), d = tb - ta, mx = Math.max(ta, tb), gap = Math.abs(d);
+  if (!A.length || !B.length || mx<=0 || gap/mx < 0.10) { box.hidden = true; return; }
+  const addTo = d>0 ? "A" : "B", rid = addTo==="A" ? ME : WITH, used = new Set([...A, ...B]);
+  const fromTeam = M && rid ? M.byRid[rid] : null;
+  let ids = fromTeam ? teamAssets(rid) : allAssets().map(a=>a.id).filter(id=>!(isPick(id) && MODE==="r"));
+  const cand = ids.filter(id=>!used.has(id)).map(asset).filter(a=>a.v>0)
+    .map(a=>{ const na = addTo==="A" ? ta+a.v : ta, nb = addTo==="B" ? tb+a.v : tb, left = nb-na;
+      return {a, left, fair: Math.abs(left)/Math.max(na, nb) < 0.10, off: Math.abs(a.v-gap)}; })
+    .sort((x,y)=>x.off-y.off).slice(0,3);
+  const who = fromTeam ? (addTo==="A" ? "your roster" : esc(fromTeam.name)+"'s roster") : "the full board";
+  box.innerHTML = `<h4>${addTo==="A" ? `To make it fair for them, add about <span class="num">${fmt(gap)}</span> to "You give"` : `To even it up, ask for about <span class="num">${fmt(gap)}</span> more in "You get"`}</h4>` +
+    (cand.length ? `<p class="small muted">Closest to the gap, from ${who}:</p><ul>${cand.map(c=>`<li><div><div>${pchip(c.a.p)} <b>${esc(c.a.name)}</b>${stTag(c.a)} <span class="muted small">${esc(c.a.meta)}</span></div>
+      <div class="after">${c.fair ? `<span class="fair">Makes it too close to call</span> (${fmt(Math.abs(c.left))} apart)` : `Still ${fmt(Math.abs(c.left))} apart, ${(c.left>0)===(d>0) ? "same way" : "now leaning the other way"}`}</div></div>
+      <span class="num small">${fmt(c.a.v)}</span><button type="button" class="btn" data-add="${esc(c.a.id)}" data-side="${addTo}">Add</button></li>`).join("")}</ul>`
+      : `<p class="small muted">Nothing left on ${who} with value. Try taking something off the other side.</p>`) +
+    (!M ? `<p class="small muted"><a href="../league/">Load your Sleeper league</a> to get suggestions from real rosters.</p>` : !fromTeam ? `<p class="small muted">Pick ${addTo==="A"?"your team":"a trade partner"} above to get suggestions from that roster.</p>` : "");
+  box.hidden = false;
+}
+$("fill").addEventListener("click", e=>{ const b = e.target.closest("button[data-add]"); if (!b) return; (b.dataset.side==="A"?A:B).push(b.dataset.add); render(); });
+// ---------- Sleeper rosters to tap from ----------
+function drawRosters(){
+  [["A", ME, "Your roster"], ["B", WITH, "Their roster"]].forEach(([side, rid, lab])=>{
+    const el = $("rs"+side), t = M && rid ? M.byRid[rid] : null; if (!t) { el.hidden = true; return; }
+    const used = new Set([...A, ...B]), ids = teamAssets(rid), as = ids.map(asset).sort((x,y)=>y.v-x.v);
+    el.querySelector("summary").textContent = `${lab}: ${t.name} (${as.length})`;
+    el.querySelector("ul").innerHTML = as.map(a=>`<li><button type="button" data-id="${esc(a.id)}" data-side="${side}"${used.has(a.id)?" disabled":""}><span class="nm">${pchip(a.p)} ${esc(a.name)}${stTag(a)} <span class="muted small">${esc(a.meta)}</span></span><span class="num small">${fmt(a.v)}</span></button></li>`).join("");
+    el.hidden = false; });
+}
+["A","B"].forEach(side=>$("rs"+side).addEventListener("click", e=>{ const b = e.target.closest("button[data-id]"); if (!b || b.disabled) return; (side==="A"?A:B).push(b.dataset.id); render(); }));
+function drawSleeper(){
+  $("slpNone").hidden = !!M; $("slpOn").hidden = !M; if (!M) return;
+  $("slpName").textContent = "Sleeper · " + M.name;
+  const opts = [...M.teams].sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<option value="${t.rid}">${esc(t.name)}</option>`).join("");
+  $("slpMe").innerHTML = `<option value="">Choose</option>` + opts; $("slpMe").value = ME || "";
+  $("slpWith").innerHTML = `<option value="">Choose</option>` + [...M.teams].filter(t=>t.rid!==ME).sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<option value="${t.rid}">${esc(t.name)}</option>`).join(""); $("slpWith").value = WITH || "";
+  $("slpPage").href = `../league/?sleeper=${M.id}`;
+}
+async function loadSleeper(id, me, wth){
+  $("slpMsg").textContent = "Loading your Sleeper league…";
+  try {
+    const [X, raw] = await Promise.all([SL.crosswalk("../"), SL.fetchLeague(id)]);
+    M = SL.build(raw, X);
+    const old = SL.recall();
+    if (!old || old.league!==M.id) { S = Object.assign({}, SL.settings(raw.league).S); L.save(S); C = compute(); }   // a shared link: use that league's settings
+    ME = me && M.byRid[me] ? me : (old && old.league===M.id && old.me) || null; WITH = wth && M.byRid[wth] && wth!==ME ? wth : null;
+    SL.remember({league:M.id, name:M.name, me:ME});
+    $("slpMsg").textContent = "";
+    drawSleeper(); render();
+  } catch(e){ M = null; $("slpMsg").textContent = "Couldn't load the Sleeper league right now."; drawSleeper(); }
+}
+$("slpMe").addEventListener("change", ()=>{ ME = Number($("slpMe").value) || null; if (WITH===ME) WITH = null; SL.remember({league:M.id, name:M.name, me:ME}); drawSleeper(); render(); });
+$("slpWith").addEventListener("change", ()=>{ WITH = Number($("slpWith").value) || null; drawSleeper(); render(); });
 ["A","B"].forEach(side=>$("ls"+side).addEventListener("click", e=>{ const b = e.target.closest("button.x"); if (!b) return;
   const arr = side==="A"?A:B, i = arr.indexOf(b.dataset.id); if (i>=0) arr.splice(i,1); render(); }));
 
 // ---------- state: league shared with /trade-values/; trade kept in the address so it can be shared ----------
 const playerIdx = {}; D.players.forEach((pl,i)=>playerIdx[norm(pl.n)+"|"+pl.p]=i);
-const enc = id => isPick(id) ? "pick-"+id.slice(2) : (()=>{ const pl = D.players[+id.slice(2)]; return pl.n+"|"+pl.p; })();
+const enc = id => id.startsWith("s:") ? "spick-"+id.slice(2) : isPick(id) ? "pick-"+id.slice(2) : (()=>{ const pl = D.players[+id.slice(2)]; return pl.n+"|"+pl.p; })();
 function dec(s){ const m = /^pick-([123])\.(\d\d)$/.exec(s); if (m) return `k:${m[1]}.${m[2]}`;
+  const sp = /^spick-(\d{4}\.\d{1,2}\.\d{1,3})$/.exec(s); if (sp) return "s:"+sp[1];
   const [n,p] = s.split("|"), i = playerIdx[norm(n||"")+"|"+(p||"")]; return i==null ? null : "p:"+i; }
 function saveState(){
   const s = L.serialize(S), isDef = L.isDefault(S);
@@ -269,6 +365,7 @@ function saveState(){
     u.searchParams.set("mode", MODE==="d" ? "dynasty" : "redraft");
     A.length ? u.searchParams.set("give", A.map(enc).join("~")) : u.searchParams.delete("give");
     B.length ? u.searchParams.set("get", B.map(enc).join("~")) : u.searchParams.delete("get");
+    if (M) { u.searchParams.set("sleeper", M.id); ME ? u.searchParams.set("me", ME) : u.searchParams.delete("me"); WITH ? u.searchParams.set("with", WITH) : u.searchParams.delete("with"); }
     history.replaceState(null, "", u); } catch(e){}
   if (window.PANav) window.PANav.update();
 }
@@ -290,7 +387,11 @@ $("share").addEventListener("click", ()=>{ const msg = $("shareMsg");
   const done = ok => { msg.textContent = ok ? "Link copied." : "Copy the page address to share this trade."; setTimeout(()=>msg.textContent="", 3000); };
   try { navigator.clipboard.writeText(location.href).then(()=>done(true), ()=>done(false)); } catch(e){ done(false); } });
 
-C = compute(); render();
+C = compute(); render(); drawSleeper();
+(function(){ let qs = null; try { qs = new URLSearchParams(location.search); } catch(e){}
+  const id = qs && qs.get("sleeper"), old = SL && SL.recall();
+  if (SL && id && SL.isLeagueId(id)) loadSleeper(id, Number(qs.get("me"))||null, Number(qs.get("with"))||null);
+  else if (SL && old) loadSleeper(old.league, old.me, null); })();
 })();
 </script>
 </body></html>

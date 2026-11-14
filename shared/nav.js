@@ -16,9 +16,9 @@
     ["dash",     "Dashboard",     "",                  []],
     ["lab",      "Prospect Lab",  "pre-draft/",        [["pre-draft/","Pre-draft rankings"],["post-draft/","Post-draft rankings"],["pre-draft/#class-2027","2027 class"],["post-draft/#mock-2027","2027 mock draft"],["compare/?for=prospects","Prospect comparisons"],["pre-draft/#does-it-work","Model validation"]]],
     ["values",   "Player Values", "trade-values/",     [["trade-values/?mode=dynasty","Dynasty"],["trade-values/?mode=redraft","Redraft"],["trade-values/?mode=dynasty&pos=PICK","Rookie pick values"],["compare/","Player comparisons"],["trade-values/?open=league","League settings"]]],
-    ["trade",    "Trade Center",  "trade-calculator/", [["trade-calculator/","Trade calculator"],["value-research/","Market check"],["buy-sell/","Buy / Sell"]]],
+    ["trade",    "Trade Center",  "trade-calculator/", [["trade-calculator/","Trade calculator"],["league/","Sleeper league"],["value-research/","Market check"],["buy-sell/","Buy / Sell"]]],
     ["research", "Research",      "research/",         [["research/","Overview"],["guide/","Plain-English guide"],["research/#methodology","Methodology"],["track-record/","Backtesting"],["research/#data-status","Data and limitations"],["about/","About"]]]];
-  const FOLDER = {"":"dash","pre-draft":"lab","post-draft":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"trade",
+  const FOLDER = {"":"dash","pre-draft":"lab","post-draft":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"trade","league":"trade",
                   "research":"research","guide":"research","track-record":"research","about":"research","compare":"values","player":""};
   const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";
   const sec = here==="compare" && /[?&]for=prospects/.test(location.search) ? "lab" : FOLDER[here] != null ? FOLDER[here] : (root==="" ? "dash" : "");
