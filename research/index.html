@@ -117,15 +117,15 @@ let M = null; try { M = JSON.parse(mt); } catch(e){}
 const tbl = document.getElementById("dsTbl");
 if (!M) { tbl.innerHTML = `<tbody><tr><td class="muted">The data manifest didn't load. The pages still work; this table just can't describe them.</td></tr></tbody>`; return; }
 const v = M.values||{}, p = M.prospects||{}, ids = M.ids||{}, F = M.files||{};
-const ver = path => F[path] ? `<span class="num muted small" title="Fingerprint of the published file: it changes whenever the data changes">v ${esc(F[path].sha)}</span>` : "";
+const ver = path => F[path] ? `<span class="num muted small" title="Fingerprint of the published file: it changes whenever the data changes">v ${esc(F[path].sha)}</span>${F[path].updated ? `<br><span class="small muted">file changed ${esc(F[path].updated)}</span>` : ""}` : "";
 const movers = mv ? mv.trim().split(/\r?\n/).length - 1 : 0;
 const rows = [
   ["Player values", `<b>${esc(v.asof)}</b>`, `${v.players} NFL players + 2027 rookie picks`, esc(v.projected), ver("trade-values/data/tv.js")],
   ["Pre-draft grades", `Classes ${esc(p.pre_classes)}`, `${p.pre_rows} prospects, ${p.pre_projected_2027} of them 2027 projections`, esc(p.projected), ver("pre-draft/data/pd_player_grades.csv")],
   ["Post-draft grades", "Drafted classes 2010-2026", `${p.post_rows} drafted players`, "Actual draft slot and team; NFL results so far are actual.", ver("post-draft/data/pd_post_player_grades.csv")],
   ["2027 mock grades", "Renner mock", `${p.mock_2027} skill-position picks`, "Mock picks stand in for draft capital until the real draft.", ver("post-draft/data/pd_post_2027_mock_grades.csv")],
-  ["Market comparison", `Dynasty Daddy snapshot ${esc((window.DD&&window.DD.asof)||"–")}`, "Fixed 12-team superflex 0.5 PPR", "Comparison only; never used in our values.", ""],
-  ["Risers and fallers", movers ? `${movers} rows` : "Not published yet", "Week-over-week value changes", movers ? "Actual changes between two weekly value builds." : "Appears after the next weekly refresh.", ""],
+  ["Market comparison", `Dynasty Daddy snapshot ${esc((window.DD&&window.DD.asof)||"–")}`, "Fixed 12-team superflex 0.5 PPR", "Comparison only; never used in our values.", ver("value-research/data/dd.js")],
+  ["Risers and fallers", movers ? `${movers} rows` : "Not published yet", "Week-over-week value changes", movers ? "Actual changes between two weekly value builds." : "Appears after the next weekly refresh.", ver("data/movers.csv")],
   ["Player ids", `Built ${esc(String(M.built).slice(0,10))}`, `${ids.players} people, ${ids.with_nfl_id} with an official NFL id`, ids.unmatched_value_players && ids.unmatched_value_players.length ? `${ids.unmatched_value_players.length} valued players matched by name only` : "Every valued player matched to an NFL id.", ""]];
 tbl.innerHTML = `<thead><tr><th>Data</th><th>Updated</th><th>Coverage</th><th>Projected or actual</th><th>Version</th></tr></thead><tbody>` +
   rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td class="small">${r[2]}</td><td class="small">${r[3]}</td><td>${r[4]}</td></tr>`).join("") + `</tbody>`;

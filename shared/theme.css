@@ -2,7 +2,7 @@
  * Loaded before each page's own <style>, so page rules can still refine a component. Colors live only here, as tokens.
  * Sections: tokens · base · layout · controls · tables · chips and tags · cards and tiles · notices · site menu · search · utilities
  */
-:root, .pa-top .pa-results{
+:root, .pa-top .pa-results, .pa-top .pa-lgpop{
   color-scheme:light;
   --bg:#f3f5f9; --bg-2:#e9edf3; --panel:#ffffff; --panel-2:#f2f5f9; --raise:#e6ebf2;
   --ink:#0f1d33; --ink-2:#34455f; --muted:#5d6d84; --line:#dce3ec; --line-2:#c6d0dd;
@@ -141,7 +141,6 @@ footer{border-top:1px solid var(--line);padding-top:16px;font-size:.82rem;color:
 .pa-drawer .grp a:not(.gh){color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;font-size:.92rem}
 .pa-drawer .grp a[aria-current]:not(.gh){color:var(--ink)}
 .pa-drawer .lg{margin-top:10px;display:inline-block}
-@media (max-width:1180px){ .pa-top .lg-wide{display:none} }
 @media (max-width:1020px){ .pa-top .main a{padding:0 8px;font-size:.84rem} }
 @media (max-width:860px){
   .pa-top .main,.pa-top .lg-wide{display:none}
@@ -169,11 +168,31 @@ footer{border-top:1px solid var(--line);padding-top:16px;font-size:.82rem;color:
 .pa-res .acts a{color:var(--accent-2);text-decoration:none}
 .pa-res .acts a:hover{text-decoration:underline}
 .pa-results .none,.pa-results .hint{padding:10px;color:var(--muted);font-size:.85rem}
+/* one search: a Search button in the menu on every page; it opens the search field over the menu bar (on the Dashboard it goes to the big box) */
+.pa-top .bar{position:relative}
+.pa-top .pa-search{display:none}
+.pa-top.searching .pa-search{display:block;position:absolute;right:max(12px,calc((100% - 1180px)/2 + 12px));top:9px;width:min(560px,calc(100% - 24px));z-index:61}
+.pa-top.searching .pa-search input{padding:9px 10px 9px 32px;font-size:.92rem}
+.pa-top.searching .pa-results{left:0;right:auto;width:100%}
+.srchbtn{font:inherit;display:inline-flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line-2);color:var(--ink-2);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:.84rem;white-space:nowrap}
+.srchbtn:hover{border-color:var(--accent);color:var(--ink)}
+.srchbtn kbd{font-family:var(--f-mono);font-size:.64rem;color:var(--muted);border:1px solid var(--line-2);border-radius:3px;padding:0 4px}
+@media (max-width:1100px){ .srchbtn span,.srchbtn kbd{display:none} .srchbtn{width:38px;height:38px;justify-content:center;padding:0} }
 @media (max-width:860px){
-  .pa-top .pa-search{display:none}
-  .pa-top.searching .pa-search{display:block;position:absolute;left:12px;right:12px;top:9px;width:auto;z-index:61}
+  .pa-top.searching .pa-search{left:12px;right:12px;width:auto}
   .pa-top.searching .pa-results{position:fixed;left:8px;right:8px;width:auto;top:calc(var(--nav-h) + 4px)}
 }
+/* league settings panel, opened in place from the league badge */
+.pa-lgpop{position:absolute;right:max(12px,calc((100% - 1180px)/2 + 12px));top:calc(var(--nav-h) - 4px);width:min(760px,calc(100vw - 24px));max-height:calc(100vh - var(--nav-h) - 16px);overflow:auto;z-index:70;
+  background:var(--panel);color:var(--ink);border:1px solid var(--line-2);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:12px}
+.pa-lgpop .hd{display:flex;flex-direction:column;gap:2px}
+.pa-lgpop .cur{background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:var(--ink-2)}
+.pa-lgpop .pa-lgset{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 16px}
+.pa-lgpop .setting{display:flex;flex-direction:column;gap:4px;min-width:0}
+.pa-lgpop .setting .lbl{font-family:var(--f-mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.pa-lgpop .setting .tabs button{padding:3px 9px;font-size:.8rem}
+.pa-lgpop .ft{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:sticky;bottom:-16px;background:var(--panel);padding:8px 0 0;border-top:1px solid var(--line)}
+.pa-top button.lg{font:inherit;font-family:var(--f-mono);font-size:.7rem}
 
 /* ---------- utilities ---------- */
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}

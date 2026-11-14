@@ -74,11 +74,12 @@
       `<div class="acts"><a href="${esc(p.href)}">All pick values</a><a href="${esc(p.calc)}">+ Add to trade</a></div></div>`;
   }
   // asset mode (Dashboard trade launcher): players with a value and 2027 picks, one line each
-  function assetRows(DB, q){
+  // sheet "d" (dynasty: players and picks) or "r" (redraft: players only, rest-of-2026 values)
+  function assetRows(DB, q, sheet){
     if (!DB.E) return [];
-    const C = DB.E.compute(window.PALeague.load()), t = norm(q), words = t.split(" ");
-    const out = DB.D.players.map((pl,i)=>({id:pl.n+"|"+pl.p, n:pl.n, p:pl.p, tm:pl.tm, v:C.d[i], k:norm(pl.n)}));
-    C.picks.forEach(pk=>out.push({id:"pick-"+pk.slot, n:pk.n, p:"PICK", tm:"", v:pk.v, k:norm(pk.n+" pick rookie "+pk.slot)}));
+    const C = DB.E.compute(window.PALeague.load()), t = norm(q), words = t.split(" "), red = sheet==="r";
+    const out = DB.D.players.map((pl,i)=>({id:pl.n+"|"+pl.p, i, n:pl.n, p:pl.p, tm:pl.tm, v:red ? C.r[i] : C.d[i], k:norm(pl.n)}));
+    if (!red) C.picks.forEach(pk=>out.push({id:"pick-"+pk.slot, slot:pk.slot, n:pk.n, p:"PICK", tm:"", v:pk.v, k:norm(pk.n+" pick rookie "+pk.slot)}));
     return out.filter(a=>words.every(w=>a.k.includes(w))).sort((a,b)=>(b.k.startsWith(t)-a.k.startsWith(t)) || b.v-a.v).slice(0,8);
   }
 
@@ -92,7 +93,7 @@
       if (!q) { close(); return; }
       if (!DB) { box.innerHTML = `<div class="hint">Loading players…</div>`; box.hidden = false; DB = await load(root); if (my!==seq) return; }
       if (mode==="asset") {
-        items = assetRows(DB, q);
+        items = assetRows(DB, q, opt.sheet ? opt.sheet() : "d");
         box.innerHTML = items.length ? items.map((a,j)=>`<div class="pa-res" role="option" id="${input.id}O${j}" data-j="${j}" aria-selected="${j===0}"><div class="top"><span class="nm">${esc(a.n)}</span>${posb(a.p)}<span class="meta">${esc(a.tm||"")}</span><span class="num" style="margin-left:auto">${fmt(a.v)}</span></div></div>`).join("")
           : `<div class="none">No player or 2027 pick matches.</div>`;
       } else {
