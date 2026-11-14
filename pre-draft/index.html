@@ -26,7 +26,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 .ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
 .ctl label{display:flex;flex-direction:column;gap:3px;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .ctl input{cursor:text;min-width:0;width:180px}
-.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.tablebox{overflow:auto;max-height:min(680px,78vh);border:1px solid var(--line);border-radius:6px;background:var(--panel)}
 table{border-collapse:collapse;width:100%;font-size:.88rem}
 th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
 th{font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--panel);position:sticky;top:0}

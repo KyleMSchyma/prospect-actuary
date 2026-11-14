@@ -74,10 +74,10 @@ details>summary{cursor:pointer}
 details.fold,details.lgwrap,details.note{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
 
 /* ---------- tables ---------- */
-.tablebox{overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);-webkit-overflow-scrolling:touch}
+.tablebox{overflow:auto;max-height:min(680px,78vh);border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-size:.86rem}
 th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--panel-2)}
+th{font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--panel-2);position:sticky;top:0;z-index:2}
 tbody tr:hover td{background:var(--hover)}
 td.r,th.r{text-align:right}
 tr:last-child td{border-bottom:none}
