@@ -64,10 +64,10 @@
         dyn.push({i, n:pl.n, st:pl.st, p:pl.p, tm:pl.tm, a:pl.a, dp:pl.dp, g:pl.g, ppg:x[0], cppg:x[1], rep:r, parts, p27:x[4], p30:x[10], s30:x[x.length-1], raw:v});
       });
       // 2027 rookie picks: each prospect's value for this league, sorted; pick 1.01 = best value, 1.02 = second ...
-      const pv = D.picks ? D.picks.pros.map(pr=>tierValue(S, RD, pr.p, pr.P, pr.d[kp(pr.p)]) || 0).sort((a,b)=>b-a) : [];
+      const pvx = D.picks ? D.picks.pros.map((pr,j)=>({j, v:tierValue(S, RD, pr.p, pr.P, pr.d[kp(pr.p)]) || 0})).sort((a,b)=>b.v-a.v) : [], pv = pvx.map(x=>x.v);
       const pickRows = [];
       for (let s=0; s<3*S.teams && s<pv.length; s++){ const rd = Math.floor(s/S.teams)+1, pk = s%S.teams+1, lab = `${rd}.${String(pk).padStart(2,"0")}`;
-        pickRows.push({id:"k:"+lab, slot:lab, n:`2027 Pick ${lab}`, p:"PICK", pick:true, raw:pv[s]}); }
+        pickRows.push({id:"k:"+lab, slot:lab, n:`2027 Pick ${lab}`, p:"PICK", pick:true, raw:pv[s], src:pvx[s].j}); }   // src: index in D.picks.pros of the prospect this slot is priced as
       const topR = Math.max(...red.map(r=>r.raw)), topD = Math.max(...dyn.map(r=>r.raw));
       red.forEach(r=>r.v = 1e5*r.raw/topR); dyn.forEach(r=>r.v = 1e5*r.raw/topD); pickRows.forEach(r=>r.v = 1e5*r.raw/topD);
       const rank = rows => { rows.sort((a,b)=>b.v-a.v); const pc = {};

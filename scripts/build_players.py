@@ -20,7 +20,7 @@ Validation (a failed check writes nothing, so the published files stay as they w
 usage: python3 scripts/build_players.py [--site .] [--nflverse DIR] [--check-only]
        (downloads the two nflverse files when --nflverse is not given)
 """
-import argparse, csv, hashlib, io, json, os, re, sys, unicodedata, urllib.request, datetime, collections
+import argparse, csv, hashlib, io, json, os, re, subprocess, sys, unicodedata, urllib.request, datetime, collections
 
 POS = {"QB", "RB", "WR", "TE"}
 GRADES = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"}
@@ -66,6 +66,15 @@ def to_int(x):
     try:
         return int(float(x))
     except (TypeError, ValueError):
+        return None
+
+
+def last_commit(site, path):
+    """Date of the last commit that changed a published file (YYYY-MM-DD), or None outside a git checkout."""
+    try:
+        out = subprocess.run(["git", "-C", site, "log", "-1", "--format=%cs", "--", path], capture_output=True, text=True, timeout=30)
+        return out.stdout.strip() or None
+    except Exception:
         return None
 
 
@@ -256,9 +265,10 @@ def main():
         "ids": {"players": len(out), "with_nfl_id": sum(1 for r in out if r.get("gsis")), "unmatched_value_players": unmatched},
         # fingerprint of each published input: changes whenever the file's contents change (the "data version" shown on the site)
         "files": {p: {"sha": hashlib.sha256(open(os.path.join(site, p), "rb").read()).hexdigest()[:10],
-                      "bytes": os.path.getsize(os.path.join(site, p))}
+                      "bytes": os.path.getsize(os.path.join(site, p)), "updated": last_commit(site, p)}
                   for p in ["pre-draft/data/pd_player_grades.csv", "post-draft/data/pd_post_player_grades.csv",
-                            "post-draft/data/pd_post_2027_mock_grades.csv", "trade-values/data/tv.js"] if os.path.exists(os.path.join(site, p))},
+                            "post-draft/data/pd_post_2027_mock_grades.csv", "pre-draft/data/rookie_board_values.csv",
+                            "trade-values/data/tv.js", "value-research/data/dd.js", "data/movers.csv"] if os.path.exists(os.path.join(site, p))},
         "checks": ["every row of every grade and value file has exactly one player id", "no two players share an id",
                    "positions and grades are valid", "at most 10% of valued players lack an NFL id",
                    "at most 2% of ids disappear and the player count moves at most 10% from the last build"],

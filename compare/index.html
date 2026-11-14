@@ -22,7 +22,7 @@ table.cmp td.best{color:var(--up);font-weight:600}
 .empty{padding:28px 0;color:var(--muted)}
 .note{font-size:.8rem;color:var(--muted);max-width:none}
 .addrow{margin-top:6px}
-@media (max-width:620px){ table.cmp{min-width:0} table.cmp td.lab{white-space:normal;min-width:96px;max-width:112px} table.cmp th.who{min-width:128px} table.cmp td{font-size:.8rem} }
+@media (max-width:620px){ table.cmp{min-width:0} table.cmp td.lab{white-space:normal;min-width:96px;max-width:112px} table.cmp th.who{min-width:128px} table.cmp td{font-size:.86rem} }
 </style></head>
 <body><div class="wrap">
 <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
@@ -70,7 +70,9 @@ function setUrl(){ try { const u = new URL(location.href); if (ids.length) u.sea
 function draw(){
   setUrl(); $("count").textContent = ids.length >= MAX ? `${MAX} players (the most). Remove one to add another.` : ids.length ? `${ids.length} of ${MAX}` : "";
   $("addQ").disabled = ids.length >= MAX;
-  if (!ids.length) { $("out").innerHTML = `<p class="empty">Search above to add a player. Tip: the Compare button on any player profile starts a comparison with him.</p>`; return; }
+  if (!ids.length) { $("out").innerHTML = /[?&]for=prospects/.test(location.search)
+    ? `<p class="empty">Search above to add prospects, for example two 2027 receivers. Prospects are compared on their grades and tier odds (within position) and their projected value in your league. Tip: the Compare button on any profile starts a comparison with that player.</p>`
+    : `<p class="empty">Search above to add a player. Tip: the Compare button on any player profile starts a comparison with him.</p>`; return; }
   const P = ids.map(id=>{ const p = DB.byId[id], R = DB.rows(p), V = DB.values(p, S); return {p, R, V, pr: R.post || R.mock, pre: R.pre}; });
   const samePos = new Set(P.map(x=>x.p.pos)).size === 1;
   // rows: [label, cells[], numeric values for "best" highlight or null]
