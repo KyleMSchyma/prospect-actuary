@@ -9,7 +9,10 @@
  *   PALeague.panel(el, get, set, setAll) -> draws the settings buttons into el, with named leagues saved in this browser ("pa-leagues")
  */
 (function(){
-  const DEF = {teams:12, ppr:1, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:0, fdQB:0, fdRB:0, fdWR:0, fdTE:0};
+  const DEF = {teams:12, ppr:1, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:2, fdQB:0, fdRB:0, fdWR:0, fdTE:0};   // 2 FLEX since Nov 15, 2026
+  // Before Nov 15, 2026 the default had no flex, and the Trade Calculator stored the league on every visit. A browser holding exactly
+  // that old default (checked once per browser, "pa-tv-league-v") never chose it, so it moves to the new default. Any other saved league is kept.
+  const OLD_DEF = "12_1_0_4_1_2_3_1_0_0_0_0_0", VER = "2";
   const FDO = [[0,"0"],[0.25,".25"],[0.5,".5"],[0.75,".75"],[1,"1"]];
   const OPTS = [
     ["teams","Teams",[[8,"8"],[10,"10"],[12,"12"],[14,"14"]]],
@@ -35,7 +38,9 @@
   const isDefault = S => ORDER.every(k=>S[k]===DEF[k]);
   function load(){
     const q = qs(); let s = q && q.get("league");
-    if (!parse(s)) { s = null; try { s = localStorage.getItem("pa-tv-league"); } catch(e){} }
+    if (!parse(s)) { s = null; try { s = localStorage.getItem("pa-tv-league");
+      if (localStorage.getItem("pa-tv-league-v") !== VER) { const p = parse(s); if (p && serialize(p) === OLD_DEF) { localStorage.removeItem("pa-tv-league"); s = null; }
+        localStorage.setItem("pa-tv-league-v", VER); } } catch(e){} }
     return parse(s) || Object.assign({}, DEF);
   }
   function save(S, opt){

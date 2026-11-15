@@ -119,7 +119,7 @@ worth the same. Both grade boards show **Value**: each player's expected dynasty
 the same 100,000-point scale as the Trade Values page, for the league you set on that page
 (every setting there: teams, scoring, TE premium, superflex, starters, flex, first-down bonus;
 saved in your browser), or the default league (12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE,
-no flex) if you haven't set one. The All tab is sorted by it.
+2 FLEX) if you haven't set one. The All tab is sorted by it.
 
 **How it's built.** His chance of each fantasy tier, times what past drafted players in that
 tier actually scored over their first five seasons (games, points per game above the
@@ -155,7 +155,9 @@ position (0, 0.25, 0.5, 0.75 or 1 per rushing or receiving first down, never pas
 starting RB (2-3), WR (2-3), TE (1-2) and FLEX (0-3). Scoring changes the points themselves, so each scoring
 setting has its own fitted model. Lineup settings set the replacement line: every team fills its position
 slots, then FLEX, then SUPERFLEX, each with the best player left; the last starter at each position is the
-line. The default (12 teams, superflex, 2 RB, 3 WR, 1 TE, no flex) gives QB24 / RB24 / WR36 / TE12.
+line. The default (12 teams, superflex, full PPR, 2 RB, 3 WR, 1 TE, 2 FLEX; since Nov 15, 2026) gives about QB24 / RB31 / WR46 / TE19
+(the flex lines move a little each week with who is projected best). The R models' reference league (used for the
+backtests, the downloadable CSVs and the weekly snapshots) is the same league with no flex: QB24 / RB24 / WR36 / TE12.
 
 **Result.** The credible points per game beat "this season only" and "history only" at every position, and
 the value ranked weeks 10-18 better than "current pace x games left" (rank correlation 0.55-0.68 vs 0.47-0.63).
@@ -180,13 +182,13 @@ Value = sum over tiers of P(tier) x what past drafted players in that tier did i
 games, PPG, PPG spread), valued against your league's replacement line with the stop-loss upside and discounted from
 2027, times one calibration multiplier (1.03 as of November 13; 95% range about 0.73-1.34 from 84 players in 7 classes) fit so past round-1 picks match what they produced, measured the same way as players. PPG is age-adjusted with the aging model's age curve (his age vs the average rookie's at his position; age =
 about 18.6 + years out of high school). Prospects are ranked for your league: 1.01 = the best value, 1.02 the second,
-and so on through round 3. Every prospect is assumed to declare. Default league: 1.01 is about the #12 asset (57,000), the rest
-of round 1 about 19,000-34,000, round 3 about 12,000-14,000.
+and so on through round 3. Every prospect is assumed to declare. Default league (Nov 15, 2026 data): 1.01 is about the #11 asset (59,500), the rest
+of round 1 about 13,500-44,500, round 3 about 6,500-8,100.
 
 **One star vs two good players.** No extra consolidation curve: the replacement line already handles it, since
-in a shallow league the 40th-best player barely beats the waiver wire. In the default league the values nearly
-match the site's trade anchors (#1 = #8 + #20, #8 = #20 + #40, #20 = #45 + #80): the two-player side is 0.99-1.12
-times the single player.
+in a shallow league the 40th-best player barely beats the waiver wire. In the default league the values roughly
+match the site's trade anchors (#1 = #8 + #20, #8 = #20 + #40, #20 = #45 + #80): the two-player side is 0.96-1.25
+times the single player (Nov 15, 2026 data).
 
 **Result.** From week-9 snapshots of 2016-2020 with models fit only on earlier seasons, the values ranked
 the next five seasons better than "current pace continues" (rank correlation 0.70 vs 0.63), for every scoring
