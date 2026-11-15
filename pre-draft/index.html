@@ -183,7 +183,7 @@ const D = window.PD, POS = ["QB","RB","WR","TE"];
 const LV = (window.PAValue && window.PAValue.ok) ? window.PAValue : null;
 if (LV) D.players.forEach(p=>{ const x = LV.value(p.pos, p.vq, p.ag); if (x!=null) p.v = x; });
 (function(){ const el = document.getElementById("lvLabel"); if (!el) return;
-  el.innerHTML = `Value for: <b>${LV ? LV.label : "12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex"}</b>${LV && !LV.isDefault ? " (your league from the Trade Values page)" : " (default league)"}. <a href="../trade-values/">Change the league on Trade Values &rarr;</a>`; })();
+  el.innerHTML = `Value for: <b>${LV ? LV.label : "12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex"}</b>${!LV ? " (the model's reference league)" : !LV.isDefault ? " (your league from the Trade Values page)" : " (default league)"}. <a href="../trade-values/">Change the league on Trade Values &rarr;</a>`; })();
 const GR = ["A+","A","A-","B+","B","B-","C+","C","C-","D","F"];
 const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));

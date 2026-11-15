@@ -346,7 +346,7 @@ Promise.all([getText("pre-draft/data/pd_player_grades.csv"), getText("data/mover
       <div class="mfacts"><div><span class="l">First snapshot</span><span class="v">${first}</span></div><div><span class="l">Snapshots stored</span><span class="v num">${SN.length}</span></div><div><span class="l">Next comparison</span><span class="v">After the next weekly refresh (Tuesday)</span></div></div>`;
   } else {
     const per = MV[0].compared_with ? `vs ${esc(MV[0].compared_with.replace(/_week(\d+)/," (week $1)"))}` : "vs the previous weekly snapshot";
-    $("movSub").textContent = `Dynasty values, default league (12-team superflex PPR), ${per.replace(/<[^>]+>/g,"")}`;
+    $("movSub").textContent = `Dynasty values, 12-team superflex PPR, no flex (the model's reference league), ${per.replace(/<[^>]+>/g,"")}`;
     const up = MV.filter(r=>+r.value_change>0).sort((a,b)=>b.value_change-a.value_change).slice(0,5), dn = MV.filter(r=>+r.value_change<0).sort((a,b)=>a.value_change-b.value_change).slice(0,5);
     const tbl = list => `<div class="tablebox"><table><thead><tr><th>Player</th><th class="r hm">Previous</th><th class="r">Current</th><th class="r">Change</th></tr></thead><tbody>` +
       list.map(r=>{ const c = +r.value_change, pc = +r.value_before>0 ? Math.round(100*c / +r.value_before) : null;
