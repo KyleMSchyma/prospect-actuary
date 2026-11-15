@@ -87,7 +87,7 @@ if (p.college) facts.push(["College", p.college]);
 if (p.cls) facts.push([p.proj ? "Draft class" : "Draft class", p.proj ? `${p.cls} (projected, not yet drafted)` : p.cls]);
 if (p.pk) facts.push(["Draft capital", `Round ${p.rd||"?"}, pick ${p.pk}${p.dteam ? " by "+p.dteam : ""}`]);
 else if (!p.proj && p.cls) facts.push(["Draft capital", "Undrafted"]);
-if (R.mock) facts.push(["2027 mock", `Pick ${R.mock.pick}, ${R.mock.team_abbr||""} (Renner mock)`]);
+if (R.mock) facts.push(["2027 mock", `Pick ${R.mock.pick}, ${R.mock.team_abbr||""} (our 7-round mock)`]);
 if (age!=null) facts.push(["Age", f1(age) + (tvp ? "" : p.birth ? "" : " (est.)")]);
 if (R.pre && R.pre.recruit_stars) facts.push(["Recruiting", `${R.pre.recruit_stars}-star`]);
 if (R.pre && R.pre.yrs_out_of_hs!=null) facts.push(["Years out of HS", R.pre.yrs_out_of_hs]);
