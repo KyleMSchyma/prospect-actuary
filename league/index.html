@@ -31,6 +31,13 @@ td .bar{display:inline-block;height:6px;border-radius:2px;background:var(--accen
 .list .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
 .grp{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding-top:10px}
 .cards{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.nd{display:inline-block;font-family:var(--f-mono);font-size:.7rem;font-weight:600;padding:1px 5px;border-radius:3px;margin-right:3px}
+.nd.Need{background:var(--down-soft);color:var(--down)} .nd.Strength{background:var(--up-soft);color:var(--up)} .nd.OK{color:var(--muted)}
+td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
+.needs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.needs .stat .who{font-size:.78rem;color:var(--muted);white-space:normal}
+.partners{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.partners li{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;justify-content:space-between;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--bg)}
 @media (max-width:760px){.two{grid-template-columns:1fr}}
 @media (max-width:520px){h1{font-size:1.8rem}}
 </style></head>
@@ -68,13 +75,21 @@ td .bar{display:inline-block;height:6px;border-radius:2px;background:var(--accen
   <div class="teamhead"><h2 id="hRank">Team rankings</h2>
     <div class="tabs seg mode" id="mode" role="group" aria-label="Value type"><button type="button" data-v="d">Dynasty</button><button type="button" data-v="r">Redraft</button></div></div>
   <div class="row"><label class="small" for="me">Your team</label><select id="me" aria-label="Your team"></select><span class="small muted" id="meHint"></span></div>
-  <div class="tablebox"><table><thead><tr><th class="r">#</th><th>Team</th><th>Outlook</th><th class="r">Total value</th><th class="r">Starters now</th><th class="r">QB</th><th class="r">RB</th><th class="r">WR</th><th class="r">TE</th><th class="r" id="thPick">Picks</th></tr></thead><tbody id="rank"></tbody></table></div>
+  <div class="tablebox"><table><thead><tr><th class="r">#</th><th>Team</th><th>Outlook</th><th class="r">Total value</th><th class="r">Starters now</th><th class="r">QB</th><th class="r">RB</th><th class="r">WR</th><th class="r">TE</th><th class="r" id="thPick">Picks</th><th>Needs</th></tr></thead><tbody id="rank"></tbody></table></div>
   <p class="small muted" id="rankNote"></p>
+</section>
+
+<section aria-labelledby="hMap">
+  <h2 id="hMap">League needs map</h2>
+  <p class="small muted" id="mapNote"></p>
+  <div class="tablebox"><table><thead><tr><th>Team</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th></tr></thead><tbody id="map"></tbody></table></div>
 </section>
 
 <section aria-labelledby="hTeam">
   <div class="teamhead"><h2 id="hTeam">Roster</h2><div class="row"><select id="team" aria-label="Show this team's roster"></select><a class="btn primary" id="tradeBtn" href="../trade-calculator/">Trade with this team</a></div></div>
   <div class="cards" id="tiles"></div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:12px"><h3>Needs</h3><p id="needSum"></p><div class="needs" id="needs"></div>
+    <h3 style="margin-top:6px">Best trade partners</h3><p class="small muted" id="partNote"></p><ul class="partners" id="partners"></ul></div>
   <div class="two">
     <div class="panel"><h3>Players</h3><ul class="list" id="plist"></ul></div>
     <div class="panel"><h3>Draft picks</h3><ul class="list" id="klist"></ul></div>
@@ -89,6 +104,7 @@ td .bar{display:inline-block;height:6px;border-radius:2px;background:var(--accen
     <li><b>Starters now</b> is the redraft value of the team's best possible starting lineup this week, using your league's lineup. Taxi-squad players are left out of it.</li>
     <li><b>Outlook:</b> the top third of teams on Starters now are <b>Contenders</b>, the bottom third <b>Rebuilders</b>, everyone else <b>Middle</b>. A rebuilder with a big dynasty total is set up for later.</li>
     <li><b>Draft picks:</b> a 2027 pick is valued at its exact slot once your league sets the 2027 draft order. Until then it gets the average value of its round. Our values cover rounds 1 to 3.</li>
+    <li><b>Needs</b> compare each team's starters at a position with the rest of the league, in the mode you picked. A team's starters are its best players for the starting spots an average team uses at that position, flex and superflex included. Bottom third = need, top third = strength. Trade partners are teams strong where you're weak, ranked higher when they're weak where you're strong.</li>
     <li>Players we don't value yet (very deep backups, a few new signings) show a value of 0 and are counted on the roster as "not valued".</li>
   </ul>
 </section>
@@ -165,9 +181,34 @@ function draw(){
     <td class="r num"><span class="bar" style="width:${(48*t.total/top).toFixed(0)}px"></span>${fmt(t.total)}</td>
     <td class="r num">${fmt(t.now)} <span class="muted small">#${t.rkNow}</span></td>
     ${POS.map(p=>`<td class="r num">${fmt(t.pos[p])} <span class="muted small">#${t["rk"+p]}</span></td>`).join("")}
-    ${MODE==="d" ? `<td class="r num">${fmt(t.pickTotal)} <span class="muted small">#${t.rkPick}</span></td>` : ""}</tr>`).join("");
+    ${MODE==="d" ? `<td class="r num">${fmt(t.pickTotal)} <span class="muted small">#${t.rkPick}</span></td>` : ""}
+    <td>${t.needs.length ? t.needs.map(p=>`<span class="nd Need">${p}</span>`).join("") : '<span class="muted small">None</span>'}</td></tr>`).join("");
+  drawMap();
   $("rankNote").textContent = `${w[0].toUpperCase()+w.slice(1)} values for ${L.label(S)}. Small numbers are each team's rank in that column.`;
   drawTeam();
+}
+const slotTxt = () => POS.map(p=>`${M.slots[p]} ${p}`).join(", ");
+function drawMap(){
+  const n = M.teams.length;
+  $("mapNote").textContent = `Each cell is the ${MODE==="d"?"dynasty":"redraft"} value of a team's starters at that position (${slotTxt()} per team, counting flex and superflex the way the league fills them) and its rank of ${n}. Bottom third = need, top third = strength, "spare" = a backup worth at least half an average starter there.`;
+  $("map").innerHTML = [...M.teams].sort((a,b)=>a.rk-b.rk).map(t=>`<tr class="${t.rid===ME?"me":""}"><td><a href="#hTeam" data-team="${t.rid}">${esc(t.name)}</a>${t.rid===ME?' <span class="tag">You</span>':""}</td>${POS.map(p=>{ const x = t.need[p];
+    return `<td class="${x.label}"><span class="nd ${x.label}">${x.label}</span> <span class="num small">#${x.rank} · ${fmt(x.start)}</span>${x.spare?' <span class="tag">spare</span>':""}</td>`; }).join("")}</tr>`).join("");
+}
+function drawNeeds(t){
+  const n = M.teams.length, top = t.need[t.top];
+  $("needSum").innerHTML = t.needs.length
+    ? `Biggest need: <b>${t.top}</b>, #${top.rank} of ${n}, <span class="num">${fmt(-top.gap)}</span> below the league middle. ${t.strengths.length ? `Strongest at ${t.strengths.join(" and ")}.` : ""}`
+    : `No position in the bottom third. Weakest spot: <b>${t.top}</b> (#${top.rank} of ${n}).${t.strengths.length ? ` Strongest at ${t.strengths.join(" and ")}.` : ""}`;
+  $("needs").innerHTML = POS.map(p=>{ const x = t.need[p];
+    return `<div class="stat"><span class="lbl">${p} · ${M.slots[p]} starter${M.slots[p]>1?"s":""}</span><span><span class="nd ${x.label}">${x.label}</span> <span class="num">#${x.rank} of ${n}</span></span>
+      <span class="small num">${fmt(x.start)} <span class="muted">(${x.gap>=0?"+":"−"}${fmt(Math.abs(x.gap))} vs middle)</span></span>
+      <span class="who">${x.who.length ? esc(x.who.join(", ")) : "Nobody valued"}${x.next ? ` · next: ${esc(x.next)} (${fmt(x.depth)})${x.spare?" spare":""}` : ""}</span></div>`; }).join("");
+  const mine = t.rid===ME;
+  $("partNote").textContent = `Teams strong at ${t.needs.length ? t.needs.join(" or ") : t.top} (best with spare depth there), ranked higher when they also need what ${mine ? "you have" : "this team has"} to spare.`;
+  $("partners").innerHTML = t.partners.length ? t.partners.map(x=>{ const o = M.byRid[x.rid];
+    const link = mine ? `<a class="btn" href="../trade-calculator/?sleeper=${M.id}&me=${ME}&with=${x.rid}">Trade with them</a>` : `<a href="#hTeam" data-team="${x.rid}">View roster</a>`;
+    return `<li><span><b>${esc(x.name)}</b> <span class="small muted">has ${x.fills.map(p=>`${p} #${o.need[p].rank}${o.need[p].spare?" with spare depth":""}`).join(", ")}${x.wants.length ? ` · needs ${x.wants.join(", ")}` : ""}</span></span>${link}</li>`; }).join("")
+    : `<li class="small muted">No team is strong where this team needs help.</li>`;
 }
 function drawTeam(){
   const t = M.byRid[VIEW]; if (!t) return;
@@ -175,6 +216,7 @@ function drawTeam(){
     .concat(POS.map(p=>[p, fmt(t.pos[p]), `#${t["rk"+p]}`]));
   if (MODE==="d") tiles.push(["Picks", fmt(t.pickTotal), `#${t.rkPick}`]);
   $("tiles").innerHTML = tiles.map(([l,v,s])=>`<div class="stat"><span class="lbl">${l}</span><span class="big">${v}</span><span class="small muted">${s}</span></div>`).join("");
+  drawNeeds(t);
   const starters = new Set(t.lineup.map(x=>x.sid));
   const row = p => `<li><div><div class="nm">${pchip(p.pos)} ${p.i!=null ? `<a href="../player/?key=${encodeURIComponent("tv:"+p.key)}">${esc(p.name)}</a>` : esc(p.name || "Unknown player")}${p.st?` <span class="st">${esc(p.st)}</span>`:""}${p.taxi?' <span class="tag">Taxi</span>':""}${p.ir?' <span class="tag">IR slot</span>':""}</div>
     <div class="meta">${p.i!=null ? [p.tm||"FA", p.rank, p.a!=null?"age "+p.a.toFixed(1):""].filter(Boolean).join(" · ") : (p.pos ? "Not valued yet" : "Not matched to our player list")}</div></div><span class="v">${p.i!=null ? fmt(p.v) : "–"}</span></li>`;
@@ -197,6 +239,7 @@ $("form").addEventListener("submit", e=>{ e.preventDefault(); const v = $("who")
 $("mode").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; MODE = b.dataset.v; L.saveMode(MODE); draw(); });
 $("me").addEventListener("change", ()=>{ ME = Number($("me").value) || null; if (ME) VIEW = ME; SL.remember({league:M.id, name:M.name, me:ME}); draw(); });
 $("team").addEventListener("change", ()=>{ VIEW = Number($("team").value); drawTeam(); });
+["map","partners"].forEach(id=>$(id).addEventListener("click", e=>{ const a = e.target.closest("a[data-team]"); if (!a) return; VIEW = Number(a.dataset.team); drawTeam(); $("team").value = VIEW; }));
 $("rank").addEventListener("click", e=>{ const a = e.target.closest("a[data-team]"); if (!a) return; VIEW = Number(a.dataset.team); drawTeam(); $("team").value = VIEW; });
 $("undo").addEventListener("click", ()=>{ if (!PREV) return; S = PREV; PREV = null; L.save(S); $("undo").hidden = true;
   $("setSum").innerHTML = L.long(S); $("setMsg").innerHTML = `<span class="muted">Back to your previous settings. The Sleeper settings are still saved under "My leagues".</span>`; $("setNotes").innerHTML = ""; draw(); });
