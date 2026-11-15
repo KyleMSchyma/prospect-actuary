@@ -133,7 +133,7 @@
     return {v: row.reduce((a,x)=>a+x.v,0)/row.length, note:"Slot not set yet: valued at the round's average", valued:true};
   }
   // players and picks valued for a league; teams ranked
-  function price(M, C, D, S, mode){
+  function price(M, C, D, S, mode, basis){
     const idx = {}; D.players.forEach((pl,i)=>idx[pl.n+"|"+pl.p] = i);
     const val = i => mode==="d" ? C.d[i] : C.r[i], rk = mode==="d" ? C.rd : C.rr;
     M.teams.forEach(t=>{
@@ -158,21 +158,21 @@
     rankBy(t=>t.total, "rk"); rankBy(t=>t.now, "rkNow"); POS.forEach(p=>rankBy(t=>t.pos[p], "rk"+p)); rankBy(t=>t.pickTotal, "rkPick");
     const n = M.teams.length, third = Math.max(1, Math.round(n/3));
     M.teams.forEach(t=>{ t.label = t.rkNow<=third ? "Contender" : t.rkNow>n-third ? "Rebuilder" : "Middle"; });
-    needs(M, C, S, mode, third);
+    needs(M, C, S, mode, third, basis==='g' ? 'g' : 's');
     return M;
   }
   // ---------- needs: each position's starters against the rest of the league ----------
   // Starting spots per team at a position = the league-wide starters there (lineup slots, then FLEX and SUPERFLEX filled by
   // projected PPG, the same count that sets the replacement line) / teams. A team's position score = the value (this mode)
-  // of its best players for those spots. Ranked against the league: bottom third = Need, top third = Strength.
+  // of its best players for those spots (basis "s"), or of every valued player there (basis "g": whole group, depth included). Ranked against the league: bottom third = Need, top third = Strength.
   // Spare = the next player at that position is worth at least half an average starter there (tradeable depth).
-  function needs(M, C, S, mode, third){
+  function needs(M, C, S, mode, third, basis){
     const RL = mode==="d" ? C.RD : C.RR, n = M.teams.length, slots = {};
     POS.forEach(p=>slots[p] = Math.max(1, Math.round(RL.n[p]/S.teams)));
-    M.slots = slots; M.med = {};
+    M.slots = slots; M.med = {}; M.basis = basis;
     M.teams.forEach(t=>{ t.need = {}; POS.forEach(p=>{
       const vs = t.players.filter(x=>x.pos===p && x.i!=null && !x.taxi).sort((a,b)=>b.v-a.v);
-      t.need[p] = {start: vs.slice(0, slots[p]).reduce((a,x)=>a+x.v,0), who: vs.slice(0, slots[p]).map(x=>x.name), depth: vs[slots[p]] ? vs[slots[p]].v : 0, next: vs[slots[p]] ? vs[slots[p]].name : null}; }); });
+      t.need[p] = {start: (basis==="g" ? vs : vs.slice(0, slots[p])).reduce((a,x)=>a+x.v,0), n: vs.length, who: vs.slice(0, slots[p]).map(x=>x.name), depth: vs[slots[p]] ? vs[slots[p]].v : 0, next: vs[slots[p]] ? vs[slots[p]].name : null}; }); });
     POS.forEach(p=>{
       const sorted = M.teams.map(t=>t.need[p].start).sort((a,b)=>a-b), med = n%2 ? sorted[(n-1)/2] : (sorted[n/2-1]+sorted[n/2])/2;
       M.med[p] = med;

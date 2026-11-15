@@ -80,7 +80,8 @@ td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
 </section>
 
 <section aria-labelledby="hMap">
-  <h2 id="hMap">League needs map</h2>
+  <div class="teamhead"><h2 id="hMap">League needs map</h2>
+    <div class="tabs seg" id="basis" role="group" aria-label="Needs based on"><button type="button" data-v="s">Starters</button><button type="button" data-v="g">Whole group</button></div></div>
   <p class="small muted" id="mapNote"></p>
   <div class="tablebox"><table><thead><tr><th>Team</th><th>QB</th><th>RB</th><th>WR</th><th>TE</th></tr></thead><tbody id="map"></tbody></table></div>
 </section>
@@ -104,7 +105,7 @@ td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
     <li><b>Starters now</b> is the redraft value of the team's best possible starting lineup this week, using your league's lineup. Taxi-squad players are left out of it.</li>
     <li><b>Outlook:</b> the top third of teams on Starters now are <b>Contenders</b>, the bottom third <b>Rebuilders</b>, everyone else <b>Middle</b>. A rebuilder with a big dynasty total is set up for later.</li>
     <li><b>Draft picks:</b> a 2027 pick is valued at its exact slot once your league sets the 2027 draft order. Until then it gets the average value of its round. Our values cover rounds 1 to 3.</li>
-    <li><b>Needs</b> compare each team's starters at a position with the rest of the league, in the mode you picked. A team's starters are its best players for the starting spots an average team uses at that position, flex and superflex included. Bottom third = need, top third = strength. Trade partners are teams strong where you're weak, ranked higher when they're weak where you're strong.</li>
+    <li><b>Needs</b> compare each team's starters at a position with the rest of the league, in the mode you picked. Two ways to measure: <b>Starters</b> counts a team's best players for the starting spots an average team uses at that position, flex and superflex included; <b>Whole group</b> counts every valued player there, depth included. Bottom third = need, top third = strength. Trade partners are teams strong where you're weak, ranked higher when they're weak where you're strong.</li>
     <li>Players we don't value yet (very deep backups, a few new signings) show a value of 0 and are counted on the roster as "not valued".</li>
   </ul>
 </section>
@@ -124,7 +125,8 @@ const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
 const pchip = p => `<span class="pos" style="color:var(--${p||"muted"})">${p||"?"}</span>`;
 if (!D) { $("status").textContent = "The trade values didn't load. Refresh the page to try again."; return; }
 const E = window.PAEngine(D);
-let X = null, RAW = null, M = null, S = L.load(), MODE = L.loadMode(), ME = null, VIEW = null, PREV = null;
+let X = null, RAW = null, M = null, S = L.load(), MODE = L.loadMode(), ME = null, VIEW = null, PREV = null, BASIS = "s";
+try { if (localStorage.getItem("pa-needs-basis")==="g") BASIS = "g"; } catch(e){}
 const status = (t, err) => { const s = $("status"); s.textContent = t; s.classList.toggle("err", !!err); };
 
 async function loadUser(name){
@@ -167,7 +169,8 @@ async function loadLeague(id, userId, keepSettings){
 
 function draw(){
   const C = E.compute(S);
-  SL.price(M, C, D, S, MODE);
+  SL.price(M, C, D, S, MODE, BASIS);
+  $("basis").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===BASIS));
   $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===MODE));
   $("thPick").hidden = MODE!=="d";
   const opts = [...M.teams].sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<option value="${t.rid}">${esc(t.name)}${t.user && t.user!==t.name ? " ("+esc(t.user)+")" : ""}</option>`).join("");
@@ -190,7 +193,8 @@ function draw(){
 const slotTxt = () => POS.map(p=>`${M.slots[p]} ${p}`).join(", ");
 function drawMap(){
   const n = M.teams.length;
-  $("mapNote").textContent = `Each cell is the ${MODE==="d"?"dynasty":"redraft"} value of a team's starters at that position (${slotTxt()} per team, counting flex and superflex the way the league fills them) and its rank of ${n}. Bottom third = need, top third = strength, "spare" = a backup worth at least half an average starter there.`;
+  $("mapNote").textContent = (BASIS==="g" ? `Each cell is the ${MODE==="d"?"dynasty":"redraft"} value of every player a team has at that position, depth included,`
+    : `Each cell is the ${MODE==="d"?"dynasty":"redraft"} value of a team's starters at that position (${slotTxt()} per team, counting flex and superflex the way the league fills them)`) + ` and its rank of ${n}. Bottom third = need, top third = strength, "spare" = a backup worth at least half an average starter there.`;
   $("map").innerHTML = [...M.teams].sort((a,b)=>a.rk-b.rk).map(t=>`<tr class="${t.rid===ME?"me":""}"><td><a href="#hTeam" data-team="${t.rid}">${esc(t.name)}</a>${t.rid===ME?' <span class="tag">You</span>':""}</td>${POS.map(p=>{ const x = t.need[p];
     return `<td class="${x.label}"><span class="nd ${x.label}">${x.label}</span> <span class="num small">#${x.rank} · ${fmt(x.start)}</span>${x.spare?' <span class="tag">spare</span>':""}</td>`; }).join("")}</tr>`).join("");
 }
@@ -200,7 +204,7 @@ function drawNeeds(t){
     ? `Biggest need: <b>${t.top}</b>, #${top.rank} of ${n}, <span class="num">${fmt(-top.gap)}</span> below the league middle. ${t.strengths.length ? `Strongest at ${t.strengths.join(" and ")}.` : ""}`
     : `No position in the bottom third. Weakest spot: <b>${t.top}</b> (#${top.rank} of ${n}).${t.strengths.length ? ` Strongest at ${t.strengths.join(" and ")}.` : ""}`;
   $("needs").innerHTML = POS.map(p=>{ const x = t.need[p];
-    return `<div class="stat"><span class="lbl">${p} · ${M.slots[p]} starter${M.slots[p]>1?"s":""}</span><span><span class="nd ${x.label}">${x.label}</span> <span class="num">#${x.rank} of ${n}</span></span>
+    return `<div class="stat"><span class="lbl">${p} · ${BASIS==="g" ? `whole group (${x.n})` : `${M.slots[p]} starter${M.slots[p]>1?"s":""}`}</span><span><span class="nd ${x.label}">${x.label}</span> <span class="num">#${x.rank} of ${n}</span></span>
       <span class="small num">${fmt(x.start)} <span class="muted">(${x.gap>=0?"+":"−"}${fmt(Math.abs(x.gap))} vs middle)</span></span>
       <span class="who">${x.who.length ? esc(x.who.join(", ")) : "Nobody valued"}${x.next ? ` · next: ${esc(x.next)} (${fmt(x.depth)})${x.spare?" spare":""}` : ""}</span></div>`; }).join("");
   const mine = t.rid===ME;
@@ -236,6 +240,7 @@ function drawTeam(){
 
 $("form").addEventListener("submit", e=>{ e.preventDefault(); const v = $("who").value.trim(); if (!v) return;
   SL.isLeagueId(v) ? loadLeague(v) : loadUser(v); });
+$("basis").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; BASIS = b.dataset.v; try { localStorage.setItem("pa-needs-basis", BASIS); } catch(e){} draw(); });
 $("mode").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; MODE = b.dataset.v; L.saveMode(MODE); draw(); });
 $("me").addEventListener("change", ()=>{ ME = Number($("me").value) || null; if (ME) VIEW = ME; SL.remember({league:M.id, name:M.name, me:ME}); draw(); });
 $("team").addEventListener("change", ()=>{ VIEW = Number($("team").value); drawTeam(); });
