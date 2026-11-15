@@ -4,7 +4,7 @@
 One permanent player_id per person, joining the files the site already publishes:
   pre-draft/data/pd_player_grades.csv        pre-draft grades (2010-2026 drafted + 2027 projected)
   post-draft/data/pd_post_player_grades.csv  post-draft grades (2010-2026 drafted)
-  post-draft/data/pd_post_2027_mock_grades.csv  2027 class graded from the public Renner mock
+  post-draft/data/pd_post_2027_mock_grades.csv  2027 class graded from our own 7-round mock (Nov 15, 2026)
   trade-values/data/tv.js                    trade values (every NFL QB/RB/WR/TE in the value pool)
 with nflverse (CC BY 4.0) for the official NFL id (gsis_id), birth date and draft details:
   draft_picks.csv  joined on (draft year, overall pick): exact for every drafted prospect
