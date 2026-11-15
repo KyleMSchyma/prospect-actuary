@@ -174,7 +174,7 @@ availability are fit by position from past seasons (for QBs with depth-chart spo
 player just under replacement keeps a little value from his chance of beating it (the insurance stop-loss formula),
 with the spread for each future season measured from how far past projections missed 1-5 seasons out.
 
-**2027 rookie picks.** Until the class is drafted: the 30 skill players in the 2027 mock (Renner) are priced from the
+**2027 rookie picks.** Until the class is drafted: the 80 skill players in our own 7-round 2027 mock (Nov 15, 2026) are priced from the
 post-draft model (mock pick = draft capital, mock team = landing spot); everyone else from the pre-draft model (no capital).
 Value = sum over tiers of P(tier) x what past drafted players in that tier did in seasons 1-5 = 2027-2031, the same window as players (2010-2022 classes:
 games, PPG, PPG spread), valued against your league's replacement line with the stop-loss upside and discounted from
