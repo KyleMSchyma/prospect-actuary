@@ -24,7 +24,7 @@ Five sections share one menu (`shared/nav.js`). Folder URLs did not change when 
 | Dashboard | `index.html`: search, top dynasty values, quick trade, risers and fallers, 2027 prospects and pick values |
 | Prospect Lab | `pre-draft/`, `post-draft/` (two stages of the same 2010-2026 players, plus the 2027 class) |
 | Player Values | `trade-values/` (dynasty default, redraft, rookie picks, league settings) |
-| Trade Center | `trade-calculator/`, `league/` (Sleeper league), `value-research/` (Market Check), `buy-sell/` |
+| Trade Center | `trade-calculator/`, `league/` (Sleeper league), `value-research/` (Market Check), `buy-sell/`, `moves/` (Contending and rebuild moves) |
 | Research | `research/` (hub, with the Data status table), `guide/`, `track-record/`, `about/` |
 | Player profiles | `player/?id=` (one page per person), `compare/?ids=a,b` (up to four side by side) |
 
