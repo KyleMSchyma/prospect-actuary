@@ -1,0 +1,154 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contending and Rebuild Moves | Prospect Actuary</title>
+<meta name="description" content="Fair one-for-one dynasty swaps that move value toward this season (Contending Moves) or toward the future (Rebuild Moves), priced with Prospect Actuary dynasty and redraft values for your league.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.ctlbar{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center}
+.ctlbar .grp{display:flex;flex-direction:column;gap:5px}
+.ctlbar .lbl{font-family:var(--f-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.kindnote{max-width:80ch}
+.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--ink-2);max-width:80ch}
+#who{width:300px;max-width:100%}
+.lab{display:inline-block;font-family:var(--f-mono);font-size:.7rem;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid currentColor}
+.lab.Contender{color:var(--up)} .lab.Rebuilder{color:var(--down)} .lab.Middle{color:var(--muted)}
+.chk{display:flex;gap:6px;align-items:center;font-size:.88rem}
+@media (max-width:520px){h1{font-size:1.8rem}}
+</style></head>
+<body><div class="wrap">
+<header class="page-head">
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">Trade Center · Contending and rebuild moves</div>
+  <h1>Contending and rebuild moves</h1>
+  <p class="lede">Fair one-for-one swaps that keep your dynasty value level and move it to when you need it. <b>Contending moves</b> trade for players worth more this season. <b>Rebuild moves</b> trade for players and picks worth more in 2027 and later.</p>
+  <div class="dev" role="note"><b>HOW A MOVE QUALIFIES</b><span>The two dynasty values are within 10% of each other, so the trade is too close to call and a fair ask. The side you get is worth more than 10% more in redraft value (contending) or future value (rebuild). Values are estimates, so smaller gains are left out.</span></div>
+</header>
+
+<section aria-label="Move type">
+  <div class="ctlbar">
+    <div class="grp"><span class="lbl">Move type</span><div class="tabs seg mode" id="kind" role="group" aria-label="Move type"><button type="button" data-v="c">Contending moves</button><button type="button" data-v="r">Rebuild moves</button></div></div>
+    <div class="grp"><span class="lbl">You give</span><div class="tabs seg" id="pos" role="group" aria-label="Position you give"><button type="button" data-v="All">All</button><button type="button" data-v="QB">QB</button><button type="button" data-v="RB">RB</button><button type="button" data-v="WR">WR</button><button type="button" data-v="TE">TE</button><button type="button" data-v="PICK">Picks</button></div></div>
+  </div>
+  <p class="small kindnote" id="kindNote"></p>
+</section>
+
+<section aria-labelledby="hTeam">
+  <h2 id="hTeam">Your Sleeper team</h2>
+  <div id="slpOff" class="panel"><p class="small">Load your league on the <a href="../league/">Sleeper league page</a> and this section shows moves for every team, using the real rosters and the draft picks each team owns. Moves also show on each team's section of that page.</p></div>
+  <div id="slpOn" hidden style="display:flex;flex-direction:column;gap:12px">
+    <div class="row"><select id="team" aria-label="Team"></select><span class="small muted" id="teamMeta"></span><a class="small" id="leagueLink" href="../league/">Open the league page</a></div>
+    <p class="small muted" id="slpStatus" role="status"></p>
+    <div id="teamMoves"></div>
+  </div>
+</section>
+
+<section aria-labelledby="hOne">
+  <h2 id="hOne">Moves for one player</h2>
+  <div class="row"><input type="search" id="who" list="names" placeholder="Type a player or a 2027 pick (1.05)" aria-label="Player or pick" autocomplete="off"><datalist id="names"></datalist><span class="small muted" id="whoMeta"></span></div>
+  <div id="oneMoves"></div>
+</section>
+
+<section aria-labelledby="hBoard">
+  <div class="row" style="justify-content:space-between"><h2 id="hBoard">Best moves on the board</h2><label class="chk"><input type="checkbox" id="picks" checked> Include 2027 rookie picks</label></div>
+  <p class="small muted" id="boardNote"></p>
+  <div id="board"></div>
+</section>
+
+<section>
+  <h2>How to read it</h2>
+  <ul class="notes">
+    <li><b>Redraft value</b> is what a player is worth for the rest of the 2026 season. <b>Future value</b> is the part of his dynasty value that comes from 2027 to 2031 (dynasty value minus its rest-of-2026 part). A 2027 rookie pick is all future value.</li>
+    <li><b>Gain</b> is how much more redraft value (contending) or future value (rebuild) you get back. <b>Dynasty change</b> is what the swap does to your dynasty total. It is always within the 10% band.</li>
+    <li>On the board each player you give appears once, with his best match. "Moves for one player" lists every match for that player.</li>
+    <li>These are one-for-one swaps on value alone. Check that the player you get would start for you, and that the other team needs what you send. The <a href="../league/">league page</a> shows each team's needs.</li>
+    <li>All values use the league saved in this browser. Change it with the League button at the top.</li>
+  </ul>
+</section>
+
+<footer>Values and models by Prospect Actuary. Rosters, when a league is loaded, from <a href="https://docs.sleeper.com">Sleeper's public API</a>, read in your browser. Not affiliated with Sleeper, the NFL or any team.</footer>
+</div>
+<script src="../trade-values/data/tv.js"></script>
+<script src="../shared/league.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/sleeper.js"></script>
+<script src="../shared/moves.js"></script>
+<script>
+(function(){
+const D = window.TV, L = window.PALeague, SL = window.PASleeper, MV = window.PAMoves;
+const $ = id => document.getElementById(id), esc = MV.esc, fmt = MV.fmt;
+if (!D) { $("board").innerHTML = `<p class="small">The trade values didn't load. Refresh the page to try again.</p>`; return; }
+const E = window.PAEngine(D), S = L.load(), C = E.compute(S), F = MV.byIndex(C);
+const qs = (() => { try { return new URLSearchParams(location.search); } catch(e){ return new URLSearchParams(); } })();
+let KIND = qs.get("kind")==="rebuild" ? "r" : qs.get("kind")==="contend" ? "c" : null, POSF = "All", M = null, VIEW = null, ME = null;
+let CHOSEN = !!KIND;
+if (!KIND) { let k = null; try { k = localStorage.getItem("pa-moves-kind"); } catch(e){} CHOSEN = !!k; KIND = k==="r" ? "r" : "c"; }
+
+// the board: every player worth at least 1,000 in dynasty, plus the 2027 picks 1.01-3.xx
+const players = D.players.map((pl,i)=>MV.player(C, F, i, {n:pl.n, p:pl.p, key:pl.n+"|"+pl.p, tm:pl.tm, a:pl.a})).filter(a=>a.d>=MV.MIN_D);
+const picks = C.picks.map(k=>MV.pick(k.v, {n:k.n, p:"PICK", slot:k.slot}));
+const nameHtml = a => a.p==="PICK" ? esc(a.n) : `<a href="../player/?key=${encodeURIComponent("tv:"+a.n+"|"+a.p)}">${esc(a.n)}</a>${a.tm ? ` <span class="st">${esc(a.tm)}</span>` : ""}`;
+$("names").innerHTML = players.concat(picks).sort((a,b)=>b.d-a.d).map(a=>`<option value="${esc(a.n)}">`).join("");
+
+const KTXT = {c: "Contending moves: similar dynasty value, more redraft value. You win more now and give up a little of the future.",
+              r: "Rebuild moves: similar dynasty value, more future value. You give up some of this season for players and picks who hold value longer."};
+function draw(){
+  $("kind").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===KIND));
+  $("pos").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===POSF));
+  $("kindNote").textContent = KTXT[KIND] + ` Values for ${L.label(S)}.`;
+  drawBoard(); drawOne(); drawTeam();
+}
+const posOk = a => POSF==="All" || a.p===POSF;
+function drawBoard(){
+  const pool = $("picks").checked ? players.concat(picks) : players;
+  const list = MV.spread(MV.swaps(pool.filter(posOk), pool, KIND), 1, 2, 40);
+  $("boardNote").textContent = `The 40 biggest ${KIND==="c" ? "redraft" : "future"} gains across every player we value${$("picks").checked ? " and the 2027 rookie picks" : ""}, best match per player you give.`;
+  $("board").innerHTML = MV.table(list, KIND, {name:nameHtml, link: s=>MV.calc("../", s)});
+}
+function drawOne(){
+  const q = $("who").value.trim().toLowerCase();
+  const pool = players.concat(picks), a = q ? pool.find(x=>x.n.toLowerCase()===q) || (q.length>=3 ? pool.find(x=>x.n.toLowerCase().includes(q)) : null) : null;
+  if (!a) { $("whoMeta").textContent = q ? "No match yet. Pick a name from the list." : ""; $("oneMoves").innerHTML = q ? "" : `<p class="small muted">Type a player you own to see every fair swap for him.</p>`; return; }
+  $("whoMeta").innerHTML = `${a.p==="PICK" ? "" : esc(a.p)+" · "}Dynasty ${fmt(a.d)} · Redraft ${fmt(a.r)} · Future ${fmt(a.fut)}`;
+  const list = MV.swaps([a], pool, KIND).slice(0, 15);
+  $("oneMoves").innerHTML = MV.table(list, KIND, {name:nameHtml, link: s=>MV.calc("../", s),
+    empty: `No ${KIND==="c" ? "contending" : "rebuild"} move for ${a.n} passes the 10% rule.${KIND==="c" ? " He already gives about as much this season as anyone at his dynasty value." : " Little of his value is tied to this season, so there's no fair swap that adds future value."}`});
+}
+// ---------- Sleeper ----------
+function drawTeam(){
+  if (!M) return;
+  const t = M.byRid[VIEW]; if (!t) return;
+  $("teamMeta").innerHTML = `<span class="lab ${t.label}">${t.label}</span> · starters now #${t.rkNow} of ${M.teams.length} · dynasty #${t.rk}`;
+  const mine = t.rid===ME;
+  const list = MV.teamMoves(M, t, KIND, 10, posOk);
+  $("teamMoves").innerHTML = MV.table(list, KIND, {name:nameHtml, owner: a=>a.team ? "from "+a.team : "",
+    link: mine ? s=>MV.calc("../", s, `&sleeper=${M.id}&me=${ME}&with=${s.get.rid}`) : null,
+    empty: `No ${KIND==="c" ? "contending" : "rebuild"} move for ${t.name} passes the 10% rule${POSF!=="All" ? " at this position" : ""}.`});
+}
+async function loadSleeper(){
+  const old = SL.recall(); if (!old) return;
+  $("slpOff").hidden = true; $("slpOn").hidden = false; $("slpStatus").textContent = `Loading ${old.name || "your league"} from Sleeper…`;
+  try {
+    const [X, RAW] = await Promise.all([SL.crosswalk("../"), SL.fetchLeague(old.league)]);
+    M = SL.build(RAW, X); SL.price(M, C, D, S, "d", "s"); MV.league(M, C, S, SL);
+    ME = old.me || null; VIEW = ME || M.teams[0].rid;
+    $("team").innerHTML = [...M.teams].sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<option value="${t.rid}">${esc(t.name)}${t.rid===ME ? " (you)" : ""}</option>`).join("");
+    $("team").value = VIEW;
+    $("slpStatus").textContent = `${M.name}: other teams' players and 2027 picks (rounds 1-3), priced for the league saved in this browser.`;
+    if (!CHOSEN) { const me = M.byRid[ME]; if (me && me.label==="Rebuilder") KIND = "r"; }
+    draw();
+  } catch(e){ $("slpStatus").textContent = "Couldn't load your Sleeper league. Try again on the league page."; }
+}
+
+$("kind").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; KIND = b.dataset.v; try { localStorage.setItem("pa-moves-kind", KIND); } catch(e){}
+  try { const u = new URL(location.href); u.searchParams.set("kind", KIND==="r" ? "rebuild" : "contend"); history.replaceState(null, "", u); } catch(e){} draw(); });
+$("pos").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; POSF = b.dataset.v; draw(); });
+$("picks").addEventListener("change", drawBoard);
+$("who").addEventListener("input", drawOne);
+$("team").addEventListener("change", ()=>{ VIEW = Number($("team").value); drawTeam(); });
+if (qs.get("player")) $("who").value = qs.get("player");
+draw(); loadSleeper();
+})();
+</script>
+</body></html>

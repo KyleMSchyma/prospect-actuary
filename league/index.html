@@ -91,6 +91,13 @@ td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
   <div class="cards" id="tiles"></div>
   <div class="panel" style="display:flex;flex-direction:column;gap:12px"><h3>Needs</h3><p id="needSum"></p><div class="needs" id="needs"></div>
     <h3 style="margin-top:6px">Best trade partners</h3><p class="small muted" id="partNote"></p><ul class="partners" id="partners"></ul></div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:10px" id="movesBox">
+    <div class="teamhead"><h3 id="hMoves">Contending moves</h3>
+      <div class="tabs seg" id="mvKind" role="group" aria-label="Move type"><button type="button" data-v="c">Contending</button><button type="button" data-v="r">Rebuild</button></div></div>
+    <p class="small muted" id="mvNote"></p>
+    <div id="mvList"></div>
+    <a class="small" id="mvMore" href="../moves/">All contending and rebuild moves</a>
+  </div>
   <div class="two">
     <div class="panel"><h3>Players</h3><ul class="list" id="plist"></ul></div>
     <div class="panel"><h3>Draft picks</h3><ul class="list" id="klist"></ul></div>
@@ -106,6 +113,7 @@ td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
     <li><b>Outlook:</b> the top third of teams on Starters now are <b>Contenders</b>, the bottom third <b>Rebuilders</b>, everyone else <b>Middle</b>. A rebuilder with a big dynasty total is set up for later.</li>
     <li><b>Draft picks:</b> a 2027 pick is valued at its exact slot once your league sets the 2027 draft order. Until then it gets the average value of its round. Our values cover rounds 1 to 3.</li>
     <li><b>Needs</b> compare each team's starters at a position with the rest of the league, in the mode you picked. Two ways to measure: <b>Starters</b> counts a team's best players for the starting spots an average team uses at that position, flex and superflex included; <b>Whole group</b> counts every valued player there, depth included. Bottom third = need, top third = strength. Trade partners are teams strong where you're weak, ranked higher when they're weak where you're strong.</li>
+    <li><b>Contending and rebuild moves</b> are one-for-one swaps with another team in the league where both dynasty values are within 10% (too close to call, so a fair ask). A contending move gets back more than 10% more redraft value, a rebuild move more than 10% more future value (the 2027-2031 part of dynasty value; a 2027 pick is all future). Contenders see contending moves and rebuilders see rebuild moves until you pick one. <a href="../moves/">See every move</a>.</li>
     <li>Players we don't value yet (very deep backups, a few new signings) show a value of 0 and are counted on the roster as "not valued".</li>
   </ul>
 </section>
@@ -116,9 +124,10 @@ td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
 <script src="../shared/league.js"></script>
 <script src="../shared/engine.js"></script>
 <script src="../shared/sleeper.js"></script>
+<script src="../shared/moves.js"></script>
 <script>
 (function(){
-const D = window.TV, L = window.PALeague, SL = window.PASleeper, POS = ["QB","RB","WR","TE"];
+const D = window.TV, L = window.PALeague, SL = window.PASleeper, MV = window.PAMoves, POS = ["QB","RB","WR","TE"];
 const $ = id => document.getElementById(id);
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
@@ -127,6 +136,7 @@ if (!D) { $("status").textContent = "The trade values didn't load. Refresh the p
 const E = window.PAEngine(D);
 let X = null, RAW = null, M = null, S = L.load(), MODE = L.loadMode(), ME = null, VIEW = null, PREV = null, BASIS = "s";
 try { if (localStorage.getItem("pa-needs-basis")==="g") BASIS = "g"; } catch(e){}
+let MVK = null; try { MVK = localStorage.getItem("pa-moves-kind"); } catch(e){}   // null = follow each team's outlook
 const status = (t, err) => { const s = $("status"); s.textContent = t; s.classList.toggle("err", !!err); };
 
 async function loadUser(name){
@@ -170,6 +180,7 @@ async function loadLeague(id, userId, keepSettings){
 function draw(){
   const C = E.compute(S);
   SL.price(M, C, D, S, MODE, BASIS);
+  if (MV) MV.league(M, C, S, SL);
   $("basis").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===BASIS));
   $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===MODE));
   $("thPick").hidden = MODE!=="d";
@@ -214,13 +225,28 @@ function drawNeeds(t){
     return `<li><span><b>${esc(x.name)}</b> <span class="small muted">has ${x.fills.map(p=>`${p} #${o.need[p].rank}${o.need[p].spare?" with spare depth":""}`).join(", ")}${x.wants.length ? ` · needs ${x.wants.join(", ")}` : ""}</span></span>${link}</li>`; }).join("")
     : `<li class="small muted">No team is strong where this team needs help.</li>`;
 }
+// Contending / rebuild moves: fair swaps (dynasty within 10%) with other teams that add redraft value or future value
+function drawMoves(t){
+  if (!MV) { $("movesBox").hidden = true; return; }
+  const k = MVK==="r" || MVK==="c" ? MVK : (t.label==="Rebuilder" ? "r" : "c"), mine = t.rid===ME, who = mine ? "you" : esc(t.name);
+  $("mvKind").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===k));
+  $("hMoves").textContent = k==="r" ? "Rebuild moves" : "Contending moves";
+  $("mvNote").innerHTML = (k==="r" ? `Swaps with other teams that keep ${who==="you"?"your":"this team's"} dynasty value level and add future value (2027 and later).`
+    : `Swaps with other teams that keep ${who==="you"?"your":"this team's"} dynasty value level and add redraft value for the rest of 2026.`) +
+    ` ${MVK ? "" : `Showing ${k==="r"?"rebuild":"contending"} moves because this team is a ${t.label.toLowerCase()} on starters now. `}Both sides' dynasty values are within 10% (a fair ask) and the gain is more than 10%. Always in dynasty values, whatever the sheet above shows.`;
+  const list = MV.teamMoves(M, t, k, 6);
+  $("mvList").innerHTML = MV.table(list, k, {name: a=>a.p==="PICK" ? esc(a.n) : `<a href="../player/?key=${encodeURIComponent("tv:"+a.key)}">${esc(a.n)}</a>`,
+    owner: a=>a.team ? "from "+a.team : "", link: mine ? s=>MV.calc("../", s, `&sleeper=${M.id}&me=${ME}&with=${s.get.rid}`) : null,
+    empty: `No ${k==="r"?"rebuild":"contending"} move with another team passes the 10% rule for ${t.name}.`});
+  $("mvMore").href = `../moves/?kind=${k==="r"?"rebuild":"contend"}`;
+}
 function drawTeam(){
   const t = M.byRid[VIEW]; if (!t) return;
   const tiles = [["Total value", fmt(t.total), `#${t.rk} of ${M.teams.length}`], ["Starters now", fmt(t.now), `#${t.rkNow} · ${t.label}`]]
     .concat(POS.map(p=>[p, fmt(t.pos[p]), `#${t["rk"+p]}`]));
   if (MODE==="d") tiles.push(["Picks", fmt(t.pickTotal), `#${t.rkPick}`]);
   $("tiles").innerHTML = tiles.map(([l,v,s])=>`<div class="stat"><span class="lbl">${l}</span><span class="big">${v}</span><span class="small muted">${s}</span></div>`).join("");
-  drawNeeds(t);
+  drawNeeds(t); drawMoves(t);
   const starters = new Set(t.lineup.map(x=>x.sid));
   const row = p => `<li><div><div class="nm">${pchip(p.pos)} ${p.i!=null ? `<a href="../player/?key=${encodeURIComponent("tv:"+p.key)}">${esc(p.name)}</a>` : esc(p.name || "Unknown player")}${p.st?` <span class="st">${esc(p.st)}</span>`:""}${p.taxi?' <span class="tag">Taxi</span>':""}${p.ir?' <span class="tag">IR slot</span>':""}</div>
     <div class="meta">${p.i!=null ? [p.tm||"FA", p.rank, p.a!=null?"age "+p.a.toFixed(1):""].filter(Boolean).join(" · ") : (p.pos ? "Not valued yet" : "Not matched to our player list")}</div></div><span class="v">${p.i!=null ? fmt(p.v) : "–"}</span></li>`;
@@ -243,6 +269,7 @@ $("form").addEventListener("submit", e=>{ e.preventDefault(); const v = $("who")
 $("basis").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; BASIS = b.dataset.v; try { localStorage.setItem("pa-needs-basis", BASIS); } catch(e){} draw(); });
 $("mode").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; MODE = b.dataset.v; L.saveMode(MODE); draw(); });
 $("me").addEventListener("change", ()=>{ ME = Number($("me").value) || null; if (ME) VIEW = ME; SL.remember({league:M.id, name:M.name, me:ME}); draw(); });
+$("mvKind").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; MVK = b.dataset.v; try { localStorage.setItem("pa-moves-kind", MVK); } catch(e){} drawTeam(); });
 $("team").addEventListener("change", ()=>{ VIEW = Number($("team").value); drawTeam(); });
 ["map","partners"].forEach(id=>$(id).addEventListener("click", e=>{ const a = e.target.closest("a[data-team]"); if (!a) return; VIEW = Number(a.dataset.team); drawTeam(); $("team").value = VIEW; }));
 $("rank").addEventListener("click", e=>{ const a = e.target.closest("a[data-team]"); if (!a) return; VIEW = Number(a.dataset.team); drawTeam(); $("team").value = VIEW; });
