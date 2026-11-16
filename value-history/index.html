@@ -1,0 +1,258 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Value History | Prospect Actuary</title>
+<meta name="description" content="Prospect Actuary trade values rebuilt for every Tuesday since 2016, using only what was known that day, and scored against what happened next">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:30px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:2.6rem} h2{font-size:1.75rem} h3{font-size:1.2rem}
+p{margin:0;max-width:72ch}
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+a{color:var(--accent)}
+.explain{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.explain ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button,.btn{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:5px 12px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.controls input,.controls select{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:6px 10px;min-width:0;max-width:100%}
+.controls input{width:260px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 6px 3px 10px;font-size:.88rem}
+.pchip i{width:14px;height:3px;border-radius:2px;display:inline-block}
+.pchip button{font:inherit;border:none;background:none;color:var(--muted);cursor:pointer;padding:0 4px;font-size:1rem;line-height:1}
+.chartbox{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 8px 4px}
+.chartbox svg{display:block;width:100%;height:auto;overflow:visible}
+.chartbox .grid line{stroke:var(--line);stroke-width:1}
+.chartbox .axis text{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.chartbox .series path{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.chartbox .xh{stroke:var(--line-2);stroke-width:1}
+.chartbox .lab{font-family:var(--f-body);font-size:12px;fill:var(--ink-2);paint-order:stroke;stroke:var(--panel);stroke-width:3px}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line-2);border-radius:6px;box-shadow:var(--shadow);padding:8px 10px;font-size:.82rem;min-width:180px;display:none;z-index:2}
+.tip .d{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);margin-bottom:4px}
+.tip .r{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.tip .r span:first-child{display:flex;align-items:center;gap:6px}
+.tip i{width:10px;height:3px;border-radius:2px;display:inline-block}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.stat .lbl{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.stat .big{font-family:var(--f-mono);font-size:1.6rem;font-weight:600;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+.tablebox{max-width:100%;overflow:auto;max-height:min(680px,78vh);background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);position:sticky;top:0;background:var(--panel);z-index:1}
+tbody tr:last-child td{border-bottom:none}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.up{color:var(--up)} .down{color:var(--down)}
+.pos{font-family:var(--f-mono);font-size:.75rem;font-weight:600}
+details summary{cursor:pointer;color:var(--accent);font-size:.9rem}
+@media (max-width:720px){.two{grid-template-columns:1fr}}
+@media (max-width:520px){h1{font-size:2.1rem}.controls input{width:100%}}
+</style></head>
+
+<body><div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <h1>Value History</h1>
+  <p class="lede">Our trade values for every Tuesday since September 2016, rebuilt as if the weekly refresh had run that morning. Each week only uses what was known on that day: no later games, no later drafts, and models fit only on earlier seasons. Then we check every week against what actually happened.</p>
+  <p class="small muted" id="meta">Loading…</p>
+</header>
+
+<section aria-labelledby="h-chart">
+  <h2 id="h-chart">A player's value over time</h2>
+  <div class="controls">
+    <input type="search" id="pick" list="plist" placeholder="Add a player (up to 3)…" aria-label="Add a player to the chart" autocomplete="off">
+    <datalist id="plist"></datalist>
+    <div class="tabs" role="group" aria-label="Format"><button type="button" data-fmt="d" aria-pressed="true">Dynasty</button><button type="button" data-fmt="r" aria-pressed="false">Redraft</button></div>
+    <select id="season" aria-label="Season"></select>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="chartbox" id="chartbox"><svg id="chart" role="img" aria-label="Value over time"></svg><div class="tip" id="tip"></div></div>
+  <p class="small muted">Values are on our 100,000 scale: the top player that Tuesday is 100,000. Redraft values stop at the end of each regular season. A gap means the player was not on that week's board (the board only lists players who have played a game that season).</p>
+  <details id="tblwrap"><summary>Show the numbers as a table</summary><div class="tablebox" style="margin-top:10px"><table id="tbl"></table></div></details>
+</section>
+
+<section aria-labelledby="h-move">
+  <h2 id="h-move">Risers and fallers by week</h2>
+  <div class="controls"><select id="moveweek" aria-label="Week"></select><span class="small muted" id="movenote"></span></div>
+  <div class="two"><div class="box"><h3>Risers</h3><ol id="risers"></ol></div><div class="box"><h3>Fallers</h3><ol id="fallers"></ol></div></div>
+  <p class="small muted">Change in value from the Tuesday before, among the top 200 on either week, in the format chosen above.</p>
+</section>
+
+<section aria-labelledby="track-record" id="track-record-sec">
+  <h2 id="track-record">How good were the values?</h2>
+  <p>Every Tuesday's values are scored against what the players actually did afterwards. <b>Redraft</b>: points scored over replacement in the rest of that season. <b>Dynasty</b>: points over replacement in the rest of that season plus the next five, discounted 15% a year, the same window the values cover. Dynasty values from 2021 on are only partly scored, because those five seasons are not over yet, so they are shown separately.</p>
+  <div class="cards" id="cards"></div>
+  <div class="explain small">
+    <ul>
+      <li><b>Rank match</b> (Spearman correlation, 0 to 1): how closely our order matched the order players actually finished in. Higher is better.</li>
+      <li><b>Simple baseline</b>: the same thing using only this season's points per game, with no credibility weighting, injuries, aging or chance of staying in the league. If we cannot beat it, the model is not earning its keep.</li>
+      <li><b>Top 24 kept</b>: of our top 24 that week, how many finished in the actual top 24.</li>
+      <li><b>Predicted / actual</b>: total value we expected divided by total value that happened. 1.00 is right on; above 1 means we were too high.</li>
+      <li>Only players with 3+ games that season are scored, the same rule our model tests use.</li>
+    </ul>
+  </div>
+  <h3>Season by season</h3>
+  <div class="tablebox"><table id="byseason"></table></div>
+  <h3>Hits and misses: our top 24 at week 9</h3>
+  <div class="controls"><select id="hmseason" aria-label="Season"></select><div class="tabs" role="group" aria-label="Format for hits and misses"><button type="button" data-hm="dynasty" aria-pressed="true">Dynasty</button><button type="button" data-hm="redraft" aria-pressed="false">Redraft</button></div></div>
+  <div class="tablebox"><table id="hits"></table></div>
+</section>
+
+<section aria-labelledby="h-honest">
+  <h2 id="h-honest">What "only what was known" means</h2>
+  <div class="explain">
+    <ul>
+      <li><b>Data:</b> each Tuesday uses NFL games played through the weekend before it, that week's injury report and roster status, and the depth chart from the week just played. Draft slots count once the draft has happened.</li>
+      <li><b>Models:</b> the credibility weights, the draft-capital starting point, the injury and role models and the aging and staying-in-the-league models are refit for each season using only earlier seasons, then held fixed all season. They never see a game from the season being valued.</li>
+      <li><b>Season length:</b> 16 games before 2021 and 17 after. A 2020 value assumes future seasons have 16 games, because the 17-game season was not announced until March 2021.</li>
+      <li><b>Same code as today:</b> the history runs today's value scripts with a short list of date edits. Run on this season's data, they reproduce the live board exactly.</li>
+    </ul>
+  </div>
+  <p class="small"><b>What is not fully clean, and why:</b> the model's design (which inputs to use) was chosen in 2026 with hindsight. NFL stats include official stat corrections made after the games. Team codes are today's (for example LV for the Raiders in 2016). Our stats start in 2006, so values from 2016 to 2018 were fit on fewer seasons than today's model. Injury reports and depth charts start in 2012. Rookie draft picks are not in the history, because we have no mock drafts from those years.</p>
+</section>
+
+<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: NFL stats, rosters, injury reports and depth charts from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. League: 12 teams, superflex, 2 RB, 3 WR, 1 TE, no flex, full PPR (the league our weekly archive uses). Method and code: <a href="https://github.com/KyleMSchyma/Football/tree/main/Trade_Values/history">Trade_Values/history</a>.</footer>
+</div>
+
+<script>
+(async function(){
+  const COLORS = ["#2369b3","#c4650a","#7046c8"];   // validated: light surface, CVD-safe for 3 series
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const fmt = n => n==null ? "–" : Math.round(n).toLocaleString("en-US");
+  const pct = x => x==null ? "–" : Math.round(x*100) + "%";
+  const r2 = x => x==null ? "–" : x.toFixed(2);
+  const [IDX, VAL] = await Promise.all([fetch("../data/history/index.json").then(r=>r.json()), fetch("../data/history/values.json").then(r=>r.json())]).catch(()=>[null,null]);
+  if (!IDX || !VAL){ $("meta").textContent = "The value history could not be loaded."; return; }
+  const SN = IDX.snapshots, N = SN.length, P = VAL.players;
+  const byG = new Map(P.map(p=>[p.g, p]));
+  const seasons = [...new Set(SN.map(s=>s.season))];
+  const last = SN[N-1];
+  $("meta").textContent = `${N} weekly snapshots, ${SN[0].date} to ${last.date} (${seasons[0]}–${seasons[seasons.length-1]}), ${P.length.toLocaleString("en-US")} players.`;
+  // per-player arrays indexed by snapshot: [dv, dr, rv, rr]
+  P.forEach(p=>{ p.a = new Array(N); p.s.forEach(x=>{ p.a[x[0]] = x; }); p.label = `${p.n} (${p.p}${p.t ? ", " + p.t : ""})`; });
+  $("plist").innerHTML = P.map(p=>`<option value="${esc(p.label)}"></option>`).join("");
+  const byLabel = new Map(P.map(p=>[p.label, p]));
+  let fmtK = "d", season = "all", sel = [];
+  try { const q = new URLSearchParams(location.search); (q.get("p")||"").split(",").filter(Boolean).forEach(g=>{ if (byG.has(g)) sel.push(g); });
+        if (q.get("fmt")==="r") fmtK = "r"; if (q.get("season")) season = q.get("season"); } catch(e){}
+  if (!sel.length) sel = P.filter(p=>p.a[N-1] && p.a[N-1][2] && p.a[N-1][2] <= 2).sort((a,b)=>a.a[N-1][2]-b.a[N-1][2]).map(p=>p.g);
+  $("season").innerHTML = `<option value="all">All seasons</option>` + seasons.slice().reverse().map(s=>`<option value="${s}">${s} season</option>`).join("");
+  $("season").value = String(season);
+  function syncURL(){ try { const q = new URLSearchParams(); if (sel.length) q.set("p", sel.join(",")); if (fmtK==="r") q.set("fmt","r"); if (season!=="all") q.set("season", season);
+    history.replaceState(null, "", "?" + q.toString() + location.hash); } catch(e){} }
+  document.querySelectorAll("[data-fmt]").forEach(b=>b.addEventListener("click", ()=>{ fmtK = b.dataset.fmt;
+    document.querySelectorAll("[data-fmt]").forEach(x=>x.setAttribute("aria-pressed", x===b)); draw(); moves(); syncURL(); }));
+  document.querySelectorAll("[data-fmt]").forEach(x=>x.setAttribute("aria-pressed", x.dataset.fmt===fmtK));
+  $("season").addEventListener("change", e=>{ season = e.target.value; draw(); syncURL(); });
+  $("pick").addEventListener("change", e=>{ const p = byLabel.get(e.target.value); if (p && !sel.includes(p.g)){ sel.push(p.g); if (sel.length>3) sel.shift(); } e.target.value = ""; draw(); syncURL(); });
+  const vi = () => fmtK==="d" ? 1 : 3;
+  function chips(){ $("chips").innerHTML = sel.map((g,k)=>{ const p = byG.get(g); return `<span class="pchip"><i style="background:${COLORS[k]}"></i>${esc(p.label)}<button type="button" data-rm="${g}" aria-label="Remove ${esc(p.n)}">×</button></span>`; }).join("");
+    $("chips").querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click", ()=>{ sel = sel.filter(x=>x!==b.dataset.rm); draw(); syncURL(); })); }
+
+  // ---------- chart: x = snapshot position with a gap between seasons; y = value (0-100k) ----------
+  function draw(){
+    chips();
+    const idx = SN.map((s,i)=>i).filter(i=>season==="all" || String(SN[i].season)===season);
+    const W = Math.max(320, $("chartbox").clientWidth - 16), H = Math.round(Math.min(380, Math.max(240, W*0.45)));
+    const m = {l:48, r:12, t:12, b:28}, svg = $("chart");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    // x positions: one step per snapshot, plus a 3-step gap at each new season
+    const xs = new Map(); let k = 0, prev = null;
+    idx.forEach(i=>{ if (prev!=null && SN[i].season!==SN[prev].season) k += 3; xs.set(i, k); k++; prev = i; });
+    const span = Math.max(k-1, 1), X = i => m.l + (W-m.l-m.r) * xs.get(i) / span, Y = v => m.t + (H-m.t-m.b) * (1 - v/100000);
+    let g = `<g class="grid">` + [0,25000,50000,75000,100000].map(v=>`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}"/>`).join("") + `</g>`;
+    g += `<g class="axis">` + [0,50000,100000].map(v=>`<text x="${m.l-6}" y="${Y(v)+4}" text-anchor="end">${v/1000}k</text>`).join("");
+    if (season==="all"){ seasons.forEach(s=>{ const f = idx.find(i=>SN[i].season===s); if (f!=null) g += `<text x="${X(f)}" y="${H-8}">${s}</text>`; }); }
+    else { idx.forEach(i=>{ if (SN[i].week%3===1) g += `<text x="${X(i)}" y="${H-8}" text-anchor="middle">Wk ${SN[i].week}</text>`; }); }
+    g += `</g><g class="series">`;
+    sel.forEach((gid,c)=>{ const p = byG.get(gid); let d = "", up = false, lastPt = null;
+      idx.forEach((i,j)=>{ const x = p.a[i], v = x ? x[vi()] : null, brk = j>0 && SN[i].season!==SN[idx[j-1]].season;
+        if (v==null || brk) up = false;
+        if (v!=null){ d += (up ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1); up = true; lastPt = [X(i), Y(v)]; } });
+      g += `<path d="${d}" stroke="${COLORS[c]}"/>`;
+      if (lastPt && sel.length > 1) g += `<text class="lab" x="${Math.min(lastPt[0]+4, W-m.r-4)}" y="${lastPt[1]-6}" text-anchor="${lastPt[0] > W-120 ? "end" : "start"}">${esc(p.n.split(" ").slice(-1)[0])}</text>`; });
+    g += `</g><line class="xh" id="xh" y1="${m.t}" y2="${H-m.b}" x1="-10" x2="-10"/><g id="dots"></g><rect id="hit" x="${m.l}" y="0" width="${W-m.l-m.r}" height="${H}" fill="transparent"/>`;
+    svg.innerHTML = g;
+    const tip = $("tip"), hit = $("hit");
+    function show(evt){ const r = svg.getBoundingClientRect(), sx = (evt.clientX - r.left) * W / r.width;
+      let best = idx[0], bd = 1e9; idx.forEach(i=>{ const dd = Math.abs(X(i)-sx); if (dd<bd){ bd = dd; best = i; } });
+      $("xh").setAttribute("x1", X(best)); $("xh").setAttribute("x2", X(best));
+      $("dots").innerHTML = sel.map((gid,c)=>{ const x = byG.get(gid).a[best], v = x ? x[vi()] : null;
+        return v==null ? "" : `<circle cx="${X(best)}" cy="${Y(v)}" r="4.5" fill="${COLORS[c]}" stroke="var(--panel)" stroke-width="2"/>`; }).join("");
+      const s = SN[best];
+      tip.innerHTML = `<div class="d">${s.date} · ${s.season} week ${s.week}</div>` + sel.map((gid,c)=>{ const p = byG.get(gid), x = p.a[best];
+        const v = x ? x[vi()] : null, rk = x ? x[vi()+1] : null;
+        return `<div class="r"><span><i style="background:${COLORS[c]}"></i>${esc(p.n)}</span><span class="num">${v==null ? "not on board" : fmt(v) + " · #" + rk}</span></div>`; }).join("");
+      tip.style.display = "block";
+      const px = X(best) * r.width / W, left = px + 14 + tip.offsetWidth > r.width ? px - tip.offsetWidth - 14 : px + 14;
+      tip.style.left = (left + 8) + "px"; tip.style.top = "14px"; }
+    hit.addEventListener("pointermove", show); hit.addEventListener("pointerdown", show);
+    hit.addEventListener("pointerleave", ()=>{ tip.style.display = "none"; $("xh").setAttribute("x1",-10); $("xh").setAttribute("x2",-10); $("dots").innerHTML = ""; });
+    svg.setAttribute("aria-label", `${fmtK==="d"?"Dynasty":"Redraft"} value over time for ${sel.map(g=>byG.get(g).n).join(", ") || "no players"}`);
+    // table view
+    $("tbl").innerHTML = `<thead><tr><th>Date</th><th>Week</th>${sel.map(g=>`<th>${esc(byG.get(g).n)}</th>`).join("")}</tr></thead><tbody>` +
+      idx.slice().reverse().map(i=>`<tr><td>${SN[i].date}</td><td class="num">${SN[i].season} wk ${SN[i].week}</td>${sel.map(g=>{ const x = byG.get(g).a[i];
+        return `<td class="num">${x && x[vi()]!=null ? fmt(x[vi()]) + " (#" + x[vi()+1] + ")" : "–"}</td>`; }).join("")}</tr>`).join("") + `</tbody>`;
+  }
+  let rt; addEventListener("resize", ()=>{ clearTimeout(rt); rt = setTimeout(draw, 120); });
+
+  // ---------- risers and fallers ----------
+  $("moveweek").innerHTML = SN.map((s,i)=>i).filter(i=>i>0 && SN[i].season===SN[i-1].season).reverse()
+    .map(i=>`<option value="${i}">${SN[i].season} week ${SN[i].week} (${SN[i].date})</option>`).join("");
+  $("moveweek").addEventListener("change", moves);
+  function moves(){
+    const i = +$("moveweek").value, j = i - 1, k = vi();
+    let rows = P.map(p=>({p, a:p.a[i], b:p.a[j]})).filter(o=>o.a && o.b && o.a[k]!=null && o.b[k]!=null && (o.a[k+1]<=200 || o.b[k+1]<=200))
+      .map(o=>({p:o.p, d:o.a[k]-o.b[k], v:o.a[k], r0:o.b[k+1], r1:o.a[k+1]}));
+    const li = o => `<li><a href="?p=${o.p.g}${fmtK==="r"?"&fmt=r":""}">${esc(o.p.n)}</a> <span class="pos" style="color:var(--${o.p.p})">${o.p.p}</span> <span class="num ${o.d>0?"up":"down"}">${o.d>0?"+":""}${fmt(o.d)}</span> <span class="muted num small">#${o.r0} → #${o.r1}</span></li>`;
+    $("risers").innerHTML = rows.slice().sort((a,b)=>b.d-a.d).slice(0,10).filter(o=>o.d>0).map(li).join("") || "<li class='muted'>None</li>";
+    $("fallers").innerHTML = rows.slice().sort((a,b)=>a.d-b.d).slice(0,10).filter(o=>o.d<0).map(li).join("") || "<li class='muted'>None</li>";
+    $("movenote").textContent = `vs ${SN[j].date} (week ${SN[j].week})`;
+    if (!rows.length) $("movenote").textContent = "No redraft values that week (season over).";
+  }
+
+  // ---------- track record ----------
+  const O = (kind, pos, seasons) => IDX.overall.find(o=>o.kind===kind && o.pos===pos && o.seasons===seasons);
+  const card = (lbl, big, sub) => `<div class="stat"><span class="lbl">${lbl}</span><span class="big">${big}</span><span class="small muted">${sub}</span></div>`;
+  const dc = O("dynasty","ALL","all complete"), rc = O("redraft","ALL","all complete"), di = O("dynasty","ALL","so far (incomplete)");
+  $("cards").innerHTML = [
+    dc && card("Dynasty rank match", r2(dc.spearman), `baseline ${r2(dc.spearman_naive)} · ${dc.snapshots} Tuesdays with 5 full seasons after`),
+    dc && card("Dynasty predicted / actual", r2(dc.pred_over_actual), `top 24 kept ${pct(dc.top_hit)} (baseline ${pct(dc.top_hit_naive)})`),
+    rc && card("Redraft rank match", r2(rc.spearman), `baseline ${r2(rc.spearman_naive)} · ${rc.snapshots} Tuesdays`),
+    rc && card("Redraft predicted / actual", r2(rc.pred_over_actual), `top 24 kept ${pct(rc.top_hit)} (baseline ${pct(rc.top_hit_naive)})`),
+    di && card("Dynasty since 2021, so far", r2(di.spearman), `rank match, seasons still being played · baseline ${r2(di.spearman_naive)}`)].filter(Boolean).join("");
+  const bs = IDX.by_season;
+  const ss = [...new Set(bs.map(b=>b.season))].sort((a,b)=>b-a);
+  const cell = (b, f) => b ? f(b) : "–";
+  const dyn = s => bs.find(b=>b.kind==="dynasty" && b.season===s), red = s => bs.find(b=>b.kind==="redraft" && b.season===s);
+  const partial = s => IDX.weekly.some(w=>w.kind==="dynasty" && w.season===s && !w.complete);
+  $("byseason").innerHTML = `<thead><tr><th>Season</th><th>Redraft rank match</th><th>Baseline</th><th>Top 24 kept</th><th>Dynasty rank match</th><th>Baseline</th><th>Top 24 kept</th><th>Dynasty predicted / actual</th></tr></thead><tbody>` +
+    ss.map(s=>`<tr><td>${s}</td><td class="num">${cell(red(s),b=>r2(b.spearman))}</td><td class="num">${cell(red(s),b=>r2(b.spearman_naive))}</td><td class="num">${cell(red(s),b=>pct(b.top_hit))}</td>` +
+      `<td class="num">${cell(dyn(s),b=>r2(b.spearman))}</td><td class="num">${cell(dyn(s),b=>r2(b.spearman_naive))}</td><td class="num">${cell(dyn(s),b=>pct(b.top_hit))}</td><td class="num">${cell(dyn(s),b=>r2(b.pred_over_actual))}</td></tr>`).join("") +
+    (ss.length ? "" : `<tr><td colspan="8" class="muted">Nothing scored yet.</td></tr>`) + `</tbody>` ;
+  // hits and misses
+  const hs = [...new Set(IDX.hits.map(h=>h.season))].sort((a,b)=>b-a); let hmF = "dynasty";
+  $("hmseason").innerHTML = hs.map(s=>`<option value="${s}">${s} week 9</option>`).join("");
+  const firstComplete = IDX.hits.find(h=>h.format==="dynasty" && h.complete); if (firstComplete) $("hmseason").value = String(Math.max(...IDX.hits.filter(h=>h.format==="dynasty"&&h.complete).map(h=>h.season)));
+  document.querySelectorAll("[data-hm]").forEach(b=>b.addEventListener("click", ()=>{ hmF = b.dataset.hm; document.querySelectorAll("[data-hm]").forEach(x=>x.setAttribute("aria-pressed", x===b)); hits(); }));
+  $("hmseason").addEventListener("change", hits);
+  function hits(){ const s = +$("hmseason").value, rows = IDX.hits.filter(h=>h.format===hmF && h.season===s);
+    const note = rows.length && !rows[0].complete ? `<caption class="small muted" style="text-align:left;padding:8px 10px">Seasons after ${s} are still being played: "finished" is so far.</caption>` : "";
+    $("hits").innerHTML = note + `<thead><tr><th>Player</th><th>Our rank</th><th>Finished</th><th>Result</th></tr></thead><tbody>` + rows.map(h=>{ const ok = h.actual_rank<=24;
+      return `<tr><td><a href="?p=${h.player_id}${hmF==="redraft"?"&fmt=r":""}">${esc(h.name)}</a> <span class="pos" style="color:var(--${h.pos})">${h.pos}</span></td><td class="num">${h.rank}</td><td class="num">${h.actual_rank}</td><td class="${ok?"up":"down"}">${ok?"Hit (top 24)":"Miss"}</td></tr>`; }).join("") + `</tbody>`; }
+  draw(); moves(); hits();
+})();
+</script>
+</body></html>
