@@ -3,7 +3,8 @@
  * Each page keeps a plain <nav class="pa-brand" data-root="../"> with simple links (works without JavaScript) and loads
  * this file right after it. This removes that nav and puts the site bar at the top of the page:
  *   Prospect Actuary | Dashboard · Prospect Lab · Player Values · Trade Center · Research | [Search] [league badge]
- *   and under it the pages of the current section. On a phone the sections fold into a menu button.
+ *   and under it the pages of the current section. On a phone the sections fold into a menu button, and shared/mobile.js
+ *   (loaded at the end) adds the bottom bar and the phone layouts.
  * The badge shows the league saved in this browser ("pa-tv-league"), the setting Player Values, the Trade Calculator,
  * the grade boards' Value column, the Dashboard and search all use. Pages call window.PANav.update() after it changes.
  * To add a page: add it to SECTIONS. Paths are folder names, so the weekly refresh is not affected.
@@ -128,5 +129,8 @@
   function attach(){ if (window.PASearch) window.PASearch.attach(document.getElementById("paQ"), document.getElementById("paRes"), {root}); }
   if (window.PASearch) attach();
   else { const s = document.createElement("script"); s.src = root + "shared/search.js"; s.onload = attach; document.head.appendChild(s); }
-  window.PANav = { update, openLeague, root };
+  window.PANav = { update, openLeague, root, sec };
+
+  // ---------- phone layout: shared/mobile.js (bottom bar, cards, sheets). It changes nothing above 760px wide. ----------
+  if (!window.PAMobile) { const m = document.createElement("script"); m.src = root + "shared/mobile.js"; document.head.appendChild(m); }
 })();

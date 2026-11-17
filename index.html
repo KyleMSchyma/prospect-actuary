@@ -102,6 +102,8 @@ table.fresh td{white-space:normal;vertical-align:top;font-size:.84rem}
 th a.q{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--line-2);font-size:.62rem;text-decoration:none;color:var(--muted);margin-left:4px}
 td a.gl{text-decoration:none}
 .smonly{display:none}
+/* 1001-1100px: the movers tables were wider than their column and pushed the whole page sideways; let them scroll in their box */
+@media (max-width:1100px){ .stack .movers{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:1000px){ .tools{grid-template-columns:repeat(2,minmax(0,1fr))} .grid,.grid.wide{grid-template-columns:1fr} }
 @media (max-width:560px){ .dh h1{font-size:1.75rem} .tools{grid-template-columns:1fr} .tool{flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 10px} .tool span.d{flex-basis:100%} .tool .go{display:none}
   .movers,.trade,.mfacts{grid-template-columns:1fr} .hm{display:none} .smonly{display:block} .vbar i{display:none} td .meta.hm2{display:none} th,td{padding:7px 6px} .box td:nth-child(2){white-space:normal} .box .body{padding:10px 10px 14px} }

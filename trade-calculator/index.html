@@ -139,6 +139,7 @@ details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     </div>
   </div>
 
+  <div class="m-tsum" id="mSum" role="button" tabindex="0" aria-label="Trade summary: show the full result" hidden></div>
   <div class="verdict" aria-live="polite">
     <div class="big" id="vBig">Add players to both sides</div>
     <p class="small muted" id="vSub">Type a name in either box. Values update the moment you change the league or switch between redraft and dynasty.</p>
@@ -261,8 +262,8 @@ function list(side, ids){
   const el = $("ls"+side);
   if (!ids.length) { el.innerHTML = `<li class="empty" style="display:block;border:none">Nothing added yet.</li>`; return 0; }
   let tot = 0;
-  el.innerHTML = ids.map(id=>{ const a = asset(id); tot += a.v;
-    return `<li><div class="who"><div class="nm">${pchip(a.p)} ${a.p==="PICK" ? esc(a.name) : `<a class="pl" href="../player/?key=${encodeURIComponent("tv:"+a.name+"|"+a.p)}">${esc(a.name)}</a>`}${stTag(a)}</div><div class="meta">${esc(a.meta)}${a.note?` · <span style="color:var(--warn)">${esc(a.note)}</span>`:""}</div></div><span class="v">${fmt(a.v)}</span><button type="button" class="x" data-id="${esc(id)}" aria-label="Remove ${esc(a.name)}">×</button></li>`; }).join("");
+  el.innerHTML = ids.map((id, k)=>{ const a = asset(id); tot += a.v;
+    return `<li><div class="who"><div class="nm">${pchip(a.p)} ${a.p==="PICK" ? esc(a.name) : `<a class="pl" href="../player/?key=${encodeURIComponent("tv:"+a.name+"|"+a.p)}">${esc(a.name)}</a>`}${stTag(a)}</div><div class="meta">${esc(a.meta)}${a.note?` · <span style="color:var(--warn)">${esc(a.note)}</span>`:""}</div></div><span class="v">${fmt(a.v)}</span><span class="mv"><button type="button" data-mv="-1" data-id="${esc(id)}" aria-label="Move ${esc(a.name)} up"${k===0?" disabled":""}>▲</button><button type="button" data-mv="1" data-id="${esc(id)}" aria-label="Move ${esc(a.name)} down"${k===ids.length-1?" disabled":""}>▼</button></span><button type="button" class="x" data-id="${esc(id)}" aria-label="Remove ${esc(a.name)}">×</button></li>`; }).join("");
   return tot;
 }
 function render(){
@@ -285,6 +286,8 @@ function render(){
     else { big.innerHTML = d>0 ? `You win by <span class="num">${fmt(d)}</span>` : `You lose by <span class="num">${fmt(-d)}</span>`;
       sub.textContent = `${d>0?"You get":"You give"} ${Math.round(100*pct)}% more ${w} value. To even it up, the ${d>0?"other side would need to add":"you would need to get back"} about ${fmt(Math.abs(d))} in value.`; }
   }
+  $("mSum").hidden = !A.length && !B.length;
+  $("mSum").innerHTML = `<span class="t"><span>You give</span><b style="color:var(--sideA)">${fmt(ta)}</b></span><span class="t"><span>You get</span><b style="color:var(--sideB)">${fmt(tb)}</b></span><span class="v">${big.innerHTML}</span>`;
   const scale = Math.max(ta, tb, 1);
   cmp.innerHTML = [["You give", ta, "--sideA"], ["You get", tb, "--sideB"]].map(([l,v,c])=>`<div class="cmprow"><span class="small">${l}</span><div class="track"><div class="fill" style="width:${(100*v/scale).toFixed(1)}%;background:var(${c})"></div></div><span class="num small" style="text-align:right">${fmt(v)}</span></div>`).join("");
   drawFill(ta, tb); drawRosters();
@@ -348,8 +351,15 @@ async function loadSleeper(id, me, wth){
 }
 $("slpMe").addEventListener("change", ()=>{ ME = Number($("slpMe").value) || null; if (WITH===ME) WITH = null; SL.remember({league:M.id, name:M.name, me:ME}); drawSleeper(); render(); });
 $("slpWith").addEventListener("change", ()=>{ WITH = Number($("slpWith").value) || null; drawSleeper(); render(); });
-["A","B"].forEach(side=>$("ls"+side).addEventListener("click", e=>{ const b = e.target.closest("button.x"); if (!b) return;
+["A","B"].forEach(side=>$("ls"+side).addEventListener("click", e=>{
+  // reorder (phone layout shows the arrows): order is only for reading; totals and the verdict do not depend on it
+  const mv = e.target.closest("button[data-mv]");
+  if (mv) { const arr = side==="A"?A:B, i = arr.indexOf(mv.dataset.id), j = i + Number(mv.dataset.mv);
+    if (i>=0 && j>=0 && j<arr.length) { [arr[i], arr[j]] = [arr[j], arr[i]]; render(); const n = $("ls"+side).querySelector(`button[data-mv="${mv.dataset.mv}"][data-id="${CSS.escape(mv.dataset.id)}"]`); if (n && !n.disabled) n.focus(); } return; }
+  const b = e.target.closest("button.x"); if (!b) return;
   const arr = side==="A"?A:B, i = arr.indexOf(b.dataset.id); if (i>=0) arr.splice(i,1); render(); }));
+// phone layout: a summary bar pinned above the bottom bar (hidden on wider screens); a tap scrolls to the full verdict
+$("mSum").addEventListener("click", ()=>document.querySelector(".verdict").scrollIntoView({block:"center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}));
 
 // ---------- state: league shared with /trade-values/; trade kept in the address so it can be shared ----------
 const playerIdx = {}; D.players.forEach((pl,i)=>playerIdx[norm(pl.n)+"|"+pl.p]=i);
