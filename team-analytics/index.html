@@ -1,0 +1,198 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NFL Team Analytics | Prospect Actuary</title>
+<meta name="description" content="Fantasy points per game for every NFL offense since 2016, split into passing, rushing and receiving, plus the points each defense allows to QBs, RBs, WRs and TEs, scored for your league">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+.ctlbar{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end}
+.ctlbar .grp{display:flex;flex-direction:column;gap:5px;min-width:0}
+.ctlbar .lbl{font-family:var(--f-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.mix{display:flex;width:140px;height:10px;border-radius:3px;overflow:hidden;background:var(--bg-2)}
+.mix i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.8rem;color:var(--ink-2)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c);vertical-align:-1px}
+.rk{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);margin-left:5px}
+td.tot{font-weight:600}
+th.sortable{cursor:pointer} th.sortable[aria-sort]{color:var(--ink)}
+.tm{font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--line-2)}
+.tm:hover{color:var(--accent)}
+.tm .full{font-weight:400;color:var(--muted);font-size:.8rem;margin-left:6px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv .stat .sm{font-size:.76rem;color:var(--muted)}
+.wbar{display:flex;height:8px;min-width:60px;border-radius:2px;overflow:hidden}
+.wbar i{display:block;height:100%}
+.detail{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:16px}
+.detail h3{font-size:1.02rem}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.spark{display:flex;align-items:flex-end;gap:2px;height:36px}
+.spark i{display:block;width:8px;border-radius:2px 2px 0 0;background:var(--accent)}
+.notes{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--ink-2);max-width:80ch}
+.err{color:var(--down)}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+@media (max-width:520px){h1{font-size:1.8rem} .mix{width:90px}}
+</style></head>
+<body><div class="wrap">
+<header class="page-head">
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">Research · NFL team analytics · 2016 on</div>
+  <h1>NFL Team Analytics</h1>
+  <p class="small muted" id="asof">Loading…</p>
+  <p class="lede">Fantasy points per game for every NFL offense, split into <b>passing</b>, <b>rushing</b> and <b>receiving</b>, and the points each defense allows to QBs, RBs, WRs and TEs. Every number is scored for your league's settings, every season back to 2016.</p>
+  <p class="small muted">Passing and receiving count the same plays twice: a touchdown pass scores for the passer and the receiver, the way fantasy scoring works. Rushing includes quarterback runs. Regular season only; special-teams scores are left out. Teams that moved are shown under today's name (the 2016-2019 Raiders as LV).</p>
+</header>
+
+<section aria-label="Settings">
+  <div class="ctlbar">
+    <div class="grp"><span class="lbl">Season</span><select id="season" aria-label="Season"></select></div>
+    <div class="grp"><span class="lbl">Games</span><div class="tabs seg" id="win" role="group" aria-label="Games"><button type="button" data-v="all">Full season</button><button type="button" data-v="4">Last 4 games</button></div></div>
+    <div class="grp"><span class="lbl">View</span><div class="tabs seg" id="side" role="group" aria-label="View"><button type="button" data-v="off">Offense</button><button type="button" data-v="def">Points allowed</button></div></div>
+    <div class="grp"><span class="lbl">Sort by</span><select id="sort" aria-label="Sort by"></select></div>
+  </div>
+  <div class="legend" id="legend"></div>
+</section>
+
+<section aria-labelledby="hTbl">
+  <h2 id="hTbl">Offenses</h2>
+  <p class="small muted" id="tblNote"></p>
+  <div class="tablebox"><table id="tbl"><tbody><tr><td class="muted">Loading…</td></tr></tbody></table></div>
+</section>
+
+<section aria-labelledby="hTeam" id="teamSec">
+  <h2 id="hTeam">Team detail</h2>
+  <div class="row"><select id="team" aria-label="Team"></select><span class="small muted">Or tap a team in the table.</span></div>
+  <div class="detail" id="detail"><p class="muted small">Pick a team.</p></div>
+</section>
+
+<section aria-labelledby="hLeague">
+  <h2 id="hLeague">League trend, 2016 on</h2>
+  <p class="small muted">Average fantasy points per team game across the NFL each season, for your league's scoring.</p>
+  <div class="tablebox"><table id="trend"><tbody><tr><td class="muted">Loading…</td></tr></tbody></table></div>
+</section>
+
+<section>
+  <h2>How to read it</h2>
+  <ul class="notes">
+    <li><b>Per game.</b> Each team's totals are divided by the games it played in the window (full season or its last 4 games), so bye weeks don't count against it.</li>
+    <li><b>Points allowed</b> adds up the fantasy points opposing QBs, RBs, WRs and TEs scored against each defense. Rank 1 allowed the most, which is the easiest matchup.</li>
+    <li><b>Your scoring.</b> PPR or half PPR, passing TD points, TE premium and first-down bonuses all come from your league settings (the league button at the top). Yards: 0.04 per passing yard, 0.1 per rushing or receiving yard; 6 per rushing or receiving TD; −2 per interception or lost fumble; 2 per two-point conversion.</li>
+    <li><b>Source.</b> nflverse weekly player stats (regular season), refreshed after each Tuesday update and on Wednesdays. Kickers and defensive scores are not included.</li>
+  </ul>
+</section>
+<p class="pa-tip">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
+<footer>Team and player stats from <a href="https://github.com/nflverse/nflverse-data">nflverse</a> (open data), scored in your browser for your league.</footer>
+</div>
+<script src="../shared/league.js"></script>
+<script src="../shared/teams.js"></script>
+<script>
+(async function(){
+const $ = id => document.getElementById(id), L = window.PALeague, TM = window.PATeams, POS = TM.POS;
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const f1 = x => x==null || !isFinite(x) ? "–" : Number(x).toFixed(1), pc = x => x==null || !isFinite(x) ? "–" : Math.round(100*x)+"%";
+const CAT = ["Passing","Rushing","Receiving"], CC = ["var(--WR)","var(--RB)","var(--accent)"];
+const S = L.load(), lgp = L.param(S), amp = lgp ? "&"+lgp : "";
+const qs = new URLSearchParams(location.search);
+let SUM, HIST, SEASON, WIN = qs.get("games")==="4" ? 4 : "all", SIDE = qs.get("view")==="def" ? "def" : "off", TEAM = (qs.get("team")||"").toUpperCase(), SORT = qs.get("sort") || "tot", DOC, D;
+function url(){ try { const u = new URL(location.href); u.searchParams.set("season", SEASON); WIN==="all" ? u.searchParams.delete("games") : u.searchParams.set("games", WIN);
+  SIDE==="off" ? u.searchParams.delete("view") : u.searchParams.set("view", SIDE); TEAM ? u.searchParams.set("team", TEAM) : u.searchParams.delete("team");
+  SORT==="tot" ? u.searchParams.delete("sort") : u.searchParams.set("sort", SORT); history.replaceState(null, "", u); } catch(e){} }
+const press = (id, v) => $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v)===String(v)));
+
+try { SUM = await TM.loadSummary("../"); }
+catch(e){ $("tbl").innerHTML = `<tbody><tr><td class="err">The team data didn't load. Refresh the page to try again.</td></tr></tbody>`; $("asof").textContent = ""; return; }
+HIST = TM.history(SUM, S);
+const seasons = Object.keys(SUM.off).map(Number).sort((a,b)=>b-a);
+SEASON = seasons.includes(+qs.get("season")) ? +qs.get("season") : SUM.last;
+$("season").innerHTML = seasons.map(s=>`<option value="${s}">${s}${s===SUM.last ? " (through week "+SUM.weeks_last+")" : ""}</option>`).join("");
+$("asof").innerHTML = `${SUM.first}-${SUM.last} regular seasons, ${SUM.last} through week ${SUM.weeks_last}. Scored for <b>${esc(L.short(S))}</b> · <a href="../trade-values/?open=league">change league</a>`;
+$("team").innerHTML = `<option value="">Choose a team</option>` + Object.keys(TM.NAMES).map(t=>`<option value="${t}">${t} · ${TM.NAMES[t]}</option>`).join("");
+
+async function loadSeason(){
+  $("tbl").innerHTML = `<tbody><tr><td class="muted">Loading ${SEASON}…</td></tr></tbody>`;
+  try { DOC = await TM.loadSeason("../", SEASON); } catch(e){ $("tbl").innerHTML = `<tbody><tr><td class="err">The ${SEASON} data didn't load. Refresh the page to try again.</td></tr></tbody>`; return false; }
+  return true;
+}
+function sorts(){
+  const o = SIDE==="off" ? [["tot","Total"],["0","Passing"],["1","Rushing"],["2","Receiving"]] : [["tot","Total allowed"],...POS.map(p=>[p,"To "+p])];
+  if (!o.some(([v])=>v===SORT)) SORT = "tot";
+  $("sort").innerHTML = o.map(([v,l])=>`<option value="${v}">${l}</option>`).join(""); $("sort").value = SORT;
+}
+function draw(){
+  D = TM.season(DOC, S, WIN);
+  const T = D.teams, pg = (x, g) => g ? x/g : 0;
+  press("win", WIN); press("side", SIDE); sorts(); $("season").value = SEASON;
+  $("legend").innerHTML = SIDE==="off" ? CAT.map((c,i)=>`<span style="--c:${CC[i]}">${c}</span>`).join("") : POS.map(p=>`<span style="--c:var(--${p})">To ${p}</span>`).join("");
+  const val = (t, k) => { const x = T[t]; if (SIDE==="off") return k==="tot" ? pg(TM.sum3(x.off), x.g) : pg(x.off[+k], x.g);
+    return k==="tot" ? pg(TM.sum3(x.def), x.dg) : pg(TM.sum3(x.defPos[k]), x.dg); };
+  const keys = SIDE==="off" ? ["tot","0","1","2"] : ["tot",...POS];
+  const R = {}; keys.forEach(k=>R[k] = TM.ranks(T, (x, t)=>val(t, k)));
+  const order = Object.keys(T).sort((a,b)=>val(b,SORT)-val(a,SORT));
+  const g = WIN==="all" ? "season" : "last 4 games";
+  $("hTbl").textContent = SIDE==="off" ? "Offenses" : "Points allowed";
+  $("tblNote").textContent = SIDE==="off" ? `Fantasy points per game, ${SEASON} ${g}. Small numbers are league ranks (1 = most).` : `Fantasy points allowed per game, ${SEASON} ${g}. Rank 1 allowed the most: the easiest matchup.`;
+  const th = (k, l) => `<th class="r sortable"${SORT===k?' aria-sort="descending"':""} data-k="${k}">${l}</th>`;
+  const head = SIDE==="off"
+    ? `<thead><tr><th class="r">Rank</th><th>Team</th>${th("tot","Total / game")}${th("0","Passing")}${th("1","Rushing")}${th("2","Receiving")}<th>Mix</th></tr></thead>`
+    : `<thead><tr><th class="r">Rank</th><th>Team</th>${th("tot","Allowed / game")}${POS.map(p=>th(p,"To "+p)).join("")}<th>Mix</th></tr></thead>`;
+  $("tbl").innerHTML = head + `<tbody>` + order.map((t,i)=>{ const x = T[t], tot = val(t,"tot");
+    const parts = SIDE==="off" ? [0,1,2].map(k=>val(t,String(k))) : POS.map(p=>val(t,p)), cols = SIDE==="off" ? CC : POS.map(p=>`var(--${p})`);
+    return `<tr${t===TEAM?' class="me"':""}><td class="r num">${i+1}</td><td><a class="tm pl" href="?team=${t}&season=${SEASON}" data-t="${t}">${t}<span class="full">${esc(TM.NAMES[t]||"")}</span></a></td>` +
+      `<td class="r num tot">${f1(tot)}<span class="rk">#${R.tot[t]}</span></td>` +
+      keys.slice(1).map(k=>`<td class="r num">${f1(val(t,k))}<span class="rk">#${R[k][t]}</span></td>`).join("") +
+      `<td><span class="mix">${parts.map((v,j)=>`<i style="width:${tot>0?(100*Math.max(0,v)/tot).toFixed(1):0}%;background:${cols[j]}"></i>`).join("")}</span></td></tr>`; }).join("") + `</tbody>`;
+  drawTeam(); drawTrend(); url();
+}
+function drawTeam(){
+  $("team").value = TEAM;
+  if (!TEAM || !D.teams[TEAM]) { $("detail").innerHTML = `<p class="muted small">Pick a team.</p>`; return; }
+  const x = D.teams[TEAM], g = x.g || 1, tot = TM.sum3(x.off), T = D.teams;
+  const rk = (f) => TM.ranks(T, f)[TEAM];
+  const rTot = rk(y=>TM.sum3(y.off)/(y.g||1)), rC = [0,1,2].map(k=>rk(y=>y.off[k]/(y.g||1))), rD = rk(y=>TM.sum3(y.def)/(y.dg||1));
+  const win = WIN==="all" ? `${SEASON} season` : `${SEASON}, last 4 games`;
+  let h = `<div><h3>${TEAM} · ${esc(TM.NAMES[TEAM]||"")}</h3><p class="small muted">${win}, ${x.g} game${x.g===1?"":"s"}. Scored for your league.</p></div>`;
+  h += `<div class="kv"><div class="stat"><span class="lbl">Offense / game</span><span class="big">${f1(tot/g)}</span><span class="sm">#${rTot} of 32</span></div>` +
+    CAT.map((c,i)=>`<div class="stat"><span class="lbl">${c} / game</span><span class="big">${f1(x.off[i]/g)}</span><span class="sm">#${rC[i]} · ${pc(x.off[i]/(tot||1))} of offense</span></div>`).join("") +
+    `<div class="stat"><span class="lbl">Defense allows / game</span><span class="big">${f1(TM.sum3(x.def)/(x.dg||1))}</span><span class="sm">#${rD} most allowed</span></div></div>`;
+  // who gets the points
+  const pl = x.players.slice().sort((a,b)=>TM.sum3(b.pts)-TM.sum3(a.pts)).filter(p=>Math.abs(TM.sum3(p.pts))>=0.5);
+  const share = (v, d) => d>0 && Math.abs(v)>=0.05 ? pc(v/d) : "–";
+  h += `<div><h3>Who gets the points</h3><p class="small muted">Each player's share of the team's fantasy points in the window. Passing points go to the passer and receiving points to the receiver, so shares add up within each column.</p></div>
+    <div class="tablebox"><table><thead><tr><th>Player</th><th>Pos</th><th class="r">G</th><th class="r">Points</th><th class="r">Share of offense</th><th class="r">Passing share</th><th class="r">Rushing share</th><th class="r">Receiving share</th></tr></thead><tbody>` +
+    pl.map(p=>`<tr><td>${p.id ? `<a class="pl" href="../player/?id=${encodeURIComponent(p.id)}${amp}">${esc(p.n)}</a>` : esc(p.n)}</td><td><span class="pos" style="color:var(--${p.pos})">${p.pos}</span></td><td class="r num">${p.g}</td><td class="r num">${f1(TM.sum3(p.pts))}</td><td class="r num"><b>${share(TM.sum3(p.pts), tot)}</b></td>${[0,1,2].map(k=>`<td class="r num">${share(p.pts[k], x.off[k])}</td>`).join("")}</tr>`).join("") + `</tbody></table></div>`;
+  // by week
+  const wk = Object.keys(x.byWeek).map(Number).sort((a,b)=>a-b), mx = Math.max(1, ...wk.map(w=>TM.sum3(x.byWeek[w].off)));
+  const dw = x.dByWeek;
+  h += `<div class="two"><div style="display:flex;flex-direction:column;gap:8px;min-width:0"><h3>By week</h3><div class="tablebox"><table><thead><tr><th class="r">Wk</th><th>Opp</th><th class="r">Pass</th><th class="r">Rush</th><th class="r">Rec</th><th class="r">Total</th><th></th><th class="r">Allowed</th></tr></thead><tbody>` +
+    wk.map(w=>{ const b = x.byWeek[w], t = TM.sum3(b.off); return `<tr><td class="r num">${w}</td><td>${esc(b.opp)}</td>${b.off.map(v=>`<td class="r num">${f1(v)}</td>`).join("")}<td class="r num tot">${f1(t)}</td><td><span class="wbar" style="width:${Math.max(4,Math.round(80*t/mx))}px">${b.off.map((v,j)=>`<i style="width:${t>0?(100*Math.max(0,v)/t).toFixed(1):0}%;background:${CC[j]}"></i>`).join("")}</span></td><td class="r num">${dw[w] ? f1(TM.sum3(dw[w].def)) : "–"}</td></tr>`; }).join("") + `</tbody></table></div></div>`;
+  // allowed by position
+  const dpos = POS.map(p=>[p, TM.sum3(x.defPos[p])/(x.dg||1), rk(y=>TM.sum3(y.defPos[p])/(y.dg||1))]);
+  h += `<div style="display:flex;flex-direction:column;gap:8px;min-width:0"><h3>Defense: points allowed / game</h3><div class="kv">` +
+    dpos.map(([p,v,r])=>`<div class="stat"><span class="lbl">To ${p}</span><span class="big">${f1(v)}</span><span class="sm">#${r} most allowed</span></div>`).join("") + `</div></div></div>`;
+  // history, every season (full seasons)
+  const ss = Object.keys(HIST).map(Number).sort((a,b)=>b-a);
+  const hr = s => { const H = HIST[s], t = H[TEAM]; if (!t) return null; const r = TM.ranks(H, y=>TM.sum3(y.off)/(y.g||1))[TEAM], rd = TM.ranks(H, y=>TM.sum3(y.def)/(y.dg||1))[TEAM]; return {t, r, rd}; };
+  const hmx = Math.max(1, ...ss.map(s=>{ const z = hr(s); return z ? TM.sum3(z.t.off)/(z.t.g||1) : 0; }));
+  h += `<div><h3>${TEAM} by season, ${SUM.first} on</h3><p class="small muted">Full regular seasons (${SUM.last} so far), your league's scoring.</p></div><div class="tablebox"><table><thead><tr><th class="r">Season</th><th class="r">G</th><th class="r">Offense / game</th><th class="r">Passing</th><th class="r">Rushing</th><th class="r">Receiving</th><th></th><th class="r">Allowed / game</th></tr></thead><tbody>` +
+    ss.map(s=>{ const z = hr(s); if (!z) return ""; const t = z.t, gg = t.g||1, tt = TM.sum3(t.off)/gg;
+      return `<tr${s===SEASON?' class="me"':""}><td class="r num"><a href="?team=${TEAM}&season=${s}">${s}</a></td><td class="r num">${t.g}</td><td class="r num tot">${f1(tt)}<span class="rk">#${z.r}</span></td>${t.off.map(v=>`<td class="r num">${f1(v/gg)}</td>`).join("")}<td><span class="wbar" style="width:${Math.max(4,Math.round(80*tt/hmx))}px">${t.off.map((v,j)=>`<i style="width:${tt>0?(100*Math.max(0,v/gg)/tt).toFixed(1):0}%;background:${CC[j]}"></i>`).join("")}</span></td><td class="r num">${f1(TM.sum3(t.def)/(t.dg||1))}<span class="rk">#${z.rd}</span></td></tr>`; }).join("") + `</tbody></table></div>`;
+  $("detail").innerHTML = h;
+}
+function drawTrend(){
+  if ($("trend").dataset.done) return; $("trend").dataset.done = "1";
+  const ss = Object.keys(HIST).map(Number).sort((a,b)=>b-a);
+  $("trend").innerHTML = `<thead><tr><th class="r">Season</th><th class="r">Offense / team game</th><th class="r">Passing</th><th class="r">Rushing</th><th class="r">Receiving</th><th class="r">Passing share</th></tr></thead><tbody>` +
+    ss.map(s=>{ const H = Object.values(HIST[s]), g = H.reduce((a,t)=>a+t.g,0)||1, c = [0,1,2].map(k=>H.reduce((a,t)=>a+t.off[k],0)/g), tt = c[0]+c[1]+c[2];
+      return `<tr><td class="r num">${s}${s===SUM.last?' <span class="tag">so far</span>':""}</td><td class="r num tot">${f1(tt)}</td>${c.map(v=>`<td class="r num">${f1(v)}</td>`).join("")}<td class="r num">${pc(c[0]/(tt||1))}</td></tr>`; }).join("") + `</tbody>`;
+}
+
+$("season").addEventListener("change", async ()=>{ SEASON = +$("season").value; if (await loadSeason()) draw(); });
+$("win").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; WIN = b.dataset.v==="4" ? 4 : "all"; draw(); });
+$("side").addEventListener("click", e=>{ const b = e.target.closest("button[data-v]"); if (!b) return; SIDE = b.dataset.v; draw(); });
+$("sort").addEventListener("change", ()=>{ SORT = $("sort").value; draw(); });
+$("tbl").addEventListener("click", e=>{ const h = e.target.closest("th[data-k]"); if (h) { SORT = h.dataset.k; draw(); return; }
+  const a = e.target.closest("a[data-t]"); if (a) { e.preventDefault(); TEAM = a.dataset.t; drawTeam(); url(); $("teamSec").scrollIntoView({block:"start"}); } });
+$("team").addEventListener("change", ()=>{ TEAM = $("team").value; drawTeam(); url(); });
+if (await loadSeason()) { draw(); if (TEAM && qs.get("team")) $("teamSec").scrollIntoView({block:"start"}); }
+})();
+</script>
+</body></html>

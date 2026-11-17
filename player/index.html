@@ -51,6 +51,7 @@
 <script src="../shared/league.js"></script>
 <script src="../shared/engine.js"></script>
 <script src="../shared/data.js"></script>
+<script src="../shared/teams.js"></script>
 <script>
 (async function(){
 const $ = id => document.getElementById(id), L = window.PALeague, POS = ["QB","RB","WR","TE"];
@@ -245,6 +246,15 @@ if (!p.proj && p.gsis) {
       rows.slice().reverse().map(r=>`<tr><td class="num">${r[0]}${r[0]===PR.last?" <span class=\"tag\">so far</span>":""}</td><td>${esc(v(r,"team"))}</td><td class="r num">${v(r,"games")}</td><td class="r num">${f1(v(r,"ppr_pts"))}</td><td class="r num"><b>${f1(v(r,"ppg"))}</b></td><td class="r num">${sp(v(r,"snap_pct"))}</td>${COLS.map(([,c,f])=>`<td class="r num">${f(v(r,c))}</td>`).join("")}</tr>`).join("") + `</tbody></table></div>`;
     b += `<p class="note">Regular season only, ${PR.first} on. Points are full PPR with 4-point passing TDs (nflverse), not your league's scoring; his value above uses your league. Snap share is the average share of offensive snaps in the games he played. Target share is his share of his team's targets.</p>`;
     prodBox.querySelector(".body").innerHTML = b;
+    // his share of his team's fantasy points this season, for your league's scoring (data/teams/, shared/teams.js)
+    if (window.PATeams && live) (async () => { try {
+      const TD = await PATeams.loadSeason("../", PR.last), pi = TD.players.findIndex(x=>x[2]===p.id); if (pi<0) return;
+      const Dt = PATeams.season(TD, S, "all"), mine = Object.entries(Dt.teams).map(([t,x])=>[t, x, x.players.find(q=>q.i===pi)]).filter(z=>z[2]).sort((a,b)=>b[2].g-a[2].g)[0];
+      if (!mine) return; const [tm, tx, me2] = mine, tot = PATeams.sum3(tx.off), sh = (v,d) => d>0 ? Math.round(100*v/d)+"%" : "–";
+      const el = document.createElement("div"); el.className = "teamshare";
+      el.innerHTML = `<p class="small"><b>Share of ${esc(tm)}'s fantasy points, ${PR.last} so far:</b> <b>${sh(PATeams.sum3(me2.pts), tot)}</b> of the offense${["passing","rushing","receiving"].map((c,k)=>Math.abs(me2.pts[k])>=0.05 ? ` · ${c} ${sh(me2.pts[k], tx.off[k])}` : "").join("")} <span class="muted">(your league's scoring, ${me2.g} of ${tx.g} games)</span>. <a href="../team-analytics/?team=${encodeURIComponent(tm)}${amp}">${esc(tm)} team analytics →</a></p>`;
+      prodBox.querySelector(".body .kv").after(el);
+    } catch(e){} })();
 
     // NFL career comparables: past seasons at his position closest in age, points per game and previous-season points per game
     if (me.b && me.c && me.c.length) {
