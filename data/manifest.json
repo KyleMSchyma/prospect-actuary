@@ -1,8 +1,8 @@
 {
- "built": "2026-11-15T16:50Z",
+ "built": "2026-11-17T16:13Z",
  "values": {
-  "asof": "2026 stats through week 10. Updated November 15, 2026.",
-  "players": 567,
+  "asof": "2026 stats through week 10. Updated November 17, 2026.",
+  "players": 581,
   "scale": "100,000 = most valuable player on each sheet; values add",
   "model": "Trade values: credibility-weighted PPG over replacement x expected games; dynasty through 2031 with aging, survival, stop-loss upside and 15%/yr discount; status-based expected games (injury report, depth chart). Weekly R build with 6 output gates.",
   "projected": "Projections for the rest of 2026 and 2027-2031; 2026 games played so far are actual."
@@ -25,15 +25,15 @@
   "projected": "2027 prospects are projections from 2026 college stats (pro-rated to 12 games); the mock pick stands in for draft capital."
  },
  "ids": {
-  "players": 1625,
-  "with_nfl_id": 1493,
+  "players": 1631,
+  "with_nfl_id": 1499,
   "unmatched_value_players": []
  },
  "files": {
   "pre-draft/data/pd_player_grades.csv": {
-   "sha": "d2718e375c",
-   "bytes": 251269,
-   "updated": "2026-11-15"
+   "sha": "cb0ed6990b",
+   "bytes": 251272,
+   "updated": "2026-11-17"
   },
   "post-draft/data/pd_post_player_grades.csv": {
    "sha": "2b70c11478",
@@ -46,24 +46,24 @@
    "updated": "2026-11-15"
   },
   "pre-draft/data/rookie_board_values.csv": {
-   "sha": "b645832561",
-   "bytes": 262730,
-   "updated": "2026-11-15"
+   "sha": "6d47825369",
+   "bytes": 262693,
+   "updated": "2026-11-17"
   },
   "trade-values/data/tv.js": {
-   "sha": "05c40ff321",
-   "bytes": 865980,
-   "updated": "2026-11-15"
+   "sha": "2f57ebdbd7",
+   "bytes": 884101,
+   "updated": "2026-11-17"
   },
   "value-research/data/dd.js": {
-   "sha": "2d4424568d",
-   "bytes": 20354,
-   "updated": "2026-11-15"
+   "sha": "731c2b8615",
+   "bytes": 20026,
+   "updated": "2026-11-17"
   },
   "data/movers.csv": {
-   "sha": "8c7778d2e9",
-   "bytes": 10176,
-   "updated": "2026-11-15"
+   "sha": "b9ec744113",
+   "bytes": 10326,
+   "updated": "2026-11-17"
   }
  },
  "checks": [
