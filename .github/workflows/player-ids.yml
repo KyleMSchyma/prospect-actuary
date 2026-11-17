@@ -1,4 +1,5 @@
-# Rebuilds the canonical player list (data/players.json), data manifest (data/manifest.json) and Sleeper id crosswalk (data/sleeper_ids.json)
+# Rebuilds the canonical player list (data/players.json), data manifest (data/manifest.json), Sleeper id crosswalk (data/sleeper_ids.json)
+# and NFL production / career comparables for player profiles (data/production.json)
 # whenever a grade or value file changes, every Wednesday (new nflverse rosters), or by hand.
 # scripts/build_players.py validates first: if a check fails the job fails, nothing is written,
 # and the site keeps the last good files. If nothing changed, nothing is committed.
@@ -14,6 +15,7 @@ on:
       - "trade-values/data/tv.js"
       - "scripts/build_players.py"
       - "scripts/build_sleeper_ids.py"
+      - "scripts/build_production.py"
   schedule:
     - cron: "0 15 * * 3"   # Wednesdays, the day after the Tuesday refresh
   workflow_dispatch:
@@ -41,9 +43,14 @@ jobs:
         # Sleeper league import (shared/sleeper.js). If the DynastyProcess id file can't be read, keep the last good file.
         continue-on-error: true
         run: python3 scripts/build_sleeper_ids.py
+      - name: Build NFL production, usage and career comparables
+        # Player profiles (data/production.json) from nflverse season stats and snap counts. If nflverse can't be read
+        # or a check fails, keep the last good file.
+        continue-on-error: true
+        run: python3 scripts/build_production.py
       - name: Commit if changed
         run: |
-          git add data/players.json data/manifest.json data/sleeper_ids.json
+          git add data/players.json data/manifest.json data/sleeper_ids.json data/production.json
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
