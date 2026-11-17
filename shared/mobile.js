@@ -104,10 +104,10 @@
     if (SKIP.has(t.id) || t.closest(".m-sheet,.pa-results,.whybox,.why")) return false;
     const ths = t.tHead ? t.tHead.rows[0] && t.tHead.rows[0].cells : null;
     if (!ths || ths.length < 4) return false;
-    return !!t.querySelector("tbody a.pl, tbody button.nmbtn, tbody a[data-team], tbody a[href*='player/']");
+    return !!t.querySelector("tbody a.pl, tbody button.nmbtn, tbody a[data-team], tbody a[href*='player/']" + (here === "player" ? ", tbody a[href^='./?']" : ""));
   }
   function profileHref(tr){
-    const a = tr.querySelector("td.m-name a.pl, td.m-name a[href*='player/']"); if (a) return a.getAttribute("href");
+    const a = tr.querySelector("td.m-name a.pl, td.m-name a[href*='player/'], td.m-name a[href^='./?']"); if (a) return a.getAttribute("href");
     const b = tr.querySelector("button.nmbtn"); if (b && b.dataset.id) return `${root}player/?key=${encodeURIComponent("tv:" + b.dataset.id)}`;
     return null;
   }
@@ -116,14 +116,15 @@
     const ths = [...t.tHead.rows[0].cells].map(c => c.textContent.trim());
     if (!t.classList.contains("mc")) {
       t.classList.add("mc"); const box = t.closest(".tablebox"); if (box) box.classList.add("m-cb");
-      if (t.dataset.mAll == null) t.classList.toggle("m-all", store.get("pa-m-all") === "1");
+      // profile tables are short: every column shows on the card
+      t.classList.toggle("m-all", here === "player" || store.get("pa-m-all") === "1");
     }
     const tb = t.tBodies[0]; if (!tb) return;
     // a row about two or more players (a trade move: you give / you get): no single name, so every column shows on the card
     const sample = tb.querySelector("tr:not(.why)");
     if ((sample && [...sample.cells].filter(c => c.querySelector("a.pl, a[href*='player/']")).length > 1) || (ths.some(h => /^you give/i.test(h)) && ths.some(h => /^you get/i.test(h)))) t.classList.add("m-multi");
     const nameIx = t.classList.contains("m-multi") ? -1 : (() => { const r = sample; if (!r) return -1;
-      const i = [...r.cells].findIndex(c => c.querySelector("a.pl, button.nmbtn, a[data-team], a[href*='player/']")); if (i >= 0) return i;
+      const i = [...r.cells].findIndex(c => c.querySelector("a.pl, button.nmbtn, a[data-team], a[href*='player/'], a[href^='./?']")); if (i >= 0) return i;
       return ths.findIndex(h => /^(player|team|name)$/i.test(h)); })();
     const valIx = (() => { const pri = ths.findIndex(h => /^(trade value|total value)$/i.test(h)); return pri >= 0 ? pri : ths.findIndex(h => VAL.test(h)); })();
     const rankIx = ths.findIndex(h => RANK.test(h)), gradeIx = ths.findIndex(h => GRADE.test(h));
@@ -149,7 +150,7 @@
       if (team && here === "league") { const s = sleeperMe(); const rid = team.dataset.team;
         h += `<a href="#hTeam" data-mteam="${esc(rid)}">Roster</a>`;
         if (s && s.league && s.me && String(s.me) !== String(rid)) h += `<a href="${root}trade-calculator/?sleeper=${encodeURIComponent(s.league)}&me=${encodeURIComponent(s.me)}&with=${encodeURIComponent(rid)}">Trade</a>`; }
-      if (extras && !t.classList.contains("m-multi")) h += `<button type="button" aria-expanded="false">More</button>`;
+      if (extras && !t.classList.contains("m-multi") && here !== "player") h += `<button type="button" aria-expanded="false">More</button>`;
       tog.innerHTML = h;
       if (h) tr.appendChild(tog);
       if (href) { tr.classList.add("m-link"); tr.dataset.href = href; }
@@ -178,7 +179,7 @@
   // a "Show all columns" switch above each card list (remembered in this browser)
   function listbar(t){
     if (t.dataset.mBar) return;
-    if (here === "" || t.classList.contains("m-multi") || ![...t.querySelectorAll("td.m-x")].some(td => td.textContent.trim())) return;   // nothing hidden: no switch needed
+    if (here === "" || here === "player" || t.classList.contains("m-multi") || ![...t.querySelectorAll("td.m-x")].some(td => td.textContent.trim())) return;   // nothing hidden: no switch needed
     t.dataset.mBar = "1";
     const box = t.closest(".tablebox") || t;
     const bar = document.createElement("div"); bar.className = "m-listbar m-only";
@@ -247,7 +248,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheets(); });
 
   // ---------- player profile: valuation first, sections fold ----------
-  const ORDER = [[/dynasty valuation|projected dynasty value/i, 1, true], [/prospect evaluation/i, 2, false], [/how the draft changed/i, 3, false], [/historical comparables/i, 4, false], [/market comparison/i, 6, false]];
+  const ORDER = [[/dynasty valuation|projected dynasty value/i, 1, true], [/prospect evaluation/i, 2, false], [/how the draft changed/i, 2, false], [/nfl production/i, 3, false], [/historical comparables|career comparables/i, 4, false], [/market comparison/i, 6, false]];
   function profile(){
     if (here !== "player") return;
     document.body.classList.add("m-prof");

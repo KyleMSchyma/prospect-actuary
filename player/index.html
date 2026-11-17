@@ -217,6 +217,50 @@ if (V && V.kind==="nfl" && window.DD) {
   b += `<p class="note">Fixed settings for a fair comparison: 12 teams, superflex, 0.5 PPR, 4-pt passing TD, 2 RB / 3 WR / 1 TE, no flex, matching Dynasty Daddy's superflex values (snapshot ${esc(window.DD.asof||"")}). This is not customized to your league. A disagreement is not by itself a reason to buy or sell. <a href="../value-research/">Full market check →</a></p>`;
   sec("right", "Market comparison", "Ours vs Dynasty Daddy, ranks", b);
 }
+// ---------- NFL production and usage, and NFL career comparables (data/production.json, built from nflverse by scripts/build_production.py) ----------
+if (!p.proj && p.gsis) {
+  const prodBox = sec("right", "NFL production and usage", "Regular season, nflverse stats", `<p class="small muted">Loading NFL stats…</p>`);
+  let PR = null;
+  try { const r = await fetch("../data/production.json"); if (r.ok) PR = await r.json(); } catch(e){}
+  const me = PR && PR.players[p.id];
+  if (!PR) prodBox.querySelector(".body").innerHTML = `<p class="small muted">The NFL stats file didn't load. Refresh the page to try again.</p>`;
+  else if (!me) prodBox.querySelector(".body").innerHTML = `<p class="small muted">No regular-season NFL games for him since ${PR.first}.</p>`;
+  else {
+    const ix = {}; PR.cols.forEach((c,i)=>ix[c] = i);
+    const rows = me.s, cur = rows[rows.length-1], v = (r, c) => r[ix[c]];
+    const sp = x => x==null ? "–" : Math.round(100*x)+"%", n0 = x => x==null ? "–" : Number(x).toLocaleString("en-US");
+    const COLS = p.pos==="QB"
+      ? [["Att","pass_att",n0],["Pass yds","pass_yds",n0],["Pass TD","pass_td",n0],["INT","int",n0],["Car","carries",n0],["Rush yds","rush_yds",n0],["Rush TD","rush_td",n0]]
+      : p.pos==="RB"
+      ? [["Car","carries",n0],["Rush yds","rush_yds",n0],["Rush TD","rush_td",n0],["Tgt","targets",n0],["Tgt share","target_share",sp],["Rec","receptions",n0],["Rec yds","rec_yds",n0],["Rec TD","rec_td",n0]]
+      : [["Tgt","targets",n0],["Tgt share","target_share",sp],["Air yds share","air_yards_share",sp],["Rec","receptions",n0],["Rec yds","rec_yds",n0],["Rec TD","rec_td",n0]];
+    const g = v(cur,"games") || 1, live = cur[0]===PR.last;
+    const touch = p.pos==="QB" ? [["Pass att / game", f1(v(cur,"pass_att")/g)], ["Carries / game", f1(v(cur,"carries")/g)]]
+      : p.pos==="RB" ? [["Touches / game", f1((v(cur,"carries")+v(cur,"receptions"))/g)], ["Target share", sp(v(cur,"target_share"))]]
+      : [["Targets / game", f1(v(cur,"targets")/g)], ["Target share", sp(v(cur,"target_share"))]];
+    let b = `<div class="kv"><div class="stat"><span class="lbl">${cur[0]}${live?" so far":""} PPR / game</span><span class="big">${f1(v(cur,"ppg"))}</span><span class="sm">${v(cur,"games")} games · ${esc(v(cur,"team"))}</span></div>
+      <div class="stat"><span class="lbl">Snap share</span><span class="big">${sp(v(cur,"snap_pct"))}</span><span class="sm">avg. of games played</span></div>` +
+      touch.map(([l,x])=>`<div class="stat"><span class="lbl">${l}</span><span class="big">${x}</span><span class="sm">${cur[0]}</span></div>`).join("") + `</div>`;
+    b += `<div class="tablebox" style="max-height:360px"><table class="prod"><thead><tr><th>Season</th><th>Team</th><th class="r">G</th><th class="r">PPR pts</th><th class="r">PPG</th><th class="r">Snap %</th>${COLS.map(([h])=>`<th class="r">${h}</th>`).join("")}</tr></thead><tbody>` +
+      rows.slice().reverse().map(r=>`<tr><td class="num">${r[0]}${r[0]===PR.last?" <span class=\"tag\">so far</span>":""}</td><td>${esc(v(r,"team"))}</td><td class="r num">${v(r,"games")}</td><td class="r num">${f1(v(r,"ppr_pts"))}</td><td class="r num"><b>${f1(v(r,"ppg"))}</b></td><td class="r num">${sp(v(r,"snap_pct"))}</td>${COLS.map(([,c,f])=>`<td class="r num">${f(v(r,c))}</td>`).join("")}</tr>`).join("") + `</tbody></table></div>`;
+    b += `<p class="note">Regular season only, ${PR.first} on. Points are full PPR with 4-point passing TDs (nflverse), not your league's scoring; his value above uses your league. Snap share is the average share of offensive snaps in the games he played. Target share is his share of his team's targets.</p>`;
+    prodBox.querySelector(".body").innerHTML = b;
+
+    // NFL career comparables: past seasons at his position closest in age, points per game and previous-season points per game
+    if (me.b && me.c && me.c.length) {
+      const B = me.b, nx = x => x==null ? `<span class="muted">in progress</span>` : x[1]===0 ? `<span class="muted">no games</span>` : `${f1(x[2])} <span class="muted small">${x[1]}g</span>`;
+      const played = me.c.filter(c=>c.next[0] && c.next[0][1]>0), chg = played.map(c=>c.next[0][2]-c.ppg).sort((a,b)=>a-b);
+      const med = chg.length ? (chg.length%2 ? chg[(chg.length-1)/2] : (chg[chg.length/2-1]+chg[chg.length/2])/2) : null;
+      const down = chg.filter(x=>x<0).length, none = me.c.filter(c=>c.next[0] && c.next[0][1]===0).length;
+      let c = `<p class="small">Basis: his <b>${B.s}${B.partial?" season so far":" season"}</b>: age ${f1(B.a)}, <b>${f1(B.ppg)}</b> PPR points per game${B.prev?` after ${f1(B.prev)} the year before`:""}.</p>`;
+      c += `<div class="tablebox" style="max-height:none"><table><thead><tr><th>Player</th><th class="r">Season</th><th class="r">Age</th><th class="r">PPG</th><th class="r">Year before</th><th class="r">Next season</th><th class="r">Two seasons later</th></tr></thead><tbody>` +
+        me.c.map(x=>`<tr><td>${x.id ? `<a class="pl" href="./?id=${encodeURIComponent(x.id)}${amp}">${esc(x.n)}</a>` : esc(x.n)}</td><td class="r num">${x.s}</td><td class="r num">${f1(x.a)}</td><td class="r num">${f1(x.ppg)}</td><td class="r num">${f1(x.prev)}</td><td class="r num">${nx(x.next[0])}</td><td class="r num">${nx(x.next[1])}</td></tr>`).join("") + `</tbody></table></div>`;
+      if (played.length) c += `<p class="small"><b>Next season:</b> ${down} of ${played.length} who played scored fewer points per game${med!=null?` (median change ${med>0?"+":""}${f1(med)} PPG)`:""}${none?`; ${none} played no regular-season games`:""}.</p>`;
+      c += `<p class="note">The ${me.c.length} closest ${p.pos} seasons since ${PR.first} by age, points per game and the previous season's points per game, one season per player, from seasons with ${PR.min_games}+ games. What they did next is what happened, not a forecast for him; it does not enter his value. "No games" means no regular-season games that year (injury, release or retirement).</p>`;
+      sec("right", "NFL career comparables", "Similar past seasons, and what came next", c);
+    }
+  }
+}
 })();
 </script>
 </body></html>

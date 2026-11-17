@@ -277,7 +277,8 @@ a.pl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line-2)} 
   .m-intro .dev{font-size:.86rem}
 
   /* ---------- cards from tables: every column is still there; the main ones are on the card, the rest under "More" ---------- */
-  .tablebox.m-cb{border:none;background:none;overflow:visible;border-radius:0}
+  .tablebox.m-cb{border:none;background:none;overflow:visible;border-radius:0;max-height:none!important}
+  table.mc td.m-x>*{align-self:flex-start}
   table.mc,table.mc>tbody{display:block;width:100%}
   table.mc>thead{display:none}
   table.mc>tbody>tr{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px;position:relative}
@@ -417,6 +418,8 @@ a.pl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line-2)} 
   body.m-prof .sec.m-shut>header{border-bottom:none}
   body.m-prof .sec.m-shut>.body{display:none}
   body.m-prof .sec .body{padding:12px 14px 14px}
+  body.m-prof .sec,body.m-prof .sec .body,body.m-prof .sec .body>*{min-width:0;max-width:100%}
+  body.m-prof .sec .body .tablebox:not(.m-cb){max-height:none}
   body.m-prof .ph{flex-direction:column;align-items:stretch!important;gap:12px}
   body.m-prof #main{display:flex;flex-direction:column;gap:14px}
   body.m-prof #main>.note{order:5}
