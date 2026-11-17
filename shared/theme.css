@@ -211,3 +211,224 @@ a.pl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line-2)} 
 .pa-lg.on{border-color:var(--accent)} .pa-lg.on button:first-child{background:var(--accent);color:var(--accent-ink);font-weight:600}
 .pa-saved-add{display:flex;gap:6px;margin-top:6px}
 .pa-saved-add input{flex:0 1 220px;min-width:0}
+
+/* ======================================================================================================
+ * Phone layout (shared/mobile.js). Everything below applies at 760px wide or less, so desktop and tablet
+ * stay exactly as they were. Same pages, same data, same engine: only the presentation changes.
+ * Sections: bottom bar · base and touch sizes · page intro · cards from tables · filter sheet · league sheet · per page
+ * ====================================================================================================== */
+.pa-bnav,.m-only,.m-tog,.m-sheet,.m-scrim,.m-fbtn,.m-sortbar,.m-tsum,.assets .mv{display:none}
+@media (max-width:760px){
+  /* ---------- bottom bar: five sections, icons with labels, orange for the current one, clear of the iPhone home bar ---------- */
+  .pa-bnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:55;
+    background:rgba(10,20,36,.97);border-top:1px solid #223a5c;-webkit-backdrop-filter:saturate(1.4) blur(8px);backdrop-filter:saturate(1.4) blur(8px);
+    padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+  .pa-bnav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:6px 2px 5px;color:#a9b6c8;text-decoration:none;
+    font-size:.66rem;font-weight:500;line-height:1.15;text-align:center;letter-spacing:-.005em;-webkit-tap-highlight-color:transparent;position:relative}
+  .pa-bnav a svg{flex:none}
+  .pa-bnav a[aria-current]{color:#f28c28;font-weight:600}
+  .pa-bnav a[aria-current]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:2px;border-radius:0 0 2px 2px;background:#f28c28}
+  .pa-bnav a:active{background:rgba(255,255,255,.05)}
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  html{scroll-padding-top:110px;scroll-padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  .m-only{display:revert}
+  /* the top bar keeps the logo, search, league and menu (the menu still lists every sub-page) */
+  .pa-top .bar{gap:8px}
+  .pa-top .brand span{font-size:.95rem}
+  @media (max-width:359px){ .pa-top .brand span{display:none} }
+  .pa-top .iconbtn,.srchbtn{width:44px!important;height:44px!important}
+  .pa-top .m-lg{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:none;font:inherit;background:none;border:1px solid var(--line-2);color:var(--ink);border-radius:6px;cursor:pointer}
+  .pa-sub a{min-height:44px}
+  .pa-drawer{max-height:calc(100vh - var(--nav-h) - 64px - env(safe-area-inset-bottom,0px))}
+  .pa-drawer .grp a{min-height:40px;display:flex;align-items:center}
+
+  /* ---------- base: tighter spacing, 16px inputs (no iOS zoom), 44px touch targets, no sideways page scroll ---------- */
+  html,body{overflow-x:clip}
+  .wrap{gap:22px;padding-top:16px;padding-bottom:24px}
+  h1{font-size:1.6rem} h2{font-size:1.2rem} h3{font-size:1.02rem}
+  p{max-width:none}
+  input[type=search],input[type=text],input[type=number],input:not([type]),select,textarea{font-size:16px!important;min-height:44px}
+  .tabs button,button.btn,.btn,.more,.mode button{min-height:44px}
+  .tabs button{padding:6px 14px}
+  .mode{display:grid!important;grid-template-columns:1fr 1fr}
+  .mode button{font-size:.86rem;padding:6px 8px;margin-left:0!important;border-radius:0}
+  .mode button:first-child{border-radius:6px 0 0 6px} .mode button:last-child{border-radius:0 6px 6px 0}
+  .linkbtn,.reset{min-height:44px;display:inline-flex;align-items:center}
+  details>summary{min-height:44px;display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
+  /* position and filter tabs scroll sideways inside their own row instead of wrapping into a block */
+  .tabs:not(.mode):not(.m-wrap){flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;max-width:100%;padding-bottom:2px;scroll-snap-type:x proximity}
+  .tabs:not(.mode)::-webkit-scrollbar{display:none}
+  .tabs:not(.mode) button{flex:none;scroll-snap-align:start}
+  .seg:not(.mode){flex-wrap:nowrap}
+  .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  select{max-width:100%}
+  .ctlbar>*,.ctl>*{min-width:0;max-width:100%}
+  .row>select{flex:1 1 180px;min-width:0}
+  .ctl input[type=search]{flex:1 1 100%;width:100%}
+  .tablebox{max-height:none}
+
+  /* ---------- page intro: explanations fold into one "About this page" line so the tool comes first ---------- */
+  .m-intro{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+  .m-intro>summary{padding:4px 14px;font-size:.88rem;color:var(--ink-2);list-style:none}
+  .m-intro>summary::-webkit-details-marker{display:none}
+  .m-intro>summary::after{content:"Show";margin-left:auto;font-size:.8rem;color:var(--accent-2)}
+  .m-intro[open]>summary::after{content:"Hide"}
+  .m-intro>.in{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px}
+  .m-intro .dev{font-size:.86rem}
+
+  /* ---------- cards from tables: every column is still there; the main ones are on the card, the rest under "More" ---------- */
+  .tablebox.m-cb{border:none;background:none;overflow:visible;border-radius:0}
+  table.mc,table.mc>tbody{display:block;width:100%}
+  table.mc>thead{display:none}
+  table.mc>tbody>tr{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px;position:relative}
+  table.mc>tbody>tr:hover td{background:none}
+  table.mc>tbody>tr.m-link{cursor:pointer}
+  table.mc>tbody>tr.m-link:active{background:var(--panel-2)}
+  table.mc>tbody>tr::before,table.mc>tbody>tr::after{content:"";flex-basis:100%;height:0;order:4}
+  table.mc>tbody>tr::after{order:6}
+  table.mc>tbody>tr>td{border:none!important;box-shadow:none!important;position:static!important;padding:0;white-space:normal;background:none!important;text-align:left;min-width:0}
+  table.mc>tbody>tr>td{overflow-wrap:anywhere}
+  table.mc td :not(.tag):not(.st):not(.chip):not(.posb):not(.pos):not(.nd):not(.lab){white-space:normal}
+  table.mc.m-multi>tbody>tr>td.m-x{display:flex;flex:1 1 100%;border-top:none;padding-top:4px}
+  table.mc.m-multi>tbody>tr>td.m-x:first-child{padding-top:0}
+  table.mc td.m-name button.nmbtn{border-bottom:none;text-decoration:none;font-weight:600;text-align:left;padding:0}
+  .ctl label:has(input[type=search]){flex:1 1 100%;min-width:0}
+  .ctl label input[type=search]{width:100%}
+  table.mc td.m-rank{order:1;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);min-width:1.6em;align-self:flex-start;padding-top:3px}
+  table.mc td.m-name{order:2;flex:1 1 0;font-weight:600;font-size:.98rem;line-height:1.3}
+  table.mc td.m-name .small,table.mc td.m-name .muted{font-weight:400}
+  table.mc td.m-name a.pl{border-bottom:none}
+  table.mc td.m-grade{order:3;flex:none}
+  table.mc td.m-val{order:3;flex:none;text-align:right;font-family:var(--f-mono);font-size:1.02rem;font-weight:600;color:var(--ink)}
+  table.mc td.m-val::before{content:attr(data-l);display:block;font-family:var(--f-mono);font-size:.58rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  table.mc td.m-val .minibar{display:none}
+  table.mc td.m-val .bar{display:none}
+  table.mc>tbody>tr>td.m-meta{order:5;font-size:.8rem;color:var(--ink-2);display:block}
+  table.mc td.m-meta::before{content:attr(data-l) " ";font-family:var(--f-mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  table.mc>tbody>tr>td.m-meta:empty,table.mc td.m-x:empty{display:none}
+  table.mc td.m-tog{order:5;margin-left:auto;display:block}
+  .m-tog button{font:inherit;font-size:.78rem;color:var(--accent-2);background:none;border:1px solid var(--line-2);border-radius:999px;padding:0 12px;min-height:32px;cursor:pointer;position:relative}
+  .m-tog button::after{content:"";position:absolute;inset:-6px -4px}
+  .m-tog a{font-size:.78rem;display:inline-flex;align-items:center;min-height:32px;padding:0 4px;margin-right:6px;text-decoration:none}
+  table.mc td.m-x{order:7;display:none;flex:0 0 calc(33.333% - 7px);flex-direction:column;font-size:.82rem;padding:6px 0 0;border-top:1px dashed var(--line)}
+  table.mc td.m-x::before{content:attr(data-l);font-family:var(--f-mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.3;margin-bottom:1px}
+  table.mc>tbody>tr.m-open>td.m-x,table.mc.m-all>tbody>tr>td.m-x{display:flex}
+  table.mc>tbody>tr.m-open>td.m-x:empty{display:none}
+  table.mc>tbody>tr.m-none{display:block;color:var(--muted)}
+  table.mc>tbody>tr.m-none>td{display:block}
+  /* expanded "how this value is built" row on Player Values: full width under its card */
+  table.mc>tbody>tr.why{display:block;margin-top:-6px;border-top:none;border-radius:0 0 10px 10px}
+  table.mc>tbody>tr.why>td{display:block}
+  table.mc>tbody>tr.why::before,table.mc>tbody>tr.why::after{display:none}
+  table.mc .why .seas{font-size:.76rem;gap:3px 8px}
+  table.mc>tbody>tr.proj{border-left:3px solid var(--proj)}
+  table.mc>tbody>tr.me{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+  table.mc>tbody>tr.pick{background:var(--panel-2)}
+  .m-mv{font-family:var(--f-mono);font-size:.74rem;font-weight:600}
+  .m-listbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between}
+  .m-listbar .m-sortbar{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted)}
+  .m-listbar select{min-height:40px!important;padding-top:4px;padding-bottom:4px}
+  .m-listbar .tabs.seg button{min-height:40px;font-size:.8rem;padding:4px 10px}
+
+  /* ---------- filters in a bottom sheet ---------- */
+  .m-fbtn{display:inline-flex;align-items:center;gap:6px}
+  .m-fbtn .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;font-size:.72rem;font-weight:700;padding:0 7px;line-height:1.6}
+  .m-scrim{position:fixed;inset:0;background:rgba(10,20,36,.45);z-index:80}
+  .m-scrim.on{display:block}
+  .m-sheet{position:fixed;left:0;right:0;bottom:0;z-index:81;background:var(--panel);color:var(--ink);border-radius:16px 16px 0 0;box-shadow:0 -10px 40px rgba(15,29,51,.25);
+    max-height:85vh;overflow:auto;padding:8px 16px calc(16px + env(safe-area-inset-bottom,0px));flex-direction:column;gap:12px;overscroll-behavior:contain}
+  .m-sheet.on{display:flex}
+  .m-sheet::before{content:"";align-self:center;width:40px;height:4px;border-radius:2px;background:var(--line-2);margin:2px 0 4px}
+  .m-sheet .hd{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .m-sheet .hd b{font-size:1.05rem}
+  .m-sheet label{display:flex;flex-direction:column;gap:4px;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .m-sheet label select,.m-sheet label input{font-family:var(--f-body);text-transform:none;letter-spacing:0;width:100%}
+  .m-sheet .ft{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom,0px));background:var(--panel);padding:10px 0 4px;display:flex;gap:8px}
+  .m-sheet .ft .btn{flex:1;justify-content:center}
+  body.m-locked{overflow:hidden}
+
+  /* ---------- league settings and search open as bottom sheets ---------- */
+  .pa-lgpop{position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0;width:auto!important;max-height:88vh!important;border-radius:16px 16px 0 0;
+    padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))!important;z-index:81!important;box-shadow:0 -10px 40px rgba(15,29,51,.3)!important}
+  .pa-lgpop .pa-lgset{grid-template-columns:1fr 1fr!important}
+  .pa-lgpop .setting .tabs{flex-wrap:wrap;overflow:visible;margin:0;padding:0}
+  .pa-lgpop .setting .tabs button{min-height:40px;padding:4px 10px}
+  .pa-lgpop .ft{bottom:calc(-16px - env(safe-area-inset-bottom,0px))}
+  .pa-lgpop .ft .btn{flex:1}
+  .league .tabs,.lgbody .tabs{flex-wrap:wrap;overflow:visible;margin:0;padding:0}
+  .pa-top.searching .pa-results{max-height:calc(100vh - var(--nav-h) - 84px - env(safe-area-inset-bottom,0px));max-height:calc(100dvh - var(--nav-h) - 84px - env(safe-area-inset-bottom,0px))}
+  .pa-res{min-height:44px}
+  .pa-res .acts a{min-height:32px;display:inline-flex;align-items:center}
+
+  /* ---------- Dashboard: search, the three shortcuts, then trending, prospects, values, picks, trade, freshness ---------- */
+  .dh .sub{font-size:.92rem}
+  .dh .facts{font-size:.78rem}
+  body.m-dash .wrap>.grid,body.m-dash .wrap>.grid.wide,body.m-dash .stack{display:contents}
+  body.m-dash .wrap>*{order:20}
+  body.m-dash .wrap>header.dh{order:1}
+  body.m-dash .wrap>section[aria-label="Search"]{order:2}
+  body.m-dash .wrap>.tools{order:3}
+  body.m-dash section[aria-labelledby="h-mov"]{order:4}
+  body.m-dash section[aria-labelledby="h-lab"]{order:5}
+  body.m-dash section[aria-labelledby="h-val"]{order:6}
+  body.m-dash section[aria-labelledby="h-picks"]{order:7}
+  body.m-dash section[aria-labelledby="h-tc"]{order:8}
+  body.m-dash section[aria-labelledby="h-df"]{order:9}
+  body.m-dash section[aria-labelledby="h-bm"]{order:10}
+  body.m-dash .wrap>.tier{display:none}
+  body.m-dash .hintline{display:none}
+  body.m-dash .tools{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+  body.m-dash .tools .tool{flex-direction:column!important;align-items:flex-start!important;padding:12px!important;gap:6px!important;min-height:44px}
+  body.m-dash .tools .tool span.d{display:none}
+  body.m-dash .tools .tool b,body.m-dash .tools .tool strong{font-size:.9rem}
+
+  /* ---------- Trade Calculator: stacked sides, reorder buttons, a summary bar pinned above the bottom bar ---------- */
+  .assets li{grid-template-columns:1fr auto auto auto!important;gap:6px!important;padding:10px 0!important}
+  .assets .x{min-width:40px;min-height:40px;font-size:1.3rem!important}
+  .assets .mv{display:inline-flex;flex-direction:column}
+  .assets .mv button{font:inherit;background:none;border:1px solid var(--line-2);color:var(--ink-2);width:34px;height:22px;line-height:1;padding:0;cursor:pointer;font-size:.7rem}
+  .assets .mv button:first-child{border-radius:5px 5px 0 0} .assets .mv button:last-child{border-radius:0 0 5px 5px;margin-top:-1px}
+  .assets .mv button:disabled{opacity:.3}
+  .sugg li,.rost li{min-height:44px}
+  .m-tsum{display:flex;position:fixed;left:8px;right:8px;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:54;background:var(--panel);border:1px solid var(--line-2);border-radius:12px;
+    box-shadow:0 6px 24px rgba(15,29,51,.18);padding:8px 12px;align-items:center;gap:10px;font-size:.82rem;cursor:pointer;min-height:52px}
+  .m-tsum[hidden]{display:none!important}
+  .m-tsum .t{display:flex;flex-direction:column;line-height:1.25}
+  .m-tsum .t span{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .m-tsum .t b{font-family:var(--f-mono);font-size:.92rem}
+  .m-tsum .v{margin-left:auto;text-align:right;font-weight:600;font-size:.84rem;line-height:1.25}
+  body.m-calc{padding-bottom:calc(132px + env(safe-area-inset-bottom,0px))}
+  body.m-calc .verdict .big{font-size:1.35rem}
+  body.m-calc .side .head h3{font-size:1.05rem}
+  body.m-calc .side .total{font-size:1.15rem}
+  body.m-calc .verdict .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  body.m-calc .verdict .actions .btn{justify-content:center}
+  body.m-calc .slp{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+  body.m-calc .slp label{display:flex;flex-direction:column;gap:4px}
+
+  /* ---------- Player profile: one column, valuation first, every section folds ---------- */
+  body.m-prof .cols{display:flex!important;flex-direction:column;gap:12px}
+  body.m-prof .cols>div{display:contents!important}
+  body.m-prof .sec{order:5}
+  body.m-prof .sec.m-o1{order:1} body.m-prof .sec.m-o2{order:2} body.m-prof .sec.m-o3{order:3} body.m-prof .sec.m-o4{order:4} body.m-prof .sec.m-o6{order:6}
+  body.m-prof .sec>header{cursor:pointer;min-height:48px;padding:10px 44px 10px 14px;position:relative;align-items:center}
+  body.m-prof .sec>header::after{content:"";position:absolute;right:18px;top:50%;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);transition:transform .15s}
+  body.m-prof .sec.m-shut>header::after{transform:translateY(-30%) rotate(-45deg)}
+  body.m-prof .sec.m-shut>header{border-bottom:none}
+  body.m-prof .sec.m-shut>.body{display:none}
+  body.m-prof .sec .body{padding:12px 14px 14px}
+  body.m-prof .ph{flex-direction:column;align-items:stretch!important;gap:12px}
+  body.m-prof #main{display:flex;flex-direction:column;gap:14px}
+  body.m-prof #main>.note{order:5}
+  body.m-prof #main>.datastrip{order:1} body.m-prof #main>.cols{order:2}
+  body.m-prof .datastrip{font-size:.7rem;gap:2px 12px}
+  body.m-prof .ph .acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  body.m-prof .ph .acts .btn{font-size:.8rem;padding:6px 4px;text-align:center}
+  body.m-prof .ph .acts .btn{justify-content:center}
+  body.m-prof .ph .acts .btn.primary{grid-column:1/-1;order:-1}
+  body.m-prof .seas{font-size:.76rem;gap:3px 8px}
+
+  /* ---------- Sleeper league: team cards ---------- */
+  body.m-league .lab{font-size:.7rem}
+  body.m-league td.m-x .nd{margin-right:2px}
+}
