@@ -1,5 +1,5 @@
 {
- "built": "2026-11-17T16:13Z",
+ "built": "2026-11-17T23:29Z",
  "values": {
   "asof": "2026 stats through week 10. Updated November 17, 2026.",
   "players": 581,
@@ -46,18 +46,18 @@
    "updated": "2026-11-15"
   },
   "pre-draft/data/rookie_board_values.csv": {
-   "sha": "6d47825369",
-   "bytes": 262693,
+   "sha": "5967dfbf43",
+   "bytes": 262729,
    "updated": "2026-11-17"
   },
   "trade-values/data/tv.js": {
-   "sha": "2f57ebdbd7",
-   "bytes": 884101,
+   "sha": "e76eead173",
+   "bytes": 884091,
    "updated": "2026-11-17"
   },
   "value-research/data/dd.js": {
-   "sha": "731c2b8615",
-   "bytes": 20026,
+   "sha": "febe295163",
+   "bytes": 20056,
    "updated": "2026-11-17"
   },
   "data/movers.csv": {
