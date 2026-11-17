@@ -36,14 +36,14 @@
    "updated": "2026-11-17"
   },
   "post-draft/data/pd_post_player_grades.csv": {
-   "sha": "2b70c11478",
-   "bytes": 234410,
-   "updated": "2026-11-12"
+   "sha": "5af2c9879c",
+   "bytes": 286296,
+   "updated": "2026-11-17"
   },
   "post-draft/data/pd_post_2027_mock_grades.csv": {
-   "sha": "add3dc6b44",
-   "bytes": 22402,
-   "updated": "2026-11-15"
+   "sha": "19d210431d",
+   "bytes": 25567,
+   "updated": "2026-11-17"
   },
   "pre-draft/data/rookie_board_values.csv": {
    "sha": "5967dfbf43",
