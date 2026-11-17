@@ -95,7 +95,8 @@
   // ---------- cards from tables ----------
   // Column roles come from the header text, so they keep working when a page or the weekly data changes a table.
   const RANK = /^(rank|#)$/i, VAL = /^(trade value|value|total value|value now|current|(dynasty|redraft) value\b.*)$/i, GRADE = /^grade/i;
-  const META = here === "league"
+  const META = here === "team-analytics" ? /./                // team rows: every number stays on the card
+    : here === "league"
     ? /^(outlook|starters now|qb|rb|wr|te|picks|needs)$/i     // team cards: positional values, picks and needs stay on the card
     : /^(pos|pos rank|team|age|college|class|drafted|stage|pick|draft pick|outlook|yrs out of hs|change|previous|p\(.*\))$/i;
   const SKIP = new Set(["fresh", "scaleTable", "vpTable", "brTable", "valTable"]);   // small reference tables: keep them as tables (they scroll inside their box)
