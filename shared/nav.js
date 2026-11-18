@@ -9,6 +9,21 @@
  * the grade boards' Value column, the Dashboard and search all use. Pages call window.PANav.update() after it changes.
  * To add a page: add it to SECTIONS. Paths are folder names, so the weekly refresh is not affected.
  */
+/* Visitor counts (GoatCounter: free, no cookies, no personal data; dashboard at https://prospectactuary.goatcounter.com).
+ * Added here because every page, including the weekly-refresh pages, loads nav.js, so the refresh never drops it.
+ * Counts only on the live site, not local copies. Open any page with #no-count to stop counting your own visits
+ * in this browser (#count turns it back on). */
+(function(){
+  try {
+    if (location.hash === "#no-count") localStorage.setItem("skipgc", "t");
+    if (location.hash === "#count") localStorage.removeItem("skipgc");
+  } catch(e){}
+  if (location.hostname !== "kylemschyma.github.io") return;
+  const s = document.createElement("script");
+  s.async = true; s.src = "https://gc.zgo.at/count.js";
+  s.setAttribute("data-goatcounter", "https://prospectactuary.goatcounter.com/count");
+  document.head.appendChild(s);
+})();
 (function(){
   const old = document.querySelector("nav.pa-brand"); if (!old) return;
   const root = old.dataset.root != null ? old.dataset.root : "../";
