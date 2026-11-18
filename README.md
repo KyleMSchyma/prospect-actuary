@@ -94,3 +94,9 @@ and CSV tables in this repository are Prospect Actuary's own work built on that 
 Prospect Actuary is not affiliated with the NFL, any team, or any of the sources above.
 
 Modeling used R with glmnet, ordinalNet, MASS, pROC, ranger and xgboost.
+
+## Visitor analytics
+
+`shared/nav.js` adds the [GoatCounter](https://www.goatcounter.com/) counter to every page (no cookies, no
+personal data), only on kylemschyma.github.io. Stats: https://prospectactuary.goatcounter.com. Open any page
+with `#no-count` to stop counting your own visits in that browser (`#count` turns it back on).
