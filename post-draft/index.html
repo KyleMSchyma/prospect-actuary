@@ -182,7 +182,7 @@ window.PAModelSwap = function(rows, kind){
   rows.forEach(p => { const d = p.dr; if (!d || !d.g || !d.q) return;
     if (kind === "mock") { p.post = d.g; p.ptop = d.q[0]; p.p2 = d.q[1]; p.pany = d.q[2]; if (p.pre) p.move = GI(d.g) - GI(p.pre); }
     else { p.g = d.g; p.pt = d.q[0]; p.p2 = d.q[1]; p.pa = d.q[2]; }
-    p.sc = d.sc; p.pct = d.pct; p.vq = d.q; p.mx = 0; p.v = null; });
+    p.sc = d.sc; p.pct = d.pct; p.vq = d.qv || d.q; p.mx = 0; p.v = null; });   // qv: mock-range value odds (pd_12)
 };
 document.addEventListener("DOMContentLoaded", function(){
   const post = window.PAModel === "post";

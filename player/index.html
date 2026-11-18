@@ -201,14 +201,26 @@ if (V && V.kind==="nfl") {
     const val = q => { const v = DB.E.prospectValue(S, p.pos, q, age); return v==null ? "–" : fmt(v); };
     const und = m.worst_case==="undrafted";
     const cell = (lab, big, g, sm) => `<div class="stat"><span class="lbl">${lab}</span><span class="big">${big}</span><span class="sm">${g?chip(g)+" · ":""}${sm}</span></div>`;
-    rng = `<div class="small" style="margin:14px 0 6px"><b>Range across our mocks</b> <span class="muted">(picks: ${esc(String(m.picks_in_mocks||"").split("/").map(x=>x==="UD"?"undrafted":x).join(", "))})</span></div><div class="kv">` +
-      cell("Best case", val([m.best_p_top, m.best_p_top2, m.best_p_any]), m.best_grade, `pick ${m.best_pick}${m.best_team_abbr?" to "+esc(m.best_team_abbr):""}`) +
-      cell("Average pick", val([m.p_top, m.p_top2, m.p_any]), m.post_grade, `pick ${m.pick}${m.team_abbr?" to "+esc(m.team_abbr):""}`) +
-      cell("Worst case", val([m.worst_p_top, m.worst_p_top2, m.worst_p_any]), und ? null : m.worst_grade, und ? "undrafted in at least one mock" : `pick ${m.worst_pick}${m.worst_team_abbr?" to "+esc(m.worst_team_abbr):""}`) + `</div>` +
-      `<p class="note">Each case is the post-draft model (mixed) with that pick and team as his draft capital and landing spot. ${m.share_drafted<1 ? `He is drafted in ${m.n_drafted} of ${m.n_mocks} mocks, so his projected value is ${Math.round(100*m.share_drafted)}% his average-pick value and ${Math.round(100*(1-m.share_drafted))}% the value of an undrafted player (past undrafted ${p.pos}s who reached the NFL rarely had a tier season).` : `His projected value uses the average pick.`}</p>`;
+    const dq = (pre, suf) => [m[pre+"p_top"+suf], m[pre+"p_top2"+suf], m[pre+"p_any"+suf]];
+    // Mixed (default, same as the rest of the page) or plain post-draft model: same mocks, same weighting (Kyle 2026-11-18)
+    const body = mode => { const s = mode==="post" && m.best_grade_draft!=null ? "_draft" : "", gk = k => m[k+s] != null ? m[k+s] : m[k];
+      const avgQ = s ? dq("", "_draft") : dq("", ""), valQ = s ? [m.p_top_value_draft, m.p_top2_value_draft, m.p_any_value_draft] : [m.p_top_value, m.p_top2_value, m.p_any_value];
+      return `<div class="kv">` +
+        (m.share_drafted<1 ? cell("Weighted value", val(valQ[2]!=null ? valQ : avgQ), null, `drafted in ${m.n_drafted} of ${m.n_mocks} mocks`) : "") +
+        cell("Best case", val(dq("best_", s)), gk("best_grade"), `pick ${m.best_pick}${m.best_team_abbr?" to "+esc(m.best_team_abbr):""}`) +
+        cell("Average pick", val(avgQ), s ? (m.post_grade_draft||m.post_grade) : m.post_grade, `pick ${m.pick}${m.team_abbr?" to "+esc(m.team_abbr):""}`) +
+        cell("Worst case", val(dq("worst_", s)), und ? null : gk("worst_grade"), und ? "undrafted in at least one mock" : `pick ${m.worst_pick}${m.worst_team_abbr?" to "+esc(m.worst_team_abbr):""}`) + `</div>`; };
+    rng = `<div class="small" style="margin:14px 0 6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b>Range across our mocks</b> <span class="muted">(picks: ${esc(String(m.picks_in_mocks||"").split("/").map(x=>x==="UD"?"undrafted":x).join(", "))})</span>
+      <span class="tabs sm" id="rngMode" role="group" aria-label="Model"><button type="button" data-v="mixed" aria-pressed="true">Mixed</button><button type="button" data-v="post" aria-pressed="false">Post-draft</button></span></div><div id="rngBody">${body("mixed")}</div>` +
+      `<p class="note">Each case is the post-draft model (mixed, or plain post-draft on the toggle) with that pick and team as his draft capital and landing spot. The pre-draft model does not use draft slot, so it has no range. ${m.share_drafted<1 ? `He is drafted in ${m.n_drafted} of ${m.n_mocks} mocks, so his projected value is ${Math.round(100*m.share_drafted)}% his average-pick value and ${Math.round(100*(1-m.share_drafted))}% the value of an undrafted player (past undrafted ${p.pos}s who reached the NFL rarely had a tier season).` : `His projected value uses the average pick.`}</p>`;
+    window._rngBody = body;
   }
   sec("right", "Projected dynasty value", "Your league", `<div class="kv"><div class="stat"><span class="lbl">Projected value</span><span class="big">${fmt(V.d)}</span><span class="sm">${V.slot ? `about the value of 2027 pick ${V.slot}` : ""}</span></div></div>${rng}
     <p class="note">Priced like a 2027 rookie pick: his chance of each fantasy tier (${esc(V.src||"")}) times what past players in that tier scored over their first seasons, above your league's replacement level, adjusted for age. Your league: ${esc(L.label(S))}. Rookie pick values are rougher than player values.</p>`);
+  const tg = document.getElementById("rngMode");
+  if (tg) tg.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return;
+    tg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x===b ? "true" : "false"));
+    document.getElementById("rngBody").innerHTML = window._rngBody(b.dataset.v); });
 } else if (!p.proj) {
   sec("right", "Dynasty valuation", "", `<p class="small muted">He is not in the current trade values (retired, unsigned, or not valued yet).</p>`);
 }
