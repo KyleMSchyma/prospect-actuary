@@ -73,7 +73,7 @@ details.note p{margin-top:6px}
   <div class="eyebrow">Prospect Lab · pre-draft view · college-only model, no combine, no draft capital</div>
   <h1>Pre-Draft Player Grades</h1>
   <p class="lede">Every drafted QB, RB, WR and TE from the 2010-2026 classes, scored by the college-only pre-draft model, ranked within position and given a letter grade on one fixed scale. The top 2027 prospects (2026 season through about week 10) are slotted into the same rankings and marked as projected. NFL results sit next to every historical player so the grades can be checked. The <a href="../post-draft/">post-draft player grades</a> page grades the same 2010-2026 players with draft slot and landing spot added.</p>
-  <div class="switch" role="group" aria-label="Evaluation stage"><span class="lbl">Stage</span><span class="seg"><a href="../pre-draft/" aria-current="page">Pre-draft (college only)</a><a href="../post-draft/" id="modelOther">Post-draft (adds draft slot and team)</a></span><span class="small muted">Same 2010-2026 players in both views: switch to see how draft slot and landing spot changed each grade.</span></div>
+  <div class="switch" role="group" aria-label="Evaluation stage"><span class="lbl">Stage</span><span class="seg"><a href="../pre-draft/" aria-current="page">Pre-draft (college only)</a><a href="../post-draft/?model=post">Post-draft (adds draft slot and team)</a><a href="../post-draft/?model=mixed">Mixed (post-draft + boost for pre-draft A's who slide)</a></span><span class="small muted">Same 2010-2026 players in every view: switch to see how draft slot, landing spot and the mixed boost changed each grade.</span></div>
 </header>
 
 <section id="board-sec">
@@ -284,8 +284,7 @@ drawBoard();
   if(q) fName.value=q;
   const b=p&&[...document.querySelectorAll("#posTabs button")].find(x=>x.dataset.p===p);
   if(b) b.click(); else if(q){ shown=100; drawBoard(); }
-  const o=document.getElementById("modelOther");
-  if(o) o.addEventListener("click",()=>{ const u=new URL(o.href); if(bPos!=="All") u.searchParams.set("pos",bPos); const t=fName.value.trim(); if(t) u.searchParams.set("q",t); o.href=u.toString(); });
+  document.querySelectorAll(".switch .seg a:not([aria-current])").forEach(o=>o.addEventListener("click",()=>{ const u=new URL(o.href, location.href); if(bPos!=="All") u.searchParams.set("pos",bPos); const t=fName.value.trim(); if(t) u.searchParams.set("q",t); o.href=u.toString(); }));
   if(location.hash==="#does-it-work"||location.hash==="#method"){ const d=document.querySelector(location.hash); if(d) d.open=true; }
 })();
 
