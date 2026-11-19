@@ -1,7 +1,7 @@
 {
- "built": "2026-11-18T22:25Z",
+ "built": "2026-11-19T00:47Z",
  "values": {
-  "asof": "2026 stats through week 10. Updated November 17, 2026.",
+  "asof": "2026 stats through week 10. Updated November 18, 2026.",
   "players": 581,
   "scale": "100,000 = most valuable player on each sheet; values add",
   "model": "Trade values: credibility-weighted PPG over replacement x expected games; dynasty through 2031 with aging, survival, stop-loss upside and 15%/yr discount; status-based expected games (injury report, depth chart). Weekly R build with 6 output gates.",
@@ -9,10 +9,10 @@
  },
  "prospects": {
   "pre_classes": "2010-2027",
-  "pre_rows": 1383,
-  "pre_projected_2027": 94,
+  "pre_rows": 1384,
+  "pre_projected_2027": 95,
   "post_rows": 1351,
-  "mock_2027": 79,
+  "mock_2027": 91,
   "pre_model": [
    "final model (trained 2010-2023)",
    "final model, 2026 season in progress",
@@ -25,15 +25,15 @@
   "projected": "2027 prospects are projections from 2026 college stats (pro-rated to 12 games); the mock pick stands in for draft capital."
  },
  "ids": {
-  "players": 1631,
+  "players": 1641,
   "with_nfl_id": 1499,
   "unmatched_value_players": []
  },
  "files": {
   "pre-draft/data/pd_player_grades.csv": {
-   "sha": "cb0ed6990b",
-   "bytes": 251272,
-   "updated": "2026-11-17"
+   "sha": "bfaaf091fe",
+   "bytes": 251467,
+   "updated": "2026-11-18"
   },
   "post-draft/data/pd_post_player_grades.csv": {
    "sha": "5af2c9879c",
@@ -41,29 +41,29 @@
    "updated": "2026-11-17"
   },
   "post-draft/data/pd_post_2027_mock_grades.csv": {
-   "sha": "19d210431d",
-   "bytes": 25567,
-   "updated": "2026-11-17"
+   "sha": "c131b319be",
+   "bytes": 45859,
+   "updated": "2026-11-18"
   },
   "pre-draft/data/rookie_board_values.csv": {
-   "sha": "5967dfbf43",
-   "bytes": 262729,
-   "updated": "2026-11-17"
+   "sha": "32b981f426",
+   "bytes": 264063,
+   "updated": "2026-11-18"
   },
   "trade-values/data/tv.js": {
-   "sha": "e76eead173",
-   "bytes": 884091,
-   "updated": "2026-11-17"
+   "sha": "e9f90f0473",
+   "bytes": 890229,
+   "updated": "2026-11-18"
   },
   "value-research/data/dd.js": {
-   "sha": "febe295163",
-   "bytes": 20056,
-   "updated": "2026-11-17"
+   "sha": "f81ba0d17d",
+   "bytes": 19726,
+   "updated": "2026-11-18"
   },
   "data/movers.csv": {
-   "sha": "b9ec744113",
-   "bytes": 10326,
-   "updated": "2026-11-17"
+   "sha": "e9e6c3dc70",
+   "bytes": 10081,
+   "updated": "2026-11-18"
   }
  },
  "checks": [
