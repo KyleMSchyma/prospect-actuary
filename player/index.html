@@ -88,7 +88,7 @@ if (p.college) facts.push(["College", p.college]);
 if (p.cls) facts.push([p.proj ? "Draft class" : "Draft class", p.proj ? `${p.cls} (projected, not yet drafted)` : p.cls]);
 if (p.pk) facts.push(["Draft capital", `Round ${p.rd||"?"}, pick ${p.pk}${p.dteam ? " by "+p.dteam : ""}`]);
 else if (!p.proj && p.cls) facts.push(["Draft capital", "Undrafted"]);
-if (R.mock) facts.push(["2027 mock", R.mock.n_mocks!=null ? `Average pick ${R.mock.pick}, ${R.mock.team_abbr||""} (drafted in ${R.mock.n_drafted} of our ${R.mock.n_mocks} mocks)` : `Pick ${R.mock.pick}, ${R.mock.team_abbr||""} (our 7-round mock)`]);
+if (R.mock) facts.push(["2027 mock", R.mock.n_mocks!=null ? `Median pick ${R.mock.pick}, ${R.mock.team_abbr||""} (drafted in ${R.mock.n_drafted} of our ${R.mock.n_mocks} mocks)` : `Pick ${R.mock.pick}, ${R.mock.team_abbr||""} (our 7-round mock)`]);
 if (age!=null) facts.push(["Age", f1(age) + (tvp ? "" : p.birth ? "" : " (est.)")]);
 if (R.pre && R.pre.recruit_stars) facts.push(["Recruiting", `${R.pre.recruit_stars}-star`]);
 if (R.pre && R.pre.yrs_out_of_hs!=null) facts.push(["Years out of HS", R.pre.yrs_out_of_hs]);
@@ -119,7 +119,7 @@ if (R.pre || R.post || R.mock) {
   let b = `<div class="kv">`;
   if (pre) b += `<div class="stat"><span class="lbl">Pre-draft grade</span><span class="big">${chip(pre.grade)}</span><span class="sm">score ${f2(pre.score)} · ${pre.position} #${pre.pos_rank_class} in class</span></div>`;
   if (post) b += `<div class="stat"><span class="lbl">Post-draft grade</span><span class="big">${chip(post.post_grade)}</span><span class="sm">score ${f2(post.post_score)} · ${post.position} #${post.post_rank_class} in class</span></div>`;
-  if (m) b += `<div class="stat"><span class="lbl">Post-draft grade (mock)</span><span class="big">${chip(m.post_grade)}</span><span class="sm">with ${m.n_mocks!=null?"his average mock pick":"mock pick"} ${m.pick} as draft capital</span></div>`;
+  if (m) b += `<div class="stat"><span class="lbl">Post-draft grade (mock)</span><span class="big">${chip(m.post_grade)}</span><span class="sm">with ${m.n_mocks!=null?"his median mock pick":"mock pick"} ${m.pick} as draft capital</span></div>`;
   if (pre && pre.p_declare!=null) b += `<div class="stat"><span class="lbl">P(declare)</span><span class="big">${pct(pre.p_declare)}</span><span class="sm">rough flag; understates elite juniors</span></div>`;
   b += `</div>`;
   const pr = post || m, pp = pre;
@@ -194,7 +194,7 @@ if (V && V.kind==="nfl") {
   sec("right", "Dynasty valuation", "Your league", b);
 } else if (V && V.kind==="prospect") {
   // 2027 mock range (Kyle 2026-11-18): best case = earliest pick across our mocks, worst = latest pick or undrafted;
-  // the projected value above weights the average pick by the share of mocks that draft him (pd_12_mock_range.R)
+  // the projected value above weights the median pick by the share of mocks that draft him (pd_12_mock_range.R)
   const m = R.mock; let rng = "";
   if (m && m.best_p_any!=null) {
     const age = (R.board && R.board.age!=null) ? R.board.age : m.age_est;
@@ -208,11 +208,11 @@ if (V && V.kind==="nfl") {
       return `<div class="kv">` +
         (m.share_drafted<1 ? cell("Weighted value", val(valQ[2]!=null ? valQ : avgQ), null, `drafted in ${m.n_drafted} of ${m.n_mocks} mocks`) : "") +
         cell("Best case", val(dq("best_", s)), gk("best_grade"), `pick ${m.best_pick}${m.best_team_abbr?" to "+esc(m.best_team_abbr):""}`) +
-        cell("Average pick", val(avgQ), s ? (m.post_grade_draft||m.post_grade) : m.post_grade, `pick ${m.pick}${m.team_abbr?" to "+esc(m.team_abbr):""}`) +
+        cell("Median pick", val(avgQ), s ? (m.post_grade_draft||m.post_grade) : m.post_grade, `pick ${m.pick}${m.team_abbr?" to "+esc(m.team_abbr):""}`) +
         cell("Worst case", val(dq("worst_", s)), und ? null : gk("worst_grade"), und ? "undrafted in at least one mock" : `pick ${m.worst_pick}${m.worst_team_abbr?" to "+esc(m.worst_team_abbr):""}`) + `</div>`; };
     rng = `<div class="small" style="margin:14px 0 6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b>Range across our mocks</b> <span class="muted">(picks: ${esc(String(m.picks_in_mocks||"").split("/").map(x=>x==="UD"?"undrafted":x).join(", "))})</span>
       <span class="tabs sm" id="rngMode" role="group" aria-label="Model"><button type="button" data-v="mixed" aria-pressed="true">Mixed</button><button type="button" data-v="post" aria-pressed="false">Post-draft</button></span></div><div id="rngBody">${body("mixed")}</div>` +
-      `<p class="note">Each case is the post-draft model (mixed, or plain post-draft on the toggle) with that pick and team as his draft capital and landing spot. The pre-draft model does not use draft slot, so it has no range. ${m.share_drafted<1 ? `He is drafted in ${m.n_drafted} of ${m.n_mocks} mocks, so his projected value is ${Math.round(100*m.share_drafted)}% his average-pick value and ${Math.round(100*(1-m.share_drafted))}% the value of an undrafted player (past undrafted ${p.pos}s who reached the NFL rarely had a tier season).` : `His projected value uses the average pick.`}</p>`;
+      `<p class="note">Each case is the post-draft model (mixed, or plain post-draft on the toggle) with that pick and team as his draft capital and landing spot. The pre-draft model does not use draft slot, so it has no range. ${m.share_drafted<1 ? `He is drafted in ${m.n_drafted} of ${m.n_mocks} mocks, so his projected value is ${Math.round(100*m.share_drafted)}% his median-pick value and ${Math.round(100*(1-m.share_drafted))}% the value of an undrafted player (past undrafted ${p.pos}s who reached the NFL rarely had a tier season).` : `His projected value uses the median pick.`}</p>`;
     window._rngBody = body;
   }
   sec("right", "Projected dynasty value", "Your league", `<div class="kv"><div class="stat"><span class="lbl">Projected value</span><span class="big">${fmt(V.d)}</span><span class="sm">${V.slot ? `about the value of 2027 pick ${V.slot}` : ""}</span></div></div>${rng}
