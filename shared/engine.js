@@ -11,6 +11,12 @@
  * The weekly gate 6b (rf_03_gates.R) checks the Trade Values page, which calls this file, against R in 5 leagues.
  *
  * usage: const E = PAEngine(window.TV, window.TVAGE);  const C = E.compute(S);   (S = a league from PALeague)
+ *
+ * Market adjusted (S.mkt = 1, off by default; Kyle 2026-11-20): each player's value x a multiplier from his ESPN % rostered,
+ * read against the % rostered at his position's starter line (window.TVOWN = trade-values/data/own.js, written each Tuesday by
+ * weekly_refresh/rf_05_espn_ownership.R). rel = min(1, rostered / line); multiplier = lo at rel <= r0, rising linearly to 1 at
+ * rel >= r1 (defaults 0.85 / 0.5 / 0.9, sized from the Dynasty Daddy market gap). Picks and players without ESPN data: 1.
+ * With S.mkt off (or no own.js) every number is exactly the points-based value.
  */
 (function(){
   const POS = ["QB","RB","WR","TE"];
@@ -42,26 +48,36 @@
       for (let tr=0; tr<4; tr++) for (let k=0; k<NK; k++){ const i = NK*tr+k; v += (D.picks.f||1) * P[tr] * Math.pow(V,k+1) * c.G[i] * stoploss(c.mu[i]+d[k], r, c.sd[i]); }
       return v;
     }
+    // market multiplier (see the header); null when off or no ownership data
+    function marketOf(S){
+      const O = S && S.mkt ? window.TVOWN : null; if (!O || !O.o || !O.lines) return null;
+      const lo = O.lo!=null ? O.lo : 0.85, r0 = O.r0!=null ? O.r0 : 0.5, r1 = O.r1!=null ? O.r1 : 0.9;
+      return pl => { const o = O.o[pl.n+"|"+pl.p], line = O.lines[pl.p]; if (!o || !(line>0)) return null;
+        const rel = Math.min(1, o[0]/line), m = Math.min(1, Math.max(lo, lo + (1-lo)*(rel-r0)/(r1-r0)));
+        return {m, own: o[0], start: o.length>1 ? o[1] : null, rel}; };
+    }
     let cacheKey = null, cache = null;
     function compute(S){
-      const ck = JSON.stringify(S); if (ck===cacheKey) return cache;
+      const ck = JSON.stringify(S) + (S && S.mkt && window.TVOWN ? "|own:" + window.TVOWN.asof : ""); if (ck===cacheKey) return cache;
+      const MK = marketOf(S);
       const kp = p => keyOf(S, p);
       const rdArr = pl => (pl.r && pl.r[kp(pl.p)]) || pl.k[kp(pl.p)];      // pl.r: redraft frozen after Week 18
       const RR = repLines(S, pl => { const a = rdArr(pl); return a ? a[1] : null; });
       const RD = repLines(S, pl => { const a = pl.k[kp(pl.p)]; return a ? a[1] : null; });
       const red = [], dyn = [], rRaw = new Array(D.players.length).fill(0), dRaw = new Array(D.players.length).fill(0);
       D.players.forEach((pl,i)=>{
-        const key = kp(pl.p), a = rdArr(pl);
-        if (a) { const por = a[1]-RR.rep[pl.p], v = por*a[2]; rRaw[i] = Math.max(0, v);
-          if (v>0) red.push({i, n:pl.n, st:pl.st, p:pl.p, tm:pl.tm, a:pl.a, g:pl.g, ppg:a[0], cppg:a[1], por, eg:a[2], rep:RR.rep[pl.p], raw:v}); }
+        const key = kp(pl.p), a = rdArr(pl), mk = MK ? MK(pl) : null, m = mk ? mk.m : 1;
+        if (a) { const por = a[1]-RR.rep[pl.p], v = por*a[2]*m; rRaw[i] = Math.max(0, v);
+          if (v>0) red.push({i, n:pl.n, st:pl.st, p:pl.p, tm:pl.tm, a:pl.a, g:pl.g, ppg:a[0], cppg:a[1], por, eg:a[2], rep:RR.rep[pl.p], raw:v, mk}); }
         const x = pl.k[key]; if (!x || x.length<4+2*NF) return;          // [2026 PPG, credible PPG, games left, (games, PPG) 2027..2031, P(playing 2030)]
         const sd = D.sd[key], r = RD.rep[pl.p];
         let v = x[2]*stoploss(x[1], r, sd[0]);
         const parts = [{y:0, g:x[2], ppg:x[1], v}];
         for (let t=1; t<=NF; t++){ const pv = Math.pow(V,t) * x[1+2*t] * stoploss(x[2+2*t], r, sd.length>2 ? sd[1+t] : sd[1]*Math.sqrt(t));
           v += pv; parts.push({y:t, g:x[1+2*t], ppg:x[2+2*t], v:pv}); }
+        if (m!==1) { v *= m; parts.forEach(q=>q.v *= m); }
         dRaw[i] = v;
-        dyn.push({i, n:pl.n, st:pl.st, p:pl.p, tm:pl.tm, a:pl.a, dp:pl.dp, g:pl.g, ppg:x[0], cppg:x[1], rep:r, parts, p27:x[4], p30:x[10], s30:x[x.length-1], raw:v});
+        dyn.push({i, n:pl.n, st:pl.st, p:pl.p, tm:pl.tm, a:pl.a, dp:pl.dp, g:pl.g, ppg:x[0], cppg:x[1], rep:r, parts, p27:x[4], p30:x[10], s30:x[x.length-1], raw:v, mk});
       });
       // 2027 rookie picks: each prospect's value for this league, sorted; pick 1.01 = best value, 1.02 = second ...
       const pvx = D.picks ? D.picks.pros.map((pr,j)=>({j, v:tierValue(S, RD, pr.p, pr.P, pr.d[kp(pr.p)]) || 0})).sort((a,b)=>b.v-a.v) : [], pv = pvx.map(x=>x.v);
@@ -91,7 +107,7 @@
       const v = tierValue(S, C.RD, pos, [q[0], q2-q[0], q3-q2, 1-q3], d);
       return v==null ? null : 1e5*v/C.topD;
     }
-    return {compute, prospectValue, repLines, keyOf, stoploss, POS, asof: D.asof, data: D};
+    return {compute, prospectValue, repLines, keyOf, stoploss, marketOf, POS, asof: D.asof, data: D};
   }
   PAEngine.keyOf = keyOf; PAEngine.stoploss = stoploss; PAEngine.POS = POS;
   window.PAEngine = PAEngine;

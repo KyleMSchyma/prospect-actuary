@@ -104,6 +104,10 @@ details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     <button type="button" data-v="d">Dynasty · 2026-2031</button>
     <button type="button" data-v="r">Redraft · rest of 2026</button>
   </div>
+  <div class="tabs mode" id="mkt" role="group" aria-label="Value basis" hidden>
+    <button type="button" data-v="0" title="Fantasy points over replacement only (the default)">Points-based value</button>
+    <button type="button" data-v="1" title="Discounts lightly rostered players by up to 15%, from ESPN % rostered">Market adjusted</button>
+  </div>
   <details class="lgwrap" id="lgWrap">
     <summary><span class="lbl">Your league</span><span class="small" id="lgSum"></span><span class="small muted">Change</span></summary>
     <div class="lgbody">
@@ -171,6 +175,7 @@ details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </div>
 <script src="../trade-values/data/tv.js"></script>
 <script src="../shared/league.js"></script>
+<script src="../trade-values/data/own.js"></script>
 <script src="../shared/engine.js"></script>
 <script src="../shared/sleeper.js"></script>
 <script>
@@ -267,6 +272,7 @@ function list(side, ids){
   return tot;
 }
 function render(){
+  $("mkt").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", Number(b.dataset.v)===(S.mkt?1:0)));
   if (M) SL.price(M, C, D, S, MODE);     // values every Sleeper roster player for this league and mode
   $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===MODE));
   panel.mark();
@@ -342,7 +348,7 @@ async function loadSleeper(id, me, wth){
     const [X, raw] = await Promise.all([SL.crosswalk("../"), SL.fetchLeague(id)]);
     M = SL.build(raw, X);
     const old = SL.recall();
-    if (!old || old.league!==M.id) { S = Object.assign({}, SL.settings(raw.league).S); L.save(S); C = compute(); }   // a shared link: use that league's settings
+    if (!old || old.league!==M.id) { S = Object.assign({}, SL.settings(raw.league).S, {mkt: S.mkt||0}); L.save(S); C = compute(); }   // a shared link: use that league's settings
     ME = me && M.byRid[me] ? me : (old && old.league===M.id && old.me) || null; WITH = wth && M.byRid[wth] && wth!==ME ? wth : null;
     SL.remember({league:M.id, name:M.name, me:ME});
     $("slpMsg").textContent = "";
@@ -391,6 +397,9 @@ const lgBox = $("lg");
 const panel = L.panel(lgBox, ()=>S, (k,v)=>{ S[k] = v; C = compute(); render(); }, S2=>{ Object.assign(S, S2); C = compute(); render(); });
 $("lgReset").addEventListener("click", ()=>{ S = Object.assign({}, DEF); C = compute(); render(); });
 $("mode").addEventListener("click", e=>{ const b = e.target.closest("button"); if(!b) return; MODE = b.dataset.v; render(); });
+// "Market adjusted" (league setting mkt, shared/engine.js): ESPN % rostered against the position's starter line, up to 15% off
+$("mkt").hidden = !(window.TVOWN && window.TVOWN.o);
+$("mkt").addEventListener("click", e=>{ const b = e.target.closest("button"); if(!b) return; S.mkt = Number(b.dataset.v); C = compute(); render(); });
 $("swap").addEventListener("click", ()=>{ [A, B] = [B, A]; render(); });
 $("clear").addEventListener("click", ()=>{ A = []; B = []; render(); $("qA").focus(); });
 $("share").addEventListener("click", ()=>{ const msg = $("shareMsg");

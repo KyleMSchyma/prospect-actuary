@@ -1,6 +1,7 @@
 /* Prospect Actuary: league settings, written once for every page.
  *
- * One league is saved in this browser ("pa-tv-league") and in the address (?league=teams_ppr_tep_ptd_sf_rb_wr_te_flex_fdQB_fdRB_fdWR_fdTE),
+ * One league is saved in this browser ("pa-tv-league") and in the address (?league=teams_ppr_tep_ptd_sf_rb_wr_te_flex_fdQB_fdRB_fdWR_fdTE_mkt),
+ * (mkt, Nov 20 2026: 1 = "Market adjusted" values, see shared/engine.js; older 13-field links read as mkt 0)
  * and used by Player Values, the Trade Calculator, the grade boards' Value column, the Dashboard and search.
  * The sheet (dynasty / redraft) is shared the same way ("pa-tc-mode", ?mode=). Same storage keys and link format as before,
  * so saved settings and shared links keep working.
@@ -9,7 +10,7 @@
  *   PALeague.panel(el, get, set, setAll) -> draws the settings buttons into el, with named leagues saved in this browser ("pa-leagues")
  */
 (function(){
-  const DEF = {teams:12, ppr:1, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:2, fdQB:0, fdRB:0, fdWR:0, fdTE:0};   // 2 FLEX since Nov 15, 2026
+  const DEF = {teams:12, ppr:1, tep:0, ptd:4, sf:1, rb:2, wr:3, te:1, flex:2, fdQB:0, fdRB:0, fdWR:0, fdTE:0, mkt:0};   // 2 FLEX since Nov 15, 2026
   // Before Nov 15, 2026 the default had no flex, and the Trade Calculator stored the league on every visit. A browser holding exactly
   // that old default (checked once per browser, "pa-tv-league-v") never chose it, so it moves to the new default. Any other saved league is kept.
   const OLD_DEF = "12_1_0_4_1_2_3_1_0_0_0_0_0", VER = "2";
@@ -24,7 +25,8 @@
     ["wr","Starting WR",[[2,"2"],[3,"3"]]],
     ["te","Starting TE",[[1,"1"],[2,"2"]]],
     ["flex","FLEX (RB/WR/TE)",[[0,"0"],[1,"1"],[2,"2"],[3,"3"]]],
-    ["fdQB","1st-down bonus · QB",FDO], ["fdRB","1st-down bonus · RB",FDO], ["fdWR","1st-down bonus · WR",FDO], ["fdTE","1st-down bonus · TE",FDO]];
+    ["fdQB","1st-down bonus · QB",FDO], ["fdRB","1st-down bonus · RB",FDO], ["fdWR","1st-down bonus · WR",FDO], ["fdTE","1st-down bonus · TE",FDO],
+    ["mkt","Market adjusted (ESPN % rostered)",[[0,"Off"],[1,"On"]]]];
   const ORDER = OPTS.map(o=>o[0]), POS = ["QB","RB","WR","TE"];
   const valid = (k,v) => OPTS.find(o=>o[0]===k)[2].some(([x])=>x===v);
   const qs = () => { try { return new URLSearchParams(location.search); } catch(e){ return null; } };
@@ -39,7 +41,7 @@
   function load(){
     const q = qs(); let s = q && q.get("league");
     if (!parse(s)) { s = null; try { s = localStorage.getItem("pa-tv-league");
-      if (localStorage.getItem("pa-tv-league-v") !== VER) { const p = parse(s); if (p && serialize(p) === OLD_DEF) { localStorage.removeItem("pa-tv-league"); s = null; }
+      if (localStorage.getItem("pa-tv-league-v") !== VER) { const p = parse(s); if (p && (serialize(p) === OLD_DEF || serialize(p) === OLD_DEF + "_0")) { localStorage.removeItem("pa-tv-league"); s = null; }
         localStorage.setItem("pa-tv-league-v", VER); } } catch(e){} }
     return parse(s) || Object.assign({}, DEF);
   }
@@ -65,11 +67,11 @@
   const starters = S => { const per = ["1 QB", `${S.rb} RB`, `${S.wr} WR`, `${S.te} TE`]; if (S.flex) per.push(`${S.flex} FLEX`); if (S.sf) per.push("1 SUPERFLEX"); return per; };
   const fdList = S => POS.filter(p=>S["fd"+p]>0).map(p=>`${p} +${S["fd"+p]}`);
   // short: menu badge; long: settings summary; label: one line under a table
-  const short = S => `${S.teams}-team · ${S.sf ? "superflex" : "1QB"} · ${S.ppr===1 ? "PPR" : "0.5 PPR"}${S.tep ? " · TE+" + S.tep : ""}${fdList(S).length ? " · 1D bonus" : ""}`;
-  const long = S => `<b>${S.teams} teams</b>, each starting ${starters(S).join(", ")} (${S.teams*(1+S.rb+S.wr+S.te+S.flex+S.sf)} starters in all). ${S.ppr===1?"Full PPR":"Half PPR"}${S.tep?`, TE premium +${S.tep}`:""}, ${S.ptd}-point passing TDs${fdList(S).length ? ", first-down bonus "+fdList(S).join(", ") : ""}.`;
+  const short = S => `${S.teams}-team · ${S.sf ? "superflex" : "1QB"} · ${S.ppr===1 ? "PPR" : "0.5 PPR"}${S.tep ? " · TE+" + S.tep : ""}${fdList(S).length ? " · 1D bonus" : ""}${S.mkt ? " · market adj." : ""}`;
+  const long = S => `<b>${S.teams} teams</b>, each starting ${starters(S).join(", ")} (${S.teams*(1+S.rb+S.wr+S.te+S.flex+S.sf)} starters in all). ${S.ppr===1?"Full PPR":"Half PPR"}${S.tep?`, TE premium +${S.tep}`:""}, ${S.ptd}-point passing TDs${fdList(S).length ? ", first-down bonus "+fdList(S).join(", ") : ""}.${S.mkt ? " Market adjusted: lightly rostered players discounted up to 15% (ESPN % rostered)." : ""}`;
   const label = S => `${S.teams} teams, ${S.sf?"superflex":"1 QB"}, ${S.ppr===1?"PPR":"half PPR"}` +
     `${S.tep?`, TE premium +${S.tep}`:""}${S.ptd!==4?`, ${S.ptd}-pt passing TD`:""}` +
-    `, ${S.rb} RB / ${S.wr} WR / ${S.te} TE${S.flex?`, ${S.flex} FLEX`:", no flex"}${fdList(S).length?`, first-down bonus ${fdList(S).map(x=>x.replace(" +"," ")).join(", ")}`:""}`;
+    `, ${S.rb} RB / ${S.wr} WR / ${S.te} TE${S.flex?`, ${S.flex} FLEX`:", no flex"}${fdList(S).length?`, first-down bonus ${fdList(S).map(x=>x.replace(" +"," ")).join(", ")}`:""}${S.mkt?", market adjusted":""}`;
   // named leagues saved in this browser ("pa-leagues"): [{name, s}] where s is the league string. Nothing leaves the browser.
   const LS = "pa-leagues", MAXN = 12;
   function saved(){ try { const a = JSON.parse(localStorage.getItem(LS) || "[]"); return Array.isArray(a) ? a.filter(x=>x && x.name && parse(x.s)) : []; } catch(e){ return []; } }

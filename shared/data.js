@@ -35,6 +35,7 @@
       if (!window.PAEngine) need.push(loadScript(root+"shared/engine.js"));
       if (!window.TV) need.push(loadScript(root+"trade-values/data/tv.js").catch(()=>null));
       if (!window.TVAGE) need.push(loadScript(root+"trade-values/data/agetab.js").catch(()=>null));
+      if (!window.TVOWN) need.push(loadScript(root+"trade-values/data/own.js").catch(()=>null));   // ESPN % rostered ("Market adjusted")
       const [players, manifest, pre, post, mock, board] = await Promise.all([json(root+"data/players.json"), json(root+"data/manifest.json"),
         text(root+"pre-draft/data/pd_player_grades.csv"), text(root+"post-draft/data/pd_post_player_grades.csv"),
         text(root+"post-draft/data/pd_post_2027_mock_grades.csv"), text(root+"pre-draft/data/rookie_board_values.csv"), ...need]);
