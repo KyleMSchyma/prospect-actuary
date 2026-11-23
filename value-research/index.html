@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Market Check | Prospect Actuary</title>
-<meta name="description" content="How Prospect Actuary's trade values compare with the market: overall and positional rank gaps against Dynasty Daddy (dynasty and redraft) and DynastyProcess superflex values, 12-team 0.5 PPR.">
+<meta name="description" content="How Prospect Actuary's trade values compare with the market: overall and positional rank gaps against Dynasty Daddy (dynasty and redraft), DynastyProcess and values implied by real dynasty trades, 12-team superflex 0.5 PPR.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -56,16 +56,39 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
   <div class="dev" role="note"><b>KNOWN LIMITS</b><span>Our values are estimates and so are the market's. A gap in rank is a reason to look closer, not proof that either side is wrong. Not valued yet on our side: Jayden Higgins, Travis Hunter and Brandon Aiyuk.</span></div>
   <div class="eyebrow" id="eyebrow">Market check · 12-team superflex · 0.5 PPR</div>
   <h1>Market Check</h1>
-  <p>How do our trade values line up with the market? This page ranks every player by our model and by a market source, all in superflex, and shows where the two disagree, overall and within each position. Pick the source: <a href="https://dynasty-daddy.com" target="_blank" rel="noopener">Dynasty Daddy</a> (dynasty and redraft trade values from its public API) or <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> (open dynasty values built from expert consensus rankings).</p>
+  <p>How do our trade values line up with the market? This page ranks every player by our model and by a market source, all in superflex, and shows where the two disagree, overall and within each position. Pick the source: <a href="https://dynasty-daddy.com" target="_blank" rel="noopener">Dynasty Daddy</a> (dynasty and redraft trade values from its public API), <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> (open dynasty values built from expert consensus rankings), or the <b>Trade market</b> (dynasty values implied by over a million real trades from the <a href="https://dynasty-daddy.com/trade-database" target="_blank" rel="noopener">Dynasty Daddy Trade Database</a>, put on our value curve).</p>
   <p class="small muted" id="asof">Loading…</p>
 </header>
 
 <section aria-label="Comparison settings">
   <div class="controls">
-    <div class="tabs" id="src" role="group" aria-label="Market source"><button type="button" data-v="dd">Dynasty Daddy</button><button type="button" data-v="dp">DynastyProcess</button></div>
+    <div class="tabs" id="src" role="group" aria-label="Market source"><button type="button" data-v="dd">Dynasty Daddy</button><button type="button" data-v="dp">DynastyProcess</button><button type="button" data-v="tm">Trade market</button></div>
     <div class="tabs" id="mode" role="group" aria-label="Value type"><button type="button" data-v="d">Dynasty</button><button type="button" data-v="r">Redraft</button></div>
   </div>
   <p class="small muted" id="modeNote"></p>
+  <div class="dev" role="note" id="tmNotes" hidden><b>TRADE MARKET: WHERE IT DOESN'T ADD UP</b><span>These values come from what managers actually accepted in real dynasty trades (1-for-1, 1-for-2, 2-for-2 and 2-for-3 deals), put on the same curve as our values so the two read the same way. The market doesn't follow an additive scale in every situation:
+    <ul class="notes" style="margin:.4em 0 0">
+      <li><span style="font-weight:600">One player for two:</span> the single player usually fetches about 20% more than the two pieces add up to.</li>
+      <li><span style="font-weight:600">Two for three:</span> the side with fewer players fetches about 5% more.</li>
+      <li><span style="font-weight:600">Bigger packages</span> (1-for-3, 1-for-4, 3-for-4 and up) weren't used. There the best single player fetches 50% or more over the sum, so adding values up isn't reliable.</li>
+      <li><span style="font-weight:600">Straight-up swaps between close players:</span> managers trade players as closer in value than this curve spaces them, so small gaps are often an even swap in practice.</li>
+      <li><span style="font-weight:600">League settings:</span> traders barely adjust for TE premium, PPR or league size, and price superflex about half as strongly as our model. Pass TD and first-down bonuses aren't in the trade data.</li>
+      <li><span style="font-weight:600">Recent news:</span> trades from the last week or so count most, so values react quickly to news and hype.</li>
+      <li><span style="font-weight:600">Rarely traded players</span> (under 25 trades) aren't valued on their own and don't appear. Dynasty only; picks are left out like the other sources.</li>
+    </ul></span></div>
+</section>
+
+<section id="tmMoves">
+  <h2>Best market moves</h2>
+  <p class="small muted" id="mvIntro"></p>
+  <div class="controls"><input type="search" id="mvQ" placeholder="Moves for one player" aria-label="Moves for one player"></div>
+  <h3>Pivots: 1-for-1</h3>
+  <p class="small muted">Swap a player for one the market prices the same straight up, but our values rate higher. Any position.</p>
+  <div class="box"><ol id="mvPivot"></ol></div>
+  <div class="two" style="margin-top:16px">
+    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. One piece you give is the same position as the player you get; the other can be any position.</p><ol id="mvUp"></ol></div>
+    <div class="box"><h3>Downtier: give 1, get 2</h3><p class="small muted">Split one player into two pieces the market prices at the same total, where our values rate the two together higher. One piece is the same position as the player you give; the other can be any position.</p><ol id="mvDown"></ol></div>
+  </div>
 </section>
 
 <section>
@@ -104,19 +127,21 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
     <li><b>Our side</b> is the <a href="../trade-values/">Trade Values</a> page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs, and 2 RB, 3 WR, 1 TE starters, no flex. Dynasty projects fantasy points per game over replacement for the rest of 2026 through 2030; redraft covers the rest of 2026 only.</li>
     <li><b>Dynasty Daddy</b> values come from its public values API (superflex trade values, dynasty and redraft), saved with the site and refreshed each week rather than pulled on every visit.</li>
     <li><b>DynastyProcess</b> values are its superflex value (<span class="num">value_2qb</span>), which turns FantasyPros expert consensus dynasty rankings into trade values.</li>
-    <li>Neither market source changes with your scoring settings, so small gaps can come from scoring alone.</li>
+    <li><b>Trade market</b> values are solved so that real trades balance, with recent trades counting most (half-life about a week) and adjustments for league size, superflex, PPR, TE premium and starters, set here to this page's league. They're then raised to one power so their value curve matches ours (top player 100,000), so a market value and ours read on the same scale. Used with permission from Dynasty Daddy's owner; only trade counts and fitted values are published, never individual trades or leagues.</li>
+    <li>Dynasty Daddy and DynastyProcess don't change with your scoring settings, so small gaps can come from scoring alone.</li>
     <li>Rookie picks are left out, since our pick values come from the pre-draft model and theirs from a different scale.</li>
     <li>A big gap isn't a mistake on either side. It flags a player worth a closer look: our model may see production the market hasn't priced in, or the market may know something (role change, injury news, draft pedigree) the numbers don't capture yet.</li>
   </ul>
 </section>
 
 <p class="pa-tip" style="margin:0;font-size:.9rem;color:var(--muted);max-width:72ch">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
-<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: our values use NFL stats from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Market values from the <a href="https://dynasty-daddy.com/help/api-documentation">Dynasty Daddy public values API</a> and the <a href="https://github.com/dynastyprocess/data">DynastyProcess open data repository</a> by Tan Ho; only ranks are shown. Values and models by Prospect Actuary. Not affiliated with the NFL, any team, Dynasty Daddy, DynastyProcess or FantasyPros.</footer>
+<footer style="border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch">Data: our values use NFL stats from <a href="https://nflverse.com">nflverse</a> (via <a href="https://nflreadr.nflverse.com">nflreadr</a>), shared under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Market values from the <a href="https://dynasty-daddy.com/help/api-documentation">Dynasty Daddy public values API</a>, trades from the <a href="https://dynasty-daddy.com/trade-database">Dynasty Daddy Trade Database</a> (with permission) and the <a href="https://github.com/dynastyprocess/data">DynastyProcess open data repository</a> by Tan Ho; only ranks are shown for those two sources. Values and models by Prospect Actuary. Not affiliated with the NFL, any team, Dynasty Daddy, DynastyProcess or FantasyPros.</footer>
 </div>
 <script src="../trade-values/data/tv.js"></script>
 <script src="../shared/engine.js"></script>
 <script src="data/dp.js"></script>
 <script src="data/dd.js"></script>
+<script src="data/tm.js"></script>
 <script>
 (function(){
 const D = window.TV;
@@ -160,13 +185,27 @@ function parseCSV(t){
 
 let ROWS = [], FILTER = "ALL", SORT = {k:"avg", dir:1}, SRC = "dd", MODE = "d", DPDATA = null, DPLIVE = false;
 const OURS = ours();
-const SRCNAME = {dp:"DynastyProcess", dd:"Dynasty Daddy"};
+const SRCNAME = {dp:"DynastyProcess", dd:"Dynasty Daddy", tm:"Trade market"};
+// Trade market: log 1:1 values from real trades (tm.js). One power p is fitted so the market's top-150 value curve
+// matches ours (same 100k top), then values = 100k * exp(p * (lv - max lv)).
+function tmRows(){
+  const d = window.TM; if (!d) return null;
+  const ourCurve = OURS.d.map(x=>x.v).filter(v=>v>0).sort((a,b)=>b-a).slice(0,150);
+  const lv = d.rows.map(r=>r[2]), top = Math.max(...lv);
+  const curve = p => lv.map(l=>1e5*Math.exp(p*(l-top))).sort((a,b)=>b-a).slice(0, ourCurve.length);
+  const loss = p => { const c = curve(p); let e = 0; for (let i=0;i<c.length;i++) e += (Math.log(c[i])-Math.log(ourCurve[i]))**2; return e; };
+  let a = 0.5, b = 5; const g = (Math.sqrt(5)-1)/2;
+  for (let i=0;i<60;i++){ const c1 = b-g*(b-a), c2 = a+g*(b-a); if (loss(c1) < loss(c2)) b = c2; else a = c1; }
+  const p = (a+b)/2;
+  return {asof: d.asof, p, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:"", v:1e5*Math.exp(p*(r[2]-top)), l:r[2]-top, k:norm(r[0])+"|"+r[1]}))};
+}
 // Dynasty Daddy ids are the name in lowercase letters plus the position (e.g. "kennethwalkerrb")
 const ddKey = (n, p) => norm(n).replace(/ /g,"") + p.toLowerCase();
 const ddKeyRaw = (n, p) => String(n).toLowerCase().normalize("NFD").replace(/[^a-z]/g,"") + p.toLowerCase();
 // Same player, different first name in the two sources (nicknames). Key: Dynasty Daddy id, value: our name.
 const ALIAS = {chigoziemokonkwote:"Chig Okonkwo", zonovanknightrb:"Bam Knight", kennethgainwellrb:"Kenny Gainwell"};
 function market(){
+  if (SRC === "tm") { const t = tmRows(); return t && {asof: t.asof, live: false, rows: t.rows, p: t.p}; }
   if (SRC === "dp") { const d = DPDATA || window.DP; if (!d) return null;
     return {asof: d.asof, live: DPDATA ? DPLIVE : false, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:r[2], v:r[3], k:norm(r[0])+"|"+r[1]}))}; }
   const d = window.DD; if (!d) return null;
@@ -178,24 +217,77 @@ function build(){
   const m = market(); if (!m) { $("asof").textContent = "Market values didn't load. Refresh the page to try again."; return; }
   const us = rank(OURS[MODE].map(x=>Object.assign({}, x))), them = rank(m.rows);
   const idx = {}; them.forEach(t=>{ if (!idx[t.k]) idx[t.k] = t; });
-  const find = u => SRC === "dp" ? idx[norm(u.n)+"|"+u.p] : (idx[ddKey(u.n, u.p)] || idx[ddKeyRaw(u.n, u.p)]);
+  const find = u => SRC !== "dd" ? idx[norm(u.n)+"|"+u.p] : (idx[ddKey(u.n, u.p)] || idx[ddKeyRaw(u.n, u.p)]);
   const used = new Set(), rows = [];
   us.forEach(u=>{ const t = find(u); if (t) used.add(t);
     if (!u.ro && !(t && t.ro)) return;
-    rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp}); });
-  them.forEach(t=>{ if (!used.has(t) && t.ro) rows.push({n:t.n, p:t.p, tm:t.tm||"FA", a:null, uo:null, up:null, to:t.ro, tp:t.rp, miss:1}); });
+    rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp, uv:u.v>0?u.v:null, tv:t&&t.v, tl:t?t.l:null}); });
+  them.forEach(t=>{ if (!used.has(t) && t.ro) rows.push({n:t.n, p:t.p, tm:t.tm||"FA", a:null, uo:null, up:null, to:t.ro, tp:t.rp, uv:null, tv:t.v, miss:1}); });
   rows.forEach(r=>{ r.d = (r.uo && r.to) ? r.to - r.uo : null; r.dp = (r.up && r.tp) ? r.tp - r.up : null;
     r.avg = r.uo && r.to ? (r.uo+r.to)/2 : (r.uo||r.to) + 400; });
+  // market value used for moves: trade market = its own log 1:1 value; Dynasty Daddy / DynastyProcess values are on a
+  // different scale, so each player gets OUR value at the same overall rank (rank-matched)
+  if (SRC !== "tm") { const curve = us.filter(x=>x.ro).map(x=>x.v).sort((a,b)=>b-a);
+    rows.forEach(r=>{ r.tl = r.to && curve[r.to-1] > 0 ? Math.log(curve[r.to-1]/curve[0]) : null; }); }
   ROWS = rows;
   const miss = rows.filter(r=>r.miss && r.to<=150).length;
   $("missNote").textContent = miss ? `${miss} of the market's top 150 aren't in our trade values yet (marked "not in our values"), so they count as disagreements above.` : "";
-  $("asof").textContent = `${D.asof} Market values: ${SRCNAME[SRC]} ${MODE==="r"?"redraft":"dynasty"} superflex values, pulled ${m.asof || "recently"}${SRC==="dp" && !m.live ? " (saved copy)" : ""}.`;
+  $("asof").textContent = SRC==="tm"
+    ? `${D.asof} Market values: ${window.TM.trades.toLocaleString("en-US")} real dynasty trades (${window.TM.first} to ${m.asof}) from the Dynasty Daddy Trade Database, on our value curve (power ${m.p.toFixed(2)}).`
+    : `${D.asof} Market values: ${SRCNAME[SRC]} ${MODE==="r"?"redraft":"dynasty"} superflex values, pulled ${m.asof || "recently"}${SRC==="dp" && !m.live ? " (saved copy)" : ""}.`;
+  $("tmNotes").hidden = SRC !== "tm";
   $("eyebrow").textContent = `Trade Center · Market check · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · 12-team superflex · 0.5 PPR`;
   $("src").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.v===SRC));
-  $("mode").querySelectorAll("button").forEach(x=>{ x.setAttribute("aria-pressed", x.dataset.v===MODE); if (x.dataset.v==="r") x.disabled = SRC==="dp"; });
-  $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy." : "";
+  $("mode").querySelectorAll("button").forEach(x=>{ x.setAttribute("aria-pressed", x.dataset.v===MODE); if (x.dataset.v==="r") x.disabled = SRC!=="dd"; });
+  $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy."
+    : SRC==="tm" ? "The trade market is dynasty only for now." : "";
   try { localStorage.setItem("pa-vr", SRC+"|"+MODE); } catch(e){}
-  summary(); table();
+  $("mvIntro").textContent = SRC==="tm"
+    ? "Trades the market treats as fair that gain the most on our values. Fair is judged on the market's own prices: straight-up (1:1) prices for 1-for-1 swaps, package (2:1) prices for 2-for-1 deals, where the two pieces add up to what managers pay for the single player. Listed when the market prices both sides within 10% and our values gain more than 10% (and at least 1,000). Players in either list's top 200."
+    : `Trades ${SRCNAME[SRC]} treats as fair that gain the most on our values. ${SRCNAME[SRC]} values aren't on our scale, so each player gets our value at the same overall rank in ${SRCNAME[SRC]}'s list (rank-matched), and packages add up on that scale. Listed when both sides are within 10% on that scale and our values gain more than 10% (and at least 1,000). Players in either list's top 200.`;
+  summary(); table(); moves();
+}
+
+// ---------- best market moves (trade market only) ----------
+// Pivot: market 1:1 prices (exp(l)) within 10%; uptier/downtier: market 2:1 prices (exp(s_pkg*l), additive) within 10%.
+// Listed when our dynasty values gain more than 10% of the larger side and at least 1,000.
+const BAND = 0.10;
+const fair = (a, b) => Math.min(a, b) >= (1-BAND)*Math.max(a, b);
+const ok = (gain, big) => gain >= 1000 && gain > BAND*big;
+function moves(){
+  const k = x => Math.round(x/1000)+"k";
+  const sp = SRC==="tm" ? window.TM.s_pkg : 1, q = norm($("mvQ").value), L1 = SRC==="tm" ? "market 1:1" : "rank-matched", L2 = SRC==="tm" ? "market 2:1" : "rank-matched";
+  const v1v = i => SRC==="tm" ? fmt(P[i].tv) : k(1e5*v1[i]);
+  const P = ROWS.filter(r=>r.uv && r.tl!=null && !r.miss && (r.uo<=200 || r.to<=200));
+  const n = P.length, v1 = P.map(r=>Math.exp(r.tl)), w = P.map(r=>Math.exp(sp*r.tl)), wTop = Math.max(...w);
+  const hit = (...ix) => !q || ix.some(i=>norm(P[i].n).includes(q));
+  const tag = i => `<b>${nm(P[i])}</b> <span class="pos" style="color:var(--${P[i].p})">${P[i].p}</span>`;
+  // pivots: best target per player given
+  const piv = [];
+  for (let a=0;a<n;a++){ let best = null;
+    for (let b=0;b<n;b++){ if (a===b || !fair(v1[a], v1[b])) continue; const g = P[b].uv - P[a].uv;
+      if (ok(g, Math.max(P[a].uv, P[b].uv)) && hit(a,b) && (!best || g > best.g)) best = {a, b, g}; }
+    if (best) piv.push(best); }
+  const seen = new Set(), pv = piv.sort((x,y)=>y.g-x.g).filter(m=>!seen.has(m.b) && seen.add(m.b)).slice(0, 15);
+  $("mvPivot").innerHTML = pv.length ? pv.map(m=>`<li>Give ${tag(m.a)} → get ${tag(m.b)} <span class="d">${L1} ${v1v(m.a)} vs ${v1v(m.b)} · ours ${k(P[m.a].uv)} → ${k(P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`).join("")
+    : `<li class="muted">No pivot passes the rule${q?" for this player":""}.</li>`;
+  // 2-for-1: best pair per single player, both directions
+  const up = [], down = [];
+  for (let x=0;x<n;x++){ let bu = null, bd = null;
+    for (let a=0;a<n;a++){ if (a===x) continue;
+      for (let b=a+1;b<n;b++){ if (b===x) continue; const ws = w[a]+w[b]; if (!fair(ws, w[x])) continue;
+        const us = P[a].uv + P[b].uv, gu = P[x].uv - us, gd = -gu, big = Math.max(us, P[x].uv);
+        const same = P[a].p===P[x].p || P[b].p===P[x].p;   // uptier and downtier: one of the two pieces matches the single player's position, the other can be any
+        if (same && ok(gu, big) && hit(a,b,x) && (!bu || gu > bu.g)) bu = {x, a: P[a].p===P[x].p ? a : b, b: P[a].p===P[x].p ? b : a, g:gu};
+        if (same && ok(gd, big) && hit(a,b,x) && (!bd || gd > bd.g)) bd = {x, a: P[a].p===P[x].p ? a : b, b: P[a].p===P[x].p ? b : a, g:gd}; } }
+    if (bu) up.push(bu); if (bd) down.push(bd); }
+  const li2 = (m, give) => give
+    ? `<li>Give ${tag(m.a)} + ${tag(m.b)} → get ${tag(m.x)} <span class="d">${L2} ${k(1e5*(w[m.a]+w[m.b])/wTop)} vs ${k(1e5*w[m.x]/wTop)} · ours ${k(P[m.a].uv+P[m.b].uv)} → ${k(P[m.x].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`
+    : `<li>Give ${tag(m.x)} → get ${tag(m.a)} + ${tag(m.b)} <span class="d">${L2} ${k(1e5*w[m.x]/wTop)} vs ${k(1e5*(w[m.a]+w[m.b])/wTop)} · ours ${k(P[m.x].uv)} → ${k(P[m.a].uv+P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`;
+  const top = (L, give) => { const used = new Set(); return L.sort((x,y)=>y.g-x.g).filter(m=>{ const ids = [m.x, m.a, m.b];
+      if (!q && ids.some(i=>used.has(i))) return false; ids.forEach(i=>used.add(i)); return true; }).slice(0, 10).map(m=>li2(m, give)).join(""); };
+  $("mvUp").innerHTML = top(up, true) || `<li class="muted">No uptier passes the rule${q?" for this player":""}.</li>`;
+  $("mvDown").innerHTML = top(down, false) || `<li class="muted">No downtier passes the rule${q?" for this player":""}.</li>`;
 }
 
 function spearman(pairs){ const n = pairs.length; if (n<3) return null;
@@ -228,8 +320,11 @@ function summary(){
   $("lo").innerHTML = [...pool].sort((a,b)=>a.d-b.d).slice(0,10).filter(r=>r.d<0).map(li).join("");
 }
 
-const COLS = [["n","Player"],["uo","Our rank"],["to","Market rank"],["d","Gap"],["up","Our pos rank"],["tp","Market pos rank"],["dp","Pos gap"]];
+const COLS0 = [["n","Player"],["uo","Our rank"],["to","Market rank"],["d","Gap"],["up","Our pos rank"],["tp","Market pos rank"],["dp","Pos gap"]];
+let COLS = COLS0;
 function table(){
+  COLS = SRC==="tm" ? [...COLS0.slice(0,4), ["uv","Our value"], ["tv","Market value"], ...COLS0.slice(4)] : COLS0;
+  const vv = x => x==null ? "–" : fmt(x);
   const q = norm($("q").value), topOnly = $("top").checked;
   let rows = ROWS.filter(r=>(FILTER==="ALL"||r.p===FILTER) && (!q || norm(r.n).includes(q)) && (!topOnly || r.uo<=200 || r.to<=200));
   const k = SORT.k, dir = SORT.dir;
@@ -239,18 +334,19 @@ function table(){
   const gapC = d => d==null ? "–" : `<span class="${d>0?"up":d<0?"down":""}">${d>0?"+":""}${d}</span>`;
   const rk = (r,p) => r==null ? "–" : (p ? p+r : r);
   $("tbl").innerHTML = `<thead><tr>${COLS.map(([c,l])=>`<th><button type="button" data-k="${c}"${SORT.k===c?` aria-sort="${dir>0?"ascending":"descending"}"`:""}>${l}${SORT.k===c?(dir>0?" ▲":" ▼"):""}</button></th>`).join("")}</tr></thead><tbody>` +
-    (rows.length ? rows.map(r=>`<tr><td><b>${nm(r)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span><div class="meta">${esc(r.tm)}${r.a!=null?" · age "+Number(r.a).toFixed(1):""}${r.miss?" · not in our values":""}</div></td><td class="num">${rk(r.uo)}</td><td class="num">${rk(r.to)}</td><td class="num">${gapC(r.d)}</td><td class="num">${rk(r.up,r.p)}</td><td class="num">${rk(r.tp,r.p)}</td><td class="num">${gapC(r.dp)}</td></tr>`).join("")
-      : `<tr><td colspan="7" class="muted">No players match.</td></tr>`) + `</tbody>`;
+    (rows.length ? rows.map(r=>`<tr><td><b>${nm(r)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span><div class="meta">${esc(r.tm)}${r.a!=null?" · age "+Number(r.a).toFixed(1):""}${r.miss?" · not in our values":""}</div></td><td class="num">${rk(r.uo)}</td><td class="num">${rk(r.to)}</td><td class="num">${gapC(r.d)}</td>${SRC==="tm" ? `<td class="num">${vv(r.uv)}</td><td class="num">${vv(r.tv)}</td>` : ""}<td class="num">${rk(r.up,r.p)}</td><td class="num">${rk(r.tp,r.p)}</td><td class="num">${gapC(r.dp)}</td></tr>`).join("")
+      : `<tr><td colspan="${COLS.length}" class="muted">No players match.</td></tr>`) + `</tbody>`;
 }
 $("tbl").addEventListener("click", e=>{ const b = e.target.closest("button[data-k]"); if (!b) return; const k = b.dataset.k;
-  SORT = SORT.k===k ? {k, dir:-SORT.dir} : {k, dir: (k==="d"||k==="dp") ? -1 : 1}; table(); });
+  SORT = SORT.k===k ? {k, dir:-SORT.dir} : {k, dir: (k==="d"||k==="dp"||k==="uv"||k==="tv") ? -1 : 1}; table(); });
 $("posF").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; FILTER = b.dataset.v;
   $("posF").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); table(); });
-$("q").addEventListener("input", table); $("top").addEventListener("change", table);
+$("q").addEventListener("input", table);
+let mvT = null; $("mvQ").addEventListener("input", ()=>{ clearTimeout(mvT); mvT = setTimeout(moves, 200); }); $("top").addEventListener("change", table);
 
-$("src").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; SRC = b.dataset.v; if (SRC==="dp") MODE = "d"; build(); });
+$("src").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; SRC = b.dataset.v; if (SRC!=="dd") MODE = "d"; build(); });
 $("mode").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b || b.disabled) return; MODE = b.dataset.v; build(); });
-try { const v = (localStorage.getItem("pa-vr")||"").split("|"); if (v[0]==="dp"||v[0]==="dd") SRC = v[0]; if (v[1]==="r"&&SRC==="dd") MODE = "r"; } catch(e){}
+try { const v = (localStorage.getItem("pa-vr")||"").split("|"); if (v[0]==="dp"||v[0]==="dd"||v[0]==="tm") SRC = v[0]; if (v[1]==="r"&&SRC==="dd") MODE = "r"; } catch(e){}
 build();
 // DynastyProcess: try the live file (updated weekly); the saved copy is used until it arrives or if it fails.
 fetch("https://raw.githubusercontent.com/dynastyprocess/data/master/files/values-players.csv", {cache:"no-cache"})
