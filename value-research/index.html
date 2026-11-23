@@ -86,7 +86,7 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
   <p class="small muted">Swap a player for one the market prices the same straight up, but our values rate higher. Any position.</p>
   <div class="box"><ol id="mvPivot"></ol></div>
   <div class="two" style="margin-top:16px">
-    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. Any positions.</p><ol id="mvUp"></ol></div>
+    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. One piece you give is the same position as the player you get; the other can be any position.</p><ol id="mvUp"></ol></div>
     <div class="box"><h3>Downtier: give 1, get 2</h3><p class="small muted">Split one player into two pieces the market prices at the same total, where our values rate the two together higher. One piece is the same position as the player you give; the other can be any position.</p><ol id="mvDown"></ol></div>
   </div>
 </section>
@@ -277,8 +277,8 @@ function moves(){
     for (let a=0;a<n;a++){ if (a===x) continue;
       for (let b=a+1;b<n;b++){ if (b===x) continue; const ws = w[a]+w[b]; if (!fair(ws, w[x])) continue;
         const us = P[a].uv + P[b].uv, gu = P[x].uv - us, gd = -gu, big = Math.max(us, P[x].uv);
-        if (ok(gu, big) && hit(a,b,x) && (!bu || gu > bu.g)) bu = {x, a, b, g:gu};
-        const same = P[a].p===P[x].p || P[b].p===P[x].p;   // downtier: same position back first, then any
+        const same = P[a].p===P[x].p || P[b].p===P[x].p;   // uptier and downtier: one of the two pieces matches the single player's position, the other can be any
+        if (same && ok(gu, big) && hit(a,b,x) && (!bu || gu > bu.g)) bu = {x, a: P[a].p===P[x].p ? a : b, b: P[a].p===P[x].p ? b : a, g:gu};
         if (same && ok(gd, big) && hit(a,b,x) && (!bd || gd > bd.g)) bd = {x, a: P[a].p===P[x].p ? a : b, b: P[a].p===P[x].p ? b : a, g:gd}; } }
     if (bu) up.push(bu); if (bd) down.push(bd); }
   const li2 = (m, give) => give
