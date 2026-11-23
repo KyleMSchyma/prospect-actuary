@@ -78,16 +78,16 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
     </ul></span></div>
 </section>
 
-<section id="tmMoves" hidden>
+<section id="tmMoves">
   <h2>Best market moves</h2>
-  <p class="small muted">Trades the market treats as fair that gain the most on our values. Fair is judged on the market's own prices: for 1-for-1 swaps the straight-up (1:1) prices, for 2-for-1 deals the package (2:1) prices, where the two pieces add up to what managers pay for the single player. A move is listed when the market prices both sides within 10% of each other and our values gain more than 10% (and at least 1,000). Players in either list's top 200.</p>
+  <p class="small muted" id="mvIntro"></p>
   <div class="controls"><input type="search" id="mvQ" placeholder="Moves for one player" aria-label="Moves for one player"></div>
   <h3>Pivots: 1-for-1</h3>
-  <p class="small muted">Swap a player for one the market prices the same straight up, but our values rate higher.</p>
+  <p class="small muted">Swap a player for one the market prices the same straight up, but our values rate higher. Any position.</p>
   <div class="box"><ol id="mvPivot"></ol></div>
   <div class="two" style="margin-top:16px">
-    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. It also frees a roster spot, which our values don't count.</p><ol id="mvUp"></ol></div>
-    <div class="box"><h3>Downtier: give 1, get 2</h3><p class="small muted">Split one player into two pieces the market prices at the same total, where our values rate the two together higher. You need an open roster spot.</p><ol id="mvDown"></ol></div>
+    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. Any positions.</p><ol id="mvUp"></ol></div>
+    <div class="box"><h3>Downtier: give 1, get 2</h3><p class="small muted">Split one player into two pieces the market prices at the same total, where our values rate the two together higher. One piece is the same position as the player you give; the other can be any position.</p><ol id="mvDown"></ol></div>
   </div>
 </section>
 
@@ -225,6 +225,10 @@ function build(){
   them.forEach(t=>{ if (!used.has(t) && t.ro) rows.push({n:t.n, p:t.p, tm:t.tm||"FA", a:null, uo:null, up:null, to:t.ro, tp:t.rp, uv:null, tv:t.v, miss:1}); });
   rows.forEach(r=>{ r.d = (r.uo && r.to) ? r.to - r.uo : null; r.dp = (r.up && r.tp) ? r.tp - r.up : null;
     r.avg = r.uo && r.to ? (r.uo+r.to)/2 : (r.uo||r.to) + 400; });
+  // market value used for moves: trade market = its own log 1:1 value; Dynasty Daddy / DynastyProcess values are on a
+  // different scale, so each player gets OUR value at the same overall rank (rank-matched)
+  if (SRC !== "tm") { const curve = us.filter(x=>x.ro).map(x=>x.v).sort((a,b)=>b-a);
+    rows.forEach(r=>{ r.tl = r.to && curve[r.to-1] > 0 ? Math.log(curve[r.to-1]/curve[0]) : null; }); }
   ROWS = rows;
   const miss = rows.filter(r=>r.miss && r.to<=150).length;
   $("missNote").textContent = miss ? `${miss} of the market's top 150 aren't in our trade values yet (marked "not in our values"), so they count as disagreements above.` : "";
@@ -238,8 +242,10 @@ function build(){
   $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy."
     : SRC==="tm" ? "The trade market is dynasty only for now." : "";
   try { localStorage.setItem("pa-vr", SRC+"|"+MODE); } catch(e){}
-  $("tmMoves").hidden = SRC !== "tm";
-  summary(); table(); if (SRC==="tm") moves();
+  $("mvIntro").textContent = SRC==="tm"
+    ? "Trades the market treats as fair that gain the most on our values. Fair is judged on the market's own prices: straight-up (1:1) prices for 1-for-1 swaps, package (2:1) prices for 2-for-1 deals, where the two pieces add up to what managers pay for the single player. Listed when the market prices both sides within 10% and our values gain more than 10% (and at least 1,000). Players in either list's top 200."
+    : `Trades ${SRCNAME[SRC]} treats as fair that gain the most on our values. ${SRCNAME[SRC]} values aren't on our scale, so each player gets our value at the same overall rank in ${SRCNAME[SRC]}'s list (rank-matched), and packages add up on that scale. Listed when both sides are within 10% on that scale and our values gain more than 10% (and at least 1,000). Players in either list's top 200.`;
+  summary(); table(); moves();
 }
 
 // ---------- best market moves (trade market only) ----------
@@ -249,12 +255,13 @@ const BAND = 0.10;
 const fair = (a, b) => Math.min(a, b) >= (1-BAND)*Math.max(a, b);
 const ok = (gain, big) => gain >= 1000 && gain > BAND*big;
 function moves(){
-  const sp = window.TM.s_pkg, q = norm($("mvQ").value);
+  const k = x => Math.round(x/1000)+"k";
+  const sp = SRC==="tm" ? window.TM.s_pkg : 1, q = norm($("mvQ").value), L1 = SRC==="tm" ? "market 1:1" : "rank-matched", L2 = SRC==="tm" ? "market 2:1" : "rank-matched";
+  const v1v = i => SRC==="tm" ? fmt(P[i].tv) : k(1e5*v1[i]);
   const P = ROWS.filter(r=>r.uv && r.tl!=null && !r.miss && (r.uo<=200 || r.to<=200));
   const n = P.length, v1 = P.map(r=>Math.exp(r.tl)), w = P.map(r=>Math.exp(sp*r.tl)), wTop = Math.max(...w);
   const hit = (...ix) => !q || ix.some(i=>norm(P[i].n).includes(q));
   const tag = i => `<b>${nm(P[i])}</b> <span class="pos" style="color:var(--${P[i].p})">${P[i].p}</span>`;
-  const k = x => Math.round(x/1000)+"k";
   // pivots: best target per player given
   const piv = [];
   for (let a=0;a<n;a++){ let best = null;
@@ -262,7 +269,7 @@ function moves(){
       if (ok(g, Math.max(P[a].uv, P[b].uv)) && hit(a,b) && (!best || g > best.g)) best = {a, b, g}; }
     if (best) piv.push(best); }
   const seen = new Set(), pv = piv.sort((x,y)=>y.g-x.g).filter(m=>!seen.has(m.b) && seen.add(m.b)).slice(0, 15);
-  $("mvPivot").innerHTML = pv.length ? pv.map(m=>`<li>Give ${tag(m.a)} → get ${tag(m.b)} <span class="d">market 1:1 ${fmt(P[m.a].tv)} vs ${fmt(P[m.b].tv)} · ours ${k(P[m.a].uv)} → ${k(P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`).join("")
+  $("mvPivot").innerHTML = pv.length ? pv.map(m=>`<li>Give ${tag(m.a)} → get ${tag(m.b)} <span class="d">${L1} ${v1v(m.a)} vs ${v1v(m.b)} · ours ${k(P[m.a].uv)} → ${k(P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`).join("")
     : `<li class="muted">No pivot passes the rule${q?" for this player":""}.</li>`;
   // 2-for-1: best pair per single player, both directions
   const up = [], down = [];
@@ -271,11 +278,12 @@ function moves(){
       for (let b=a+1;b<n;b++){ if (b===x) continue; const ws = w[a]+w[b]; if (!fair(ws, w[x])) continue;
         const us = P[a].uv + P[b].uv, gu = P[x].uv - us, gd = -gu, big = Math.max(us, P[x].uv);
         if (ok(gu, big) && hit(a,b,x) && (!bu || gu > bu.g)) bu = {x, a, b, g:gu};
-        if (ok(gd, big) && hit(a,b,x) && (!bd || gd > bd.g)) bd = {x, a, b, g:gd}; } }
+        const same = P[a].p===P[x].p || P[b].p===P[x].p;   // downtier: same position back first, then any
+        if (same && ok(gd, big) && hit(a,b,x) && (!bd || gd > bd.g)) bd = {x, a: P[a].p===P[x].p ? a : b, b: P[a].p===P[x].p ? b : a, g:gd}; } }
     if (bu) up.push(bu); if (bd) down.push(bd); }
   const li2 = (m, give) => give
-    ? `<li>Give ${tag(m.a)} + ${tag(m.b)} → get ${tag(m.x)} <span class="d">market 2:1 ${k(1e5*(w[m.a]+w[m.b])/wTop)} vs ${k(1e5*w[m.x]/wTop)} · ours ${k(P[m.a].uv+P[m.b].uv)} → ${k(P[m.x].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`
-    : `<li>Give ${tag(m.x)} → get ${tag(m.a)} + ${tag(m.b)} <span class="d">market 2:1 ${k(1e5*w[m.x]/wTop)} vs ${k(1e5*(w[m.a]+w[m.b])/wTop)} · ours ${k(P[m.x].uv)} → ${k(P[m.a].uv+P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`;
+    ? `<li>Give ${tag(m.a)} + ${tag(m.b)} → get ${tag(m.x)} <span class="d">${L2} ${k(1e5*(w[m.a]+w[m.b])/wTop)} vs ${k(1e5*w[m.x]/wTop)} · ours ${k(P[m.a].uv+P[m.b].uv)} → ${k(P[m.x].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`
+    : `<li>Give ${tag(m.x)} → get ${tag(m.a)} + ${tag(m.b)} <span class="d">${L2} ${k(1e5*w[m.x]/wTop)} vs ${k(1e5*(w[m.a]+w[m.b])/wTop)} · ours ${k(P[m.x].uv)} → ${k(P[m.a].uv+P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`;
   const top = (L, give) => { const used = new Set(); return L.sort((x,y)=>y.g-x.g).filter(m=>{ const ids = [m.x, m.a, m.b];
       if (!q && ids.some(i=>used.has(i))) return false; ids.forEach(i=>used.add(i)); return true; }).slice(0, 10).map(m=>li2(m, give)).join(""); };
   $("mvUp").innerHTML = top(up, true) || `<li class="muted">No uptier passes the rule${q?" for this player":""}.</li>`;
