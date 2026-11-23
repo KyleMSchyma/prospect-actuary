@@ -86,8 +86,8 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
   <p class="small muted">Swap a player for one the market prices the same straight up, but our values rate higher. Any position.</p>
   <div class="box"><ol id="mvPivot"></ol></div>
   <div class="two" style="margin-top:16px">
-    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. One piece you give is the same position as the player you get; the other can be any position.</p><ol id="mvUp"></ol></div>
-    <div class="box"><h3>Downtier: give 1, get 2</h3><p class="small muted">Split one player into two pieces the market prices at the same total, where our values rate the two together higher. One piece is the same position as the player you give; the other can be any position.</p><ol id="mvDown"></ol></div>
+    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. Most of what you give (over half its market value) is one player at the same position as the player you get, a tier or so lower; the other piece makes up the difference and can be any position.</p><ol id="mvUp"></ol></div>
+    <div class="box"><h3>Downtier: give 1, get 2</h3><p class="small muted">Split one player into two pieces the market prices at the same total, where our values rate the two together higher. Most of what you get back (over half its market value) is one player at the same position as the player you give, a tier or so lower; the other piece makes up the difference and can be any position.</p><ol id="mvDown"></ol></div>
   </div>
 </section>
 
@@ -277,9 +277,12 @@ function moves(){
     for (let a=0;a<n;a++){ if (a===x) continue;
       for (let b=a+1;b<n;b++){ if (b===x) continue; const ws = w[a]+w[b]; if (!fair(ws, w[x])) continue;
         const us = P[a].uv + P[b].uv, gu = P[x].uv - us, gd = -gu, big = Math.max(us, P[x].uv);
-        const same = P[a].p===P[x].p || P[b].p===P[x].p;   // uptier and downtier: one of the two pieces matches the single player's position, the other can be any
-        if (same && ok(gu, big) && hit(a,b,x) && (!bu || gu > bu.g)) bu = {x, a: P[a].p===P[x].p ? a : b, b: P[a].p===P[x].p ? b : a, g:gu};
-        if (same && ok(gd, big) && hit(a,b,x) && (!bd || gd > bd.g)) bd = {x, a: P[a].p===P[x].p ? a : b, b: P[a].p===P[x].p ? b : a, g:gd}; } }
+        // uptier and downtier: the two-piece side is led by a player at the single player's position (a tier or so lower)
+        // carrying more than half of that side's market value; the other piece makes up the difference (any position)
+        const lead = P[a].p===P[x].p && w[a] > w[b] ? a : P[b].p===P[x].p && w[b] > w[a] ? b : -1;
+        if (lead < 0 || w[lead] >= w[x]) continue; const oth = lead===a ? b : a;   // the lead piece is below the single player
+        if (ok(gu, big) && hit(a,b,x) && (!bu || gu > bu.g)) bu = {x, a: lead, b: oth, g:gu};
+        if (ok(gd, big) && hit(a,b,x) && (!bd || gd > bd.g)) bd = {x, a: lead, b: oth, g:gd}; } }
     if (bu) up.push(bu); if (bd) down.push(bd); }
   const li2 = (m, give) => give
     ? `<li>Give ${tag(m.a)} + ${tag(m.b)} → get ${tag(m.x)} <span class="d">${L2} ${k(1e5*(w[m.a]+w[m.b])/wTop)} vs ${k(1e5*w[m.x]/wTop)} · ours ${k(P[m.a].uv+P[m.b].uv)} → ${k(P[m.x].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`
