@@ -78,6 +78,19 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
     </ul></span></div>
 </section>
 
+<section id="tmMoves" hidden>
+  <h2>Best market moves</h2>
+  <p class="small muted">Trades the market treats as fair that gain the most on our values. Fair is judged on the market's own prices: for 1-for-1 swaps the straight-up (1:1) prices, for 2-for-1 deals the package (2:1) prices, where the two pieces add up to what managers pay for the single player. A move is listed when the market prices both sides within 10% of each other and our values gain more than 10% (and at least 1,000). Players in either list's top 200.</p>
+  <div class="controls"><input type="search" id="mvQ" placeholder="Moves for one player" aria-label="Moves for one player"></div>
+  <h3>Pivots: 1-for-1</h3>
+  <p class="small muted">Swap a player for one the market prices the same straight up, but our values rate higher.</p>
+  <div class="box"><ol id="mvPivot"></ol></div>
+  <div class="two" style="margin-top:16px">
+    <div class="box"><h3>Uptier: give 2, get 1</h3><p class="small muted">Consolidate two pieces into one player the market prices at their sum, where our values rate the one higher than the two together. It also frees a roster spot, which our values don't count.</p><ol id="mvUp"></ol></div>
+    <div class="box"><h3>Downtier: give 1, get 2</h3><p class="small muted">Split one player into two pieces the market prices at the same total, where our values rate the two together higher. You need an open roster spot.</p><ol id="mvDown"></ol></div>
+  </div>
+</section>
+
 <section>
   <h2>Where we disagree most</h2>
   <p class="small muted">Among players in either list's top 150 overall. The number is how many spots apart the two overall ranks are.</p>
@@ -184,7 +197,7 @@ function tmRows(){
   let a = 0.5, b = 5; const g = (Math.sqrt(5)-1)/2;
   for (let i=0;i<60;i++){ const c1 = b-g*(b-a), c2 = a+g*(b-a); if (loss(c1) < loss(c2)) b = c2; else a = c1; }
   const p = (a+b)/2;
-  return {asof: d.asof, p, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:"", v:1e5*Math.exp(p*(r[2]-top)), k:norm(r[0])+"|"+r[1]}))};
+  return {asof: d.asof, p, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:"", v:1e5*Math.exp(p*(r[2]-top)), l:r[2]-top, k:norm(r[0])+"|"+r[1]}))};
 }
 // Dynasty Daddy ids are the name in lowercase letters plus the position (e.g. "kennethwalkerrb")
 const ddKey = (n, p) => norm(n).replace(/ /g,"") + p.toLowerCase();
@@ -208,7 +221,7 @@ function build(){
   const used = new Set(), rows = [];
   us.forEach(u=>{ const t = find(u); if (t) used.add(t);
     if (!u.ro && !(t && t.ro)) return;
-    rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp, uv:u.v>0?u.v:null, tv:t&&t.v}); });
+    rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp, uv:u.v>0?u.v:null, tv:t&&t.v, tl:t?t.l:null}); });
   them.forEach(t=>{ if (!used.has(t) && t.ro) rows.push({n:t.n, p:t.p, tm:t.tm||"FA", a:null, uo:null, up:null, to:t.ro, tp:t.rp, uv:null, tv:t.v, miss:1}); });
   rows.forEach(r=>{ r.d = (r.uo && r.to) ? r.to - r.uo : null; r.dp = (r.up && r.tp) ? r.tp - r.up : null;
     r.avg = r.uo && r.to ? (r.uo+r.to)/2 : (r.uo||r.to) + 400; });
@@ -225,7 +238,48 @@ function build(){
   $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy."
     : SRC==="tm" ? "The trade market is dynasty only for now." : "";
   try { localStorage.setItem("pa-vr", SRC+"|"+MODE); } catch(e){}
-  summary(); table();
+  $("tmMoves").hidden = SRC !== "tm";
+  summary(); table(); if (SRC==="tm") moves();
+}
+
+// ---------- best market moves (trade market only) ----------
+// Pivot: market 1:1 prices (exp(l)) within 10%; uptier/downtier: market 2:1 prices (exp(s_pkg*l), additive) within 10%.
+// Listed when our dynasty values gain more than 10% of the larger side and at least 1,000.
+const BAND = 0.10;
+const fair = (a, b) => Math.min(a, b) >= (1-BAND)*Math.max(a, b);
+const ok = (gain, big) => gain >= 1000 && gain > BAND*big;
+function moves(){
+  const sp = window.TM.s_pkg, q = norm($("mvQ").value);
+  const P = ROWS.filter(r=>r.uv && r.tl!=null && !r.miss && (r.uo<=200 || r.to<=200));
+  const n = P.length, v1 = P.map(r=>Math.exp(r.tl)), w = P.map(r=>Math.exp(sp*r.tl)), wTop = Math.max(...w);
+  const hit = (...ix) => !q || ix.some(i=>norm(P[i].n).includes(q));
+  const tag = i => `<b>${nm(P[i])}</b> <span class="pos" style="color:var(--${P[i].p})">${P[i].p}</span>`;
+  const k = x => Math.round(x/1000)+"k";
+  // pivots: best target per player given
+  const piv = [];
+  for (let a=0;a<n;a++){ let best = null;
+    for (let b=0;b<n;b++){ if (a===b || !fair(v1[a], v1[b])) continue; const g = P[b].uv - P[a].uv;
+      if (ok(g, Math.max(P[a].uv, P[b].uv)) && hit(a,b) && (!best || g > best.g)) best = {a, b, g}; }
+    if (best) piv.push(best); }
+  const seen = new Set(), pv = piv.sort((x,y)=>y.g-x.g).filter(m=>!seen.has(m.b) && seen.add(m.b)).slice(0, 15);
+  $("mvPivot").innerHTML = pv.length ? pv.map(m=>`<li>Give ${tag(m.a)} → get ${tag(m.b)} <span class="d">market 1:1 ${fmt(P[m.a].tv)} vs ${fmt(P[m.b].tv)} · ours ${k(P[m.a].uv)} → ${k(P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`).join("")
+    : `<li class="muted">No pivot passes the rule${q?" for this player":""}.</li>`;
+  // 2-for-1: best pair per single player, both directions
+  const up = [], down = [];
+  for (let x=0;x<n;x++){ let bu = null, bd = null;
+    for (let a=0;a<n;a++){ if (a===x) continue;
+      for (let b=a+1;b<n;b++){ if (b===x) continue; const ws = w[a]+w[b]; if (!fair(ws, w[x])) continue;
+        const us = P[a].uv + P[b].uv, gu = P[x].uv - us, gd = -gu, big = Math.max(us, P[x].uv);
+        if (ok(gu, big) && hit(a,b,x) && (!bu || gu > bu.g)) bu = {x, a, b, g:gu};
+        if (ok(gd, big) && hit(a,b,x) && (!bd || gd > bd.g)) bd = {x, a, b, g:gd}; } }
+    if (bu) up.push(bu); if (bd) down.push(bd); }
+  const li2 = (m, give) => give
+    ? `<li>Give ${tag(m.a)} + ${tag(m.b)} → get ${tag(m.x)} <span class="d">market 2:1 ${k(1e5*(w[m.a]+w[m.b])/wTop)} vs ${k(1e5*w[m.x]/wTop)} · ours ${k(P[m.a].uv+P[m.b].uv)} → ${k(P[m.x].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`
+    : `<li>Give ${tag(m.x)} → get ${tag(m.a)} + ${tag(m.b)} <span class="d">market 2:1 ${k(1e5*w[m.x]/wTop)} vs ${k(1e5*(w[m.a]+w[m.b])/wTop)} · ours ${k(P[m.x].uv)} → ${k(P[m.a].uv+P[m.b].uv)} (<span class="up">+${fmt(m.g)}</span>)</span></li>`;
+  const top = (L, give) => { const used = new Set(); return L.sort((x,y)=>y.g-x.g).filter(m=>{ const ids = [m.x, m.a, m.b];
+      if (!q && ids.some(i=>used.has(i))) return false; ids.forEach(i=>used.add(i)); return true; }).slice(0, 10).map(m=>li2(m, give)).join(""); };
+  $("mvUp").innerHTML = top(up, true) || `<li class="muted">No uptier passes the rule${q?" for this player":""}.</li>`;
+  $("mvDown").innerHTML = top(down, false) || `<li class="muted">No downtier passes the rule${q?" for this player":""}.</li>`;
 }
 
 function spearman(pairs){ const n = pairs.length; if (n<3) return null;
@@ -279,7 +333,8 @@ $("tbl").addEventListener("click", e=>{ const b = e.target.closest("button[data-
   SORT = SORT.k===k ? {k, dir:-SORT.dir} : {k, dir: (k==="d"||k==="dp"||k==="uv"||k==="tv") ? -1 : 1}; table(); });
 $("posF").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; FILTER = b.dataset.v;
   $("posF").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); table(); });
-$("q").addEventListener("input", table); $("top").addEventListener("change", table);
+$("q").addEventListener("input", table);
+let mvT = null; $("mvQ").addEventListener("input", ()=>{ clearTimeout(mvT); mvT = setTimeout(moves, 200); }); $("top").addEventListener("change", table);
 
 $("src").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b) return; SRC = b.dataset.v; if (SRC!=="dd") MODE = "d"; build(); });
 $("mode").addEventListener("click", e=>{ const b = e.target.closest("button"); if (!b || b.disabled) return; MODE = b.dataset.v; build(); });
