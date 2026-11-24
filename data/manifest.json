@@ -1,7 +1,7 @@
 {
- "built": "2026-11-23T14:39Z",
+ "built": "2026-11-24T14:34Z",
  "values": {
-  "asof": "2026 stats through week 11. Updated November 23, 2026.",
+  "asof": "2026 stats through week 11. Updated November 24, 2026.",
   "players": 588,
   "scale": "100,000 = most valuable player on each sheet; values add",
   "model": "Trade values: credibility-weighted PPG over replacement x expected games; dynasty through 2031 with aging, survival, stop-loss upside and 15%/yr discount; status-based expected games (injury report, depth chart). Weekly R build with 6 output gates.",
@@ -51,19 +51,19 @@
    "updated": "2026-11-23"
   },
   "trade-values/data/tv.js": {
-   "sha": "4dcb6b21ec",
-   "bytes": 898076,
-   "updated": "2026-11-23"
+   "sha": "9f7c4ce0ad",
+   "bytes": 897987,
+   "updated": "2026-11-24"
   },
   "value-research/data/dd.js": {
-   "sha": "2bfc601bf3",
-   "bytes": 19991,
-   "updated": "2026-11-23"
+   "sha": "f49902a9ac",
+   "bytes": 20236,
+   "updated": "2026-11-24"
   },
   "data/movers.csv": {
-   "sha": "bd69086cff",
-   "bytes": 10306,
-   "updated": "2026-11-23"
+   "sha": "50faef2ca5",
+   "bytes": 10122,
+   "updated": "2026-11-24"
   }
  },
  "checks": [
