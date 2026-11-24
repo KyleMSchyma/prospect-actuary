@@ -6,7 +6,8 @@
  *   redraft value      (credible PPG - replacement) x expected games left                                      (dv_10)
  *   dynasty value      rest of 2026 + sum_t v^t x games_t x E[(PPG_t - replacement)+]  (stop-loss, normal)     (dv_11 / dv_13)
  *   2027 picks (1.01-4.NN) sum over tiers P(tier) x sum_k v^k x games x E[(tier PPG + age adj - replacement)+]       (dv_13)
- *   100,000 scale      the top player on each sheet = 100,000; values add.
+ *   100,000 scale      ANCHOR x the mean of the top-10 raw values on each sheet = 100,000 (dv_10 anchor_top, Kyle 2026-11-24),
+ *                      so the #1 player averages about 100,000 but can sit above or below it; values add.
  * It replaces the four copies that lived in Trade Values, the Trade Calculator, Market Check and league-value.js.
  * The weekly gate 6b (rf_03_gates.R) checks the Trade Values page, which calls this file, against R in 5 leagues.
  *
@@ -19,6 +20,12 @@
   const pnorm = z => 0.5*(1+erf(z/Math.SQRT2)), dnorm = z => Math.exp(-z*z/2)/Math.sqrt(2*Math.PI);
   const stoploss = (mu, r, s) => { const z = (mu-r)/s; return s*dnorm(z) + (mu-r)*pnorm(z); };   // E[(PPG - replacement)+]
   // scoring key of a position's projections: QB by pass-TD points, TE by points per catch incl. premium, RB/WR by PPR; then first-down bonus
+  // 100k anchor (dv_10 ANCHOR_C / anchor_top): the scale is ANCHOR x the top-10 average raw value (the #1 alone when fewer
+  // than 10). Must match R exactly; refresh gate 6b compares this page with R.
+  const ANCHOR = {d: 1.33, r: 1.31};
+  const anchorTop = (vals, c) => { const v = vals.filter(Number.isFinite).sort((a,b)=>b-a);
+    if (v.length < 10) return Math.max(v.length ? v[0] : 0, 1e-9);
+    let s = 0; for (let k=0; k<10; k++) s += v[k]; return Math.max(c*s/10, 1e-9); };
   const keyOf = (S, p) => (p==="QB" ? "QB_p"+S.ptd : p==="TE" ? "TE_t"+(S.ppr+S.tep) : p+"_r"+S.ppr) + "f" + (S["fd"+p]||0);
 
   function PAEngine(D, AGE){
@@ -70,7 +77,7 @@
       for (let s=0; s<4*S.teams && s<pv.length; s++){
         const rd = Math.floor(s/S.teams)+1, pk = s%S.teams+1, lab = `${rd}.${String(pk).padStart(2,"0")}`;
         pickRows.push({id:"k:"+lab, slot:lab, n:`2027 Pick ${lab}`, p:"PICK", pick:true, raw:pv[s], src:pvx[s].j}); }   // src: index in D.picks.pros of the prospect this slot is priced as
-      const topR = Math.max(...red.map(r=>r.raw)), topD = Math.max(...dyn.map(r=>r.raw));
+      const topR = anchorTop(red.map(r=>r.raw), ANCHOR.r), topD = anchorTop(dyn.map(r=>r.raw), ANCHOR.d);   // top-10 anchor (was the #1 player)
       red.forEach(r=>r.v = 1e5*r.raw/topR); dyn.forEach(r=>r.v = 1e5*r.raw/topD); pickRows.forEach(r=>r.v = 1e5*r.raw/topD);
       const rank = rows => { rows.sort((a,b)=>b.v-a.v); const pc = {};
         rows.forEach((r,k)=>{ r.r = k+1; pc[r.p] = (pc[r.p]||0)+1; r.rp = r.pick ? "" : r.p+pc[r.p]; }); return rows; };
