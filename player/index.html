@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Player Profile | Prospect Actuary</title>
 <meta name="description" content="One player in one place: prospect grades before and after the draft, historical comparables, dynasty value in your league, and how our value compares with the market.">
+<!--share--><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Player Profile | Prospect Actuary"><meta property="og:description" content="One player in one place: prospect grades before and after the draft, historical comparables, dynasty value in your league, and how our value compares with the market."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/player/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Player Profile | Prospect Actuary"><meta name="twitter:description" content="One player in one place: prospect grades before and after the draft, historical comparables, dynasty value in your league, and how our value compares with the market."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -40,7 +41,7 @@
 @media (max-width:520px){ .ph h1{font-size:1.8rem} .prob{grid-template-columns:90px 1fr 48px} }
 </style></head>
 <body><div class="wrap">
-<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
 <main id="main"><p class="big-missing">Loading player…</p></main>
 <p class="pa-tip">Prospect Actuary is free to use. If it helped you, you can <a href="https://buymeacoffee.com/kylemschyma" target="_blank" rel="noopener">buy me a coffee</a>. A dollar is plenty.</p>
 <footer>Grades from the pre-draft and post-draft prospect models; values from the trade-value models, computed for your league in the browser; market values from Dynasty Daddy (cached weekly snapshot). Player ids and birth dates from <a href="https://nflverse.com">nflverse</a> (CC BY 4.0). Not affiliated with the NFL or any team.</footer>
@@ -59,7 +60,7 @@ const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&
 const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
 const f1 = x => x==null ? "–" : Number(x).toFixed(1), f2 = x => x==null ? "–" : Number(x).toFixed(2);
 const pct = x => x==null ? "–" : Math.round(100*x)+"%";
-const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":g[0]==="D"?"gD":"gF";
 const chip = g => g ? `<span class="chip ${chipCls(g)}">${esc(g)}</span>` : "–";
 const posb = p => `<span class="posb" style="color:var(--${p})">${p}</span>`;
 const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
@@ -94,7 +95,7 @@ if (R.pre && R.pre.recruit_stars) facts.push(["Recruiting", `${R.pre.recruit_sta
 if (R.pre && R.pre.yrs_out_of_hs!=null) facts.push(["Years out of HS", R.pre.yrs_out_of_hs]);
 const acts = [`<a class="btn" href="../compare/?ids=${encodeURIComponent(p.id)}${amp}">Compare</a>`];
 if (R.pre || R.post) acts.push(`<a class="btn" href="../${R.post && !p.proj ? "post" : "pre"}-draft/?q=${encodeURIComponent(p.name)}&pos=${p.pos}">Prospect board</a>`);
-if (R.tv!=null) acts.push(`<a class="btn" href="../trade-values/?q=${encodeURIComponent(p.name)}${amp}">Player Values</a>`, `<a class="btn primary" href="../trade-calculator/?mode=dynasty&get=${encodeURIComponent(p.keys.tv)}${amp}">+ Add to trade</a>`);
+if (R.tv!=null) acts.push(`<a class="btn" href="../trade-values/?q=${encodeURIComponent(p.name)}${amp}">Actuarial Trade Values</a>`, `<a class="btn primary" href="../trade-calculator/?mode=dynasty&get=${encodeURIComponent(p.keys.tv)}${amp}">+ Add to trade</a>`);
 let html = `<header class="ph"><div class="page-head"><div class="eyebrow">Player profile · ${p.pos}${p.proj ? " · 2027 prospect" : ""}</div><h1>${esc(p.name)}</h1>
   <div class="facts">${facts.map(([k,v])=>`<span><b>${k}</b>${esc(v)}</span>`).join("")}</div></div><div class="acts">${acts.join("")}</div></header>
   <div class="datastrip" id="ds"></div>
@@ -211,8 +212,8 @@ if (V && V.kind==="nfl") {
         cell("Median pick", val(avgQ), s ? (m.post_grade_draft||m.post_grade) : m.post_grade, `pick ${m.pick}${m.team_abbr?" to "+esc(m.team_abbr):""}`) +
         cell("Worst case", val(dq("worst_", s)), und ? null : gk("worst_grade"), und ? "undrafted in at least one mock" : `pick ${m.worst_pick}${m.worst_team_abbr?" to "+esc(m.worst_team_abbr):""}`) + `</div>`; };
     rng = `<div class="small" style="margin:14px 0 6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b>Range across our mocks</b> <span class="muted">(picks: ${esc(String(m.picks_in_mocks||"").split("/").map(x=>x==="UD"?"undrafted":x).join(", "))})</span>
-      <span class="tabs sm" id="rngMode" role="group" aria-label="Model"><button type="button" data-v="mixed" aria-pressed="true">Mixed</button><button type="button" data-v="post" aria-pressed="false">Post-draft</button></span></div><div id="rngBody">${body("mixed")}</div>` +
-      `<p class="note">Each case is the post-draft model (mixed, or plain post-draft on the toggle) with that pick and team as his draft capital and landing spot. The pre-draft model does not use draft slot, so it has no range. ${m.share_drafted<1 ? `He is drafted in ${m.n_drafted} of ${m.n_mocks} mocks, so his projected value is ${Math.round(100*m.share_drafted)}% his median-pick value and ${Math.round(100*(1-m.share_drafted))}% the value of an undrafted player (past undrafted ${p.pos}s who reached the NFL rarely had a tier season).` : `His projected value uses the median pick.`}</p>`;
+      <span class="tabs sm" id="rngMode" role="group" aria-label="Model"><button type="button" data-v="mixed" aria-pressed="true">Adjusted</button><button type="button" data-v="post" aria-pressed="false">After Draft</button></span></div><div id="rngBody">${body("mixed")}</div>` +
+      `<p class="note">Each case is the post-draft model (Adjusted, or plain post-draft on the toggle) with that pick and team as his draft capital and landing spot. The pre-draft model does not use draft slot, so it has no range. ${m.share_drafted<1 ? `He is drafted in ${m.n_drafted} of ${m.n_mocks} mocks, so his projected value is ${Math.round(100*m.share_drafted)}% his median-pick value and ${Math.round(100*(1-m.share_drafted))}% the value of an undrafted player (past undrafted ${p.pos}s who reached the NFL rarely had a tier season).` : `His projected value uses the median pick.`}</p>`;
     window._rngBody = body;
   }
   sec("right", "Projected dynasty value", "Your league", `<div class="kv"><div class="stat"><span class="lbl">Projected value</span><span class="big">${fmt(V.d)}</span><span class="sm">${V.slot ? `about the value of 2027 pick ${V.slot}` : ""}</span></div></div>${rng}

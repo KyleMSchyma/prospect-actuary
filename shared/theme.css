@@ -1,42 +1,51 @@
-/* Prospect Actuary: one design for every page (navy menu bar, white and light-gray content, orange accent).
+/* Prospect Actuary: one design for every page (navy menu bar, cool-white content, teal accent).
  * Loaded before each page's own <style>, so page rules can still refine a component. Colors live only here, as tokens.
  * Sections: tokens · base · layout · controls · tables · chips and tags · cards and tiles · notices · site menu · search · utilities
  */
+/* Design tokens (Redesign Phase 1, 2026-11-24, handoff section 6): navy + teal, semantic colors reserved for meaning.
+ * Deviation: the handoff's teal #148A8A gives 4.2:1 under white button text; --accent is darkened a touch to #107F80
+ * (4.8:1, WCAG AA). #148A8A stays as --teal for large marks.
+ * Teal is the one interactive accent. Green = improving, red = declining / injury / destructive, amber = uncertainty,
+ * purple = projected prospects and future assets, blue = information. Grades use five families (A-F), never row fills. */
 :root, .pa-top .pa-results, .pa-top .pa-lgpop{
   color-scheme:light;
-  --bg:#f3f5f9; --bg-2:#e9edf3; --panel:#ffffff; --panel-2:#f2f5f9; --raise:#e6ebf2;
-  --ink:#0f1d33; --ink-2:#34455f; --muted:#5d6d84; --line:#dce3ec; --line-2:#c6d0dd;
-  --accent:#c4650a; --accent-2:#a65308; --accent-ink:#ffffff; --accent-soft:rgba(242,140,40,.12);
-  --up:#13804f; --down:#c23a3a; --up-soft:rgba(19,128,79,.10); --down-soft:rgba(194,58,58,.09);
-  --warn:#8a5f00; --warn-soft:rgba(242,193,78,.16); --bar:#2f78c4; --dot:#c4650a;
-  --QB:#c92a62; --RB:#0e8a66; --WR:#2369b3; --TE:#7046c8; --PICK:#9a6d00;
-  --sideA:#2369b3; --sideB:#c4650a;
-  --gA:#1a8a5c; --gB:#2a6db3; --gC:#8a6c14; --gD:#b0402f; --chipfg:#ffffff;
-  --proj:#6a48cc; --proj-soft:rgba(106,72,204,.08);
-  --hover:rgba(15,29,51,.035); --shadow:0 14px 40px rgba(15,29,51,.16);
+  --bg:#f7f9fc; --bg-2:#eef2f7; --panel:#ffffff; --panel-2:#eef2f7; --raise:#e4e9f1;
+  --ink:#172033; --ink-2:#364258; --muted:#5d687a; --line:#d8dfe8; --line-2:#c3ccd8;
+  --brand:#17324d; --brand-2:#0f2338;
+  --accent:#107f80; --accent-2:#0e6f70; --teal:#148a8a; --accent-ink:#ffffff; --accent-soft:rgba(20,138,138,.12);
+  --up:#1a8755; --down:#c63f3f; --up-soft:rgba(31,157,97,.10); --down-soft:rgba(216,74,74,.09);
+  --warn:#8a5f00; --warn-c:#d99614; --warn-soft:rgba(217,150,20,.14); --info:#3478c7; --bar:#3478c7; --dot:#148a8a;
+  --QB:#2f6fb8; --RB:#1a8755; --WR:#7a5cc7; --TE:#c26a1a; --PICK:#7a5cc7;
+  --sideA:#2f6fb8; --sideB:#148a8a;
+  --gA:#17633d; --gB:#225b8f; --gC:#805b0a; --gD:#93462a; --gF:#982f3a; --chipfg:#ffffff;
+  --gA-bg:#ddf4e8; --gB-bg:#ddeaf8; --gC-bg:#fff0cc; --gD-bg:#fbe1d5; --gF-bg:#f4d6d9;
+  --proj:#7a5cc7; --proj-soft:rgba(122,92,199,.08);
+  --hover:rgba(23,32,51,.035); --shadow:0 12px 32px rgba(23,32,51,.12); --shadow-1:0 1px 2px rgba(23,32,51,.05);
   --f-display:Inter,system-ui,-apple-system,"Segoe UI",sans-serif; --f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
-  --radius:8px; --nav-h:56px;
+  --radius:12px; --radius-sm:8px; --nav-h:56px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
 }
 /* the menu bar stays navy: the dark tokens apply inside it (its search results switch back to the light set above) */
 .pa-top{
   color-scheme:dark;
-  --bg:#0a1424; --bg-2:#0d1a2e; --panel:#112038; --panel-2:#162a47; --raise:#1b3254;
-  --ink:#f1f4f8; --ink-2:#c9d2de; --muted:#8b9bb1; --line:#223a5c; --line-2:#2d4870;
-  --accent:#f28c28; --accent-2:#ffab5c; --accent-ink:#141008;
-  --QB:#ff8fa3; --RB:#4fd1a5; --WR:#6fb3ff; --TE:#c4a0ff; --PICK:#f2c14e;
-  --hover:rgba(255,255,255,.04);
+  --bg:#0c1420; --bg-2:#10233a; --panel:#17324d; --panel-2:#1b2a3b; --raise:#22384f;
+  --ink:#f4f7fa; --ink-2:#cdd6e1; --muted:#aebac8; --line:#2a4562; --line-2:#3a5675;
+  --accent:#3bc1b7; --accent-2:#6fd6ce; --accent-ink:#0c1420;
+  --QB:#8dbdf5; --RB:#6fd3a2; --WR:#bba6f2; --TE:#f2b277; --PICK:#bba6f2;
+  --hover:rgba(255,255,255,.05);
   color:var(--ink);
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:120px}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1180px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:36px}
 h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:-.015em;margin:0;line-height:1.15;text-wrap:balance;color:var(--ink)}
-h1{font-size:2.2rem} h2{font-size:1.45rem} h3{font-size:1.1rem}
+h1{font-size:2.4rem;line-height:1.12} h2{font-size:1.6rem} h3{font-size:1.15rem}
 p{margin:0;max-width:72ch}
 a{color:var(--accent-2);text-underline-offset:3px}
 a:hover{color:var(--accent)}
+.eyebrow,.page-head .crumb a{color:var(--accent-2)}
 b,strong{color:var(--ink);font-weight:600}
 .eyebrow{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent)}
 .muted{color:var(--muted)} .small{font-size:.85rem} .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
@@ -64,6 +73,10 @@ input[type=search],input[type=text]{cursor:text;min-width:0}
 input::placeholder{color:var(--muted)}
 select{padding-right:28px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px;background-repeat:no-repeat}
 button:disabled{opacity:.45;cursor:not-allowed}
+.btn.secondary{background:var(--panel);border-color:var(--line-2);color:var(--ink)}
+.btn.lg{font-size:.98rem;padding:10px 18px;border-radius:8px}
+.tlink{font-weight:600;color:var(--accent-2);text-decoration:none} .tlink:hover{text-decoration:underline}
+.tlink::after{content:" \2192"}
 .seg{gap:0;display:inline-flex;flex-wrap:wrap}
 .seg button{border-radius:0;margin-left:-1px}
 .seg button:first-child{border-radius:6px 0 0 6px;margin-left:0}
@@ -84,16 +97,16 @@ tr:last-child td{border-bottom:none}
 /* keep the player column in view while a wide table scrolls sideways on a phone */
 
 /* ---------- chips and tags ---------- */
-.chip{display:inline-block;min-width:2.2em;text-align:center;padding:1px 6px;border-radius:4px;font-family:var(--f-mono);font-size:.78rem;font-weight:600;color:var(--chipfg)}
-.chip.gA{background:var(--gA)} .chip.gB{background:var(--gB)} .chip.gC{background:var(--gC)} .chip.gD{background:var(--gD)}
+.chip{display:inline-block;min-width:2.2em;text-align:center;padding:1px 6px;border-radius:5px;font-family:var(--f-mono);font-size:.78rem;font-weight:600;color:var(--ink);background:var(--panel-2)}
+.chip.gA{background:var(--gA-bg);color:var(--gA)} .chip.gB{background:var(--gB-bg);color:var(--gB)} .chip.gC{background:var(--gC-bg);color:var(--gC)} .chip.gD{background:var(--gD-bg);color:var(--gD)} .chip.gF{background:var(--gF-bg);color:var(--gF)}
 .pos{font-family:var(--f-mono);font-size:.78rem;font-weight:600}
-.posb{display:inline-block;font-family:var(--f-mono);font-size:.7rem;font-weight:600;padding:0 5px;border-radius:3px;border:1px solid currentColor;line-height:1.5}
+.posb{display:inline-block;font-family:var(--f-mono);font-size:.7rem;font-weight:600;padding:0 6px;border-radius:999px;border:1px solid currentColor;line-height:1.5}
 .st,.tag{display:inline-block;margin-left:6px;padding:0 5px;border:1px solid var(--line-2);border-radius:3px;font-family:var(--f-mono);font-size:.68rem;line-height:1.5;color:var(--muted);vertical-align:1px;white-space:nowrap}
 .up{color:var(--up)} .down{color:var(--down)}
 .minibar{display:inline-block;height:6px;border-radius:2px;background:var(--accent)}
 
 /* ---------- cards and tiles ---------- */
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:10px;color:var(--ink);text-decoration:none}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-1);padding:20px;display:flex;flex-direction:column;gap:10px;color:var(--ink);text-decoration:none}
 a.card:hover{border-color:var(--accent);color:var(--ink)}
 .card .go{font-family:var(--f-mono);font-size:.78rem;color:var(--accent);margin-top:auto}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
@@ -111,7 +124,7 @@ a.card:hover{border-color:var(--accent);color:var(--ink)}
 footer{border-top:1px solid var(--line);padding-top:16px;font-size:.82rem;color:var(--muted);max-width:none!important}
 
 /* ---------- site menu (shared/nav.js) ---------- */
-.pa-top{position:sticky;top:0;z-index:50;background:rgba(10,20,36,.94);backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.pa-top{position:sticky;top:0;z-index:50;background:rgba(23,50,77,.97);backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
 .pa-top .bar{max-width:1180px;margin:0 auto;height:var(--nav-h);display:flex;align-items:center;gap:18px;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
 .pa-top .brand{display:flex;align-items:center;gap:9px;color:var(--ink);text-decoration:none;font-weight:700;letter-spacing:-.01em;white-space:nowrap;font-size:1rem}
 .pa-top .brand svg{flex:none}
@@ -123,6 +136,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;font-size:.82rem;color:
 .pa-top .lg{font:inherit;font-family:var(--f-mono);font-size:.7rem;border:1px solid var(--line-2);background:var(--panel);color:var(--ink-2);border-radius:999px;padding:4px 10px;cursor:pointer;text-decoration:none;white-space:nowrap;max-width:210px;min-width:0;flex:0 1 auto;overflow:hidden;text-overflow:ellipsis}
 .pa-top .lg:hover{border-color:var(--accent);color:var(--ink)}
 .pa-top .lg span{color:var(--accent)}
+.pa-top .lg-fixed{cursor:default;display:inline-block} .pa-top .lg-fixed:hover{border-color:var(--line-2);color:var(--ink-2)} .pa-top .lg-fixed span{color:var(--muted)}
 .pa-top .iconbtn{display:none;font:inherit;background:none;border:1px solid var(--line-2);color:var(--ink);border-radius:6px;width:38px;height:38px;align-items:center;justify-content:center;cursor:pointer;flex:none}
 .pa-sub{border-top:1px solid var(--line);background:var(--bg-2)}
 .pa-sub .in{max-width:1180px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
@@ -219,15 +233,15 @@ a.pl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line-2)} 
  * ====================================================================================================== */
 .pa-bnav,.m-only,.m-tog,.m-sheet,.m-scrim,.m-fbtn,.m-sortbar,.m-tsum,.assets .mv{display:none}
 @media (max-width:760px){
-  /* ---------- bottom bar: five sections, icons with labels, orange for the current one, clear of the iPhone home bar ---------- */
+  /* ---------- bottom bar: five sections, icons with labels, teal for the current one, clear of the iPhone home bar ---------- */
   .pa-bnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:55;
-    background:rgba(10,20,36,.97);border-top:1px solid #223a5c;-webkit-backdrop-filter:saturate(1.4) blur(8px);backdrop-filter:saturate(1.4) blur(8px);
+    background:rgba(23,50,77,.98);border-top:1px solid #2a4562;-webkit-backdrop-filter:saturate(1.4) blur(8px);backdrop-filter:saturate(1.4) blur(8px);
     padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
-  .pa-bnav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:6px 2px 5px;color:#a9b6c8;text-decoration:none;
+  .pa-bnav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:6px 2px 5px;color:#c2ccd8;text-decoration:none;
     font-size:.66rem;font-weight:500;line-height:1.15;text-align:center;letter-spacing:-.005em;-webkit-tap-highlight-color:transparent;position:relative}
   .pa-bnav a svg{flex:none}
-  .pa-bnav a[aria-current]{color:#f28c28;font-weight:600}
-  .pa-bnav a[aria-current]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:2px;border-radius:0 0 2px 2px;background:#f28c28}
+  .pa-bnav a[aria-current]{color:#3bc1b7;font-weight:600}
+  .pa-bnav a[aria-current]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:2px;border-radius:0 0 2px 2px;background:#3bc1b7}
   .pa-bnav a:active{background:rgba(255,255,255,.05)}
   body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
   html{scroll-padding-top:110px;scroll-padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
@@ -361,27 +375,7 @@ a.pl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line-2)} 
   .pa-res{min-height:44px}
   .pa-res .acts a{min-height:32px;display:inline-flex;align-items:center}
 
-  /* ---------- Dashboard: search, the three shortcuts, then trending, prospects, values, picks, trade, freshness ---------- */
-  .dh .sub{font-size:.92rem}
-  .dh .facts{font-size:.78rem}
-  body.m-dash .wrap>.grid,body.m-dash .wrap>.grid.wide,body.m-dash .stack{display:contents}
-  body.m-dash .wrap>*{order:20}
-  body.m-dash .wrap>header.dh{order:1}
-  body.m-dash .wrap>section[aria-label="Search"]{order:2}
-  body.m-dash .wrap>.tools{order:3}
-  body.m-dash section[aria-labelledby="h-mov"]{order:4}
-  body.m-dash section[aria-labelledby="h-lab"]{order:5}
-  body.m-dash section[aria-labelledby="h-val"]{order:6}
-  body.m-dash section[aria-labelledby="h-picks"]{order:7}
-  body.m-dash section[aria-labelledby="h-tc"]{order:8}
-  body.m-dash section[aria-labelledby="h-df"]{order:9}
-  body.m-dash section[aria-labelledby="h-bm"]{order:10}
-  body.m-dash .wrap>.tier{display:none}
-  body.m-dash .hintline{display:none}
-  body.m-dash .tools{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
-  body.m-dash .tools .tool{flex-direction:column!important;align-items:flex-start!important;padding:12px!important;gap:6px!important;min-height:44px}
-  body.m-dash .tools .tool span.d{display:none}
-  body.m-dash .tools .tool b,body.m-dash .tools .tool strong{font-size:.9rem}
+  /* ---------- Home page: one column; its own styles live in index.html ---------- */
 
   /* ---------- Trade Calculator: stacked sides, reorder buttons, a summary bar pinned above the bottom bar ---------- */
   .assets li{grid-template-columns:1fr auto auto auto!important;gap:6px!important;padding:10px 0!important}

@@ -9,8 +9,8 @@
  *   build(raw, X)            teams with players (matched through data/sleeper_ids.json) and the draft picks each owns
  *   price(M, C, D, mode)     every player and pick valued with our engine (shared/engine.js), team totals,
  *                            position totals, best starting lineup and a contender / middle / rebuilder label
- * Picks: our values cover 2027 rounds 1-3. A 2027 pick is priced at its exact slot when the league has set the 2027
- * draft order, otherwise at the average of its round (stated on screen). 2028+ picks and rounds 4+ are listed as not valued.
+ * Picks: our values cover 2027 rounds 1-4. A 2027 pick is priced at its exact slot when the league has set the 2027
+ * draft order, otherwise at the average of its round (stated on screen). 2028+ picks and rounds 5+ are listed as not valued.
  * Remembers the last league (and which team is yours) in this browser: localStorage "pa-sleeper".
  */
 (function(){
@@ -126,7 +126,7 @@
   const pickName = p => `${p.season} ${p.slot ? `Pick ${p.round}.${String(p.slot).padStart(2,"0")}` : `Round ${p.round} pick`}`;
   // value of one owned pick on the dynasty scale (redraft: 0)
   function pickValue(p, C, S, mode){
-    if (mode!=="d" || p.season!==2027 || p.round>3) return {v:0, note: p.season!==2027 ? "Not valued yet: our pick values cover 2027" : p.round>3 ? "Not valued: our pick values cover rounds 1-3" : "Picks count in dynasty only", valued:false};
+    if (mode!=="d" || p.season!==2027 || p.round>4) return {v:0, note: p.season!==2027 ? "Not valued yet: our pick values cover 2027" : p.round>4 ? "Not valued: our pick values cover rounds 1-4" : "Picks count in dynasty only", valued:false};
     const row = C.picks.filter(x=>x.slot.startsWith(p.round+"."));
     if (!row.length) return {v:0, note:"Not valued", valued:false};
     if (p.slot) { const r = row[Math.min(p.slot, row.length)-1]; return {v:r.v, note:"Exact slot", valued:true, exact:true}; }

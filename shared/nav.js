@@ -2,10 +2,10 @@
  *
  * Each page keeps a plain <nav class="pa-brand" data-root="../"> with simple links (works without JavaScript) and loads
  * this file right after it. This removes that nav and puts the site bar at the top of the page:
- *   Prospect Actuary | Dashboard · Prospect Lab · Player Values · Trade Center · Research | [Search] [league badge]
+ *   Prospect Actuary (home) | Values · Usage · Prospects · Tools · Research | [Search] [league badge]
  *   and under it the pages of the current section. On a phone the sections fold into a menu button, and shared/mobile.js
  *   (loaded at the end) adds the bottom bar and the phone layouts.
- * The badge shows the league saved in this browser ("pa-tv-league"), the setting Player Values, the Trade Calculator,
+ * The badge shows the league saved in this browser ("pa-tv-league"), the setting Values, the Trade Calculator,
  * the grade boards' Value column, the Dashboard and search all use. Pages call window.PANav.update() after it changes.
  * To add a page: add it to SECTIONS. Paths are folder names, so the weekly refresh is not affected.
  */
@@ -28,16 +28,18 @@
   const old = document.querySelector("nav.pa-brand"); if (!old) return;
   const root = old.dataset.root != null ? old.dataset.root : "../";
   // [section id, label, landing page, [[path, label], ...]]; a path may carry ?query or #hash
+  // Redesign Phase 1 (2026-11-24): three core products first (Values, Usage, Prospects), then Tools and Research.
+  // The logo is the way home. Folder names (URLs) are unchanged, so the weekly refresh is not affected.
   const SECTIONS = [
-    ["dash",     "Dashboard",     "",                  []],
-    ["lab",      "Prospect Lab",  "pre-draft/",        [["pre-draft/","Pre-draft rankings"],["post-draft/","Post-draft rankings"],["pre-draft/#class-2027","2027 class"],["post-draft/#mock-2027","2027 mock draft"],["compare/?for=prospects","Prospect comparisons"],["pre-draft/#does-it-work","Model validation"]]],
-    ["values",   "Player Values", "trade-values/",     [["trade-values/?mode=dynasty","Dynasty"],["trade-values/?mode=redraft","Redraft"],["trade-values/?mode=dynasty&pos=PICK","Rookie pick values"],["compare/","Player comparisons"],["value-history/","Value history"],["trade-values/?open=league","League settings"]]],
-    ["trade",    "Trade Center",  "trade-calculator/", [["trade-calculator/","Trade calculator"],["league/","Sleeper league"],["value-research/","Market check"],["buy-sell/","Buy / Sell"],["moves/","Contending & rebuild moves"]]],
-    ["research", "Research",      "research/",         [["research/","Overview"],["guide/","Plain-English guide"],["research/#methodology","Methodology"],["team-analytics/","NFL team analytics"],["track-record/","Backtesting"],["value-history/#track-record","Value track record"],["research/#data-status","Data and limitations"],["about/","About"]]]];
-  const FOLDER = {"":"dash","pre-draft":"lab","post-draft":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"trade","league":"trade","moves":"trade",
-                  "research":"research","team-analytics":"research","guide":"research","track-record":"research","about":"research","compare":"values","value-history":"values","player":""};
+    ["values",   "Values",    "trade-values/",     [["trade-values/?mode=dynasty","Dynasty"],["trade-values/?mode=redraft","Redraft"],["trade-values/?mode=dynasty&pos=PICK","Rookie-pick values"],["value-history/","Value history"],["compare/","Player comparison"],["trade-values/?open=league","League settings"]]],
+    ["usage",    "Usage",     "buy-sell/",         [["buy-sell/","Breakout Watch"],["team-analytics/","Team usage and offense"]]],
+    ["lab",      "Prospects", "pre-draft/",        [["pre-draft/","Pre-draft grades"],["post-draft/","Post-draft grades"],["pre-draft/#class-2027","2027 class"],["post-draft/#mock-2027","2027 mock draft"],["compare/?for=prospects","Prospect comparison"],["pre-draft/#does-it-work","Model validation"]]],
+    ["trade",    "Tools",     "trade-calculator/", [["trade-calculator/","Trade calculator"],["value-research/","Market check"],["moves/","Contending and rebuild moves"],["league/","Sleeper league"],["compare/","Player comparison"]]],
+    ["research", "Research",  "research/",         [["research/","Overview"],["guide/","How the models work"],["track-record/","Track record"],["value-history/#track-record","Value track record"],["research/#data-status","Data and limitations"],["research/#methodology","Methodology"],["about/","About"]]]];
+  const FOLDER = {"":"","pre-draft":"lab","post-draft":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"usage","league":"trade","moves":"trade",
+                  "research":"research","team-analytics":"usage","guide":"research","track-record":"research","about":"research","compare":"values","value-history":"values","player":""};
   const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";
-  const sec = here==="compare" && /[?&]for=prospects/.test(location.search) ? "lab" : FOLDER[here] != null ? FOLDER[here] : (root==="" ? "dash" : "");
+  const sec = here==="compare" && /[?&]for=prospects/.test(location.search) ? "lab" : FOLDER[here] != null ? FOLDER[here] : "";
   const LEAGUE_PAGE = here === "trade-values" || here === "trade-calculator";
   const qs = (() => { try { return new URLSearchParams(location.search); } catch(e){ return new URLSearchParams(); } })();
   // the sub-link for this exact view: same folder, and every ?key=value / #hash it names is what is on screen; most specific wins
@@ -57,14 +59,18 @@
   const searchIco = `<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m11 11 3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
   const S = SECTIONS.find(s=>s[0]===sec);
   const cur = S ? currentSub(S[3]) : null;
-  const badge = LEAGUE_PAGE
+  // A page measured in one fixed league (Market Check) says so in the badge instead of showing the visitor's league.
+  const FIXED = old.dataset.fixedLeague || "";
+  const badge = FIXED
+    ? `<span class="lg lg-wide lg-fixed" id="paLg" title="This page always uses this league, whatever your saved settings are">This page: <b>${FIXED}</b> <span>fixed</span></span>`
+    : LEAGUE_PAGE
     ? `<button type="button" class="lg lg-wide" id="paLg" aria-controls="lgWrap" title="Change league settings">League: <b></b> <span>Change</span></button>`
     : `<button type="button" class="lg lg-wide" id="paLg" aria-expanded="false" aria-controls="paLgPop" title="League used for every value on the site">League: <b></b> <span>Change</span></button>`;
   const top = document.createElement("header");
   top.className = "pa-top"; top.setAttribute("role", "banner");
   top.innerHTML =
     `<nav class="bar" aria-label="Site">` +
-      `<a class="brand" href="${root || "./"}">${logo}<span>Prospect Actuary</span></a>` +
+      `<a class="brand" href="${root || "./"}" aria-label="Prospect Actuary home">${logo}<span>Prospect Actuary</span></a>` +
       `<div class="main">${SECTIONS.map(([id,l,p])=>`<a href="${root}${p}"${id===sec?' aria-current="true"':""}>${l}</a>`).join("")}</div>` +
       `<div class="right">` +
         `<div class="pa-search" id="paSearch"><span class="ico">${searchIco}</span><input type="search" id="paQ" placeholder="Search players, prospects, or rookie picks…" aria-label="Search players, prospects, or rookie picks" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="paRes" aria-autocomplete="list"><div class="pa-results" id="paRes" role="listbox" hidden></div></div>` +
@@ -75,7 +81,7 @@
     `</nav>` +
     (S && S[3].length ? `<div class="pa-sub"><div class="in"><span class="sec">${S[1]}</span>${S[3].map(([p,l])=>`<a href="${root}${p}"${p===cur?' aria-current="page"':""}>${l}</a>`).join("")}</div></div>` : "") +
     `<div class="pa-drawer" id="paDrawer">${SECTIONS.map(([id,l,p,ps])=>`<div class="grp"><a class="gh" href="${root}${p}"${id===sec?' aria-current="true"':""}>${l}</a>${ps.map(([q,t])=>`<a href="${root}${q}"${id===sec&&q===cur?' aria-current="page"':""}>${t}</a>`).join("")}</div>`).join("")}` +
-      `<button type="button" class="lg" id="paLgM">League: <b id="paLg2"></b> <span>Change</span></button></div>` +
+      `<button type="button" class="lg" id="paLgM">${FIXED ? "Your league (other pages)" : "League"}: <b id="paLg2"></b> <span>Change</span></button></div>` +
     `<div class="pa-lgpop" id="paLgPop" role="dialog" aria-label="League settings" hidden></div>`;
   old.remove();
   document.body.insertBefore(top, document.body.firstChild);
@@ -89,7 +95,7 @@
     const [teams, ppr, tep, , sf] = a, fd = a.slice(9).some(x=>x>0);
     return `${teams}-team · ${sf ? "superflex" : "1QB"} · ${ppr===1 ? "PPR" : "0.5 PPR"}${tep ? " · TE+" + tep : ""}${fd ? " · 1D bonus" : ""}`;
   }
-  function update(){ const t = leagueShort(); const b = document.querySelector("#paLg b"); if (b) b.textContent = t; const b2 = document.getElementById("paLg2"); if (b2) b2.textContent = t; }
+  function update(){ const t = leagueShort(); if (FIXED) { const b2 = document.getElementById("paLg2"); if (b2) b2.textContent = t; return; } const b = document.querySelector("#paLg b"); if (b) b.textContent = t; const b2 = document.getElementById("paLg2"); if (b2) b2.textContent = t; }
   function openLeague(scroll){
     const d = document.getElementById("lgWrap"); if (!d) return;
     d.open = true; if (scroll) d.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"});
@@ -103,7 +109,7 @@
   async function openPop(){
     await needLeague(); const L = window.PALeague; let st = L.load(), mode = L.loadMode();
     drawer.classList.remove("open"); menuBtn.setAttribute("aria-expanded", false);
-    pop.innerHTML = `<div class="hd"><b>League settings</b><span class="muted small">Used by every value on the site: Player Values, the Trade Calculator, the Dashboard, the grade boards' Value column and player profiles.</span></div>
+    pop.innerHTML = `<div class="hd"><b>League settings</b><span class="muted small">Used by every value on the site: Actuarial Trade Values, the Trade Calculator, the home page, the prospect boards' Value column and player profiles. Saved in this browser only.</span></div>
       <div class="cur small" id="paLgCur"></div>
       <div class="setting"><span class="lbl">Valuation mode</span><div class="tabs seg" id="paMode"><button type="button" data-m="d">Dynasty</button><button type="button" data-m="r">Redraft</button></div></div>
       <div class="pa-lgset" id="paLgSet"></div>
@@ -119,7 +125,7 @@
     const first = pop.querySelector("button[aria-pressed=true]"); if (first) first.focus();
   }
   const lgClick = () => LEAGUE_PAGE ? (drawer.classList.remove("open"), openLeague(true)) : (pop.hidden ? openPop() : closePop());
-  document.getElementById("paLg").addEventListener("click", lgClick);
+  if (!FIXED) document.getElementById("paLg").addEventListener("click", lgClick);
   document.getElementById("paLgM").addEventListener("click", lgClick);
   document.addEventListener("keydown", e=>{ if (e.key==="Escape" && !pop.hidden) closePop(); });
   document.addEventListener("mousedown", e=>{ if (!pop.hidden && !pop.contains(e.target) && !e.target.closest("#paLg,#paLgM")) closePop(); });

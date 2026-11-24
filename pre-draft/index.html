@@ -1,5 +1,7 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pre-Draft Player Grades | Prospect Actuary</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prospect Grades Before the Draft | Prospect Actuary</title>
+<meta name="description" content="Pre-draft prospect grades for the 2027 class and every drafted QB, RB, WR and TE since 2010, with tier odds, cross-position Value and NFL results beside each grade.">
+<!--share--><link rel="canonical" href="https://kylemschyma.github.io/prospect-actuary/pre-draft/"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Prospect Grades Before the Draft | Prospect Actuary"><meta property="og:description" content="Pre-draft prospect grades for the 2027 class and every drafted QB, RB, WR and TE since 2010, with tier odds, cross-position Value and NFL results beside each grade."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/pre-draft/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Prospect Grades Before the Draft | Prospect Actuary"><meta name="twitter:description" content="Pre-draft prospect grades for the 2027 class and every drafted QB, RB, WR and TE since 2010, with tier odds, cross-position Value and NFL results beside each grade."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -17,8 +19,8 @@ section{display:flex;flex-direction:column;gap:14px}
 .findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
 .finding{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .finding b{font-family:var(--f-display);font-size:1.6rem;font-weight:700;color:var(--accent);line-height:1}
-.chip{display:inline-block;min-width:2.3em;text-align:center;padding:1px 6px;border-radius:4px;font-family:var(--f-mono);font-weight:500;font-size:.82rem;color:var(--chipfg)}
-.gA{background:var(--gA)} .gB{background:var(--gB)} .gC{background:var(--gC)} .gD{background:var(--gD)}
+.chip{display:inline-block;min-width:2.3em;text-align:center;padding:1px 6px;border-radius:5px;font-family:var(--f-mono);font-weight:600;font-size:.82rem}
+.gA{background:var(--gA-bg);color:var(--gA)} .gB{background:var(--gB-bg);color:var(--gB)} .gC{background:var(--gC-bg);color:var(--gC)} .gD{background:var(--gD-bg);color:var(--gD)} .gF{background:var(--gF-bg);color:var(--gF)}
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
 .tabs button,.ctl select,.ctl input,.more{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;padding:5px 12px;cursor:pointer}
 .tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
@@ -69,20 +71,24 @@ details.note p{margin-top:6px}
 
 <div class="wrap">
 <header style="display:flex;flex-direction:column;gap:12px">
-  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
-  <div class="eyebrow">Prospect Lab · pre-draft view · college-only model, no combine, no draft capital</div>
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">Prospects · before the draft · college-only model</div>
   <h1>Pre-Draft Player Grades</h1>
-  <p class="lede">Every drafted QB, RB, WR and TE from the 2010-2026 classes, scored by the college-only pre-draft model, ranked within position and given a letter grade on one fixed scale. The top 2027 prospects (2026 season through about week 10) are slotted into the same rankings and marked as projected. NFL results sit next to every historical player so the grades can be checked. The <a href="../post-draft/">post-draft player grades</a> page grades the same 2010-2026 players with draft slot and landing spot added.</p>
-  <div class="switch" role="group" aria-label="Evaluation stage"><span class="lbl">Stage</span><span class="seg"><a href="../pre-draft/" aria-current="page">Pre-draft (college only)</a><a href="../post-draft/?model=post">Post-draft (adds draft slot and team)</a><a href="../post-draft/?model=mixed">Mixed (post-draft + boost for pre-draft A's who slide)</a></span><span class="small muted">Same 2010-2026 players in every view: switch to see how draft slot, landing spot and the mixed boost changed each grade.</span></div>
+  <p class="lede">How likely a prospect is to become a useful fantasy player, from college production, age, recruiting and competition level. The board opens on the 2027 class; every drafted QB, RB, WR and TE since 2010 is one click away, with NFL results beside each grade.</p>
+  <div class="switch" role="group" aria-label="Evaluation stage"><span class="lbl">Stage</span><span class="seg"><a href="../pre-draft/" aria-current="page">Before Draft</a><a href="../post-draft/?model=post">After Draft</a><a href="../post-draft/?model=mixed">Adjusted</a></span><span class="small muted"><b>Before Draft:</b> college production, age, recruiting, and competition level. <b>After Draft</b> adds NFL draft capital and landing spot. <b>Adjusted</b> preserves extra upside for strong college prospects who fall in the draft.</span></div>
 </header>
 
 <section id="board-sec">
   <h2>Rankings board</h2>
-  <p>The grade is a rank <i>within</i> position: an A QB and an A tight end are both near the top of their own position, not worth the same. To compare across positions, use <b>Value</b>: each player's expected dynasty trade value, on the same 100,000-point scale as the <a href="../trade-values/">trade values</a> page, for your league (default: 12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex).</p>
-  <details class="note"><summary>How Value is calculated</summary><p class="small">Value = the chance of each fantasy tier times what past players in that tier scored over their first four seasons, above replacement, discounted and adjusted for age. The All tab is ordered by Value; each position tab by score. Value uses post-draft probabilities (draft slot and landing spot) for drafted players and 2027 players in the mock draft, and pre-draft probabilities recalibrated to drafted players for everyone else (the raw pre-draft probabilities include the chance of never being drafted). For past classes it's the value at draft time in today's league, not what the player is worth now. It follows the league you set on the Trade Values page (teams, scoring, TE premium, superflex, starters, flex, first-down bonus; saved in this browser); with none saved it uses the default league.</p></details>
-  <p>Rank is within position across every class. Purple rows are projected 2027 prospects, not yet drafted. Their main grade uses stats pro-rated to a 12-game season; switch to as-is to see them on raw stats through about week 10 (Value always uses the pro-rated version).</p>
+  <p>Grade ranks a prospect within his position. Value puts every position on one scale for your league.</p>
+  <details class="note gv" id="gradeValue"><summary>Grade vs Value</summary>
+    <p class="small"><b>Grade:</b> how strong the prospect is relative to players at his position (A+ to F, on one fixed scale since 2010). An A QB and an A TE are both near the top of their own position, not worth the same.</p>
+    <p class="small"><b>Value:</b> how much the prospect is worth across positions in your league: his rookie value from his chances of each fantasy tier, on the same 100,000-point scale as <a href="../trade-values/">Actuarial Trade Values</a>. For past classes it is his value at draft time in today's league; for what an NFL player is worth today, open <a href="../trade-values/">Values</a> or his profile.</p>
+    <p class="small"><b>How Value is calculated:</b> the chance of each fantasy tier times what past players in that tier scored over their first four seasons, above replacement, discounted and adjusted for age. Drafted players and 2027 players in the mock draft use post-draft probabilities (draft slot and landing spot); everyone else uses pre-draft probabilities recalibrated to drafted players. It follows the league saved in this browser; with none saved it uses the default league.</p></details>
   <div class="tabs" id="posTabs" role="group" aria-label="Position"></div>
-  <p class="small"><b>Proj. PPG:</b> projected PPR points per game over a player's first three NFL seasons, in the games he plays, from the same college inputs as the grade. The chance of making the NFL at all is what the grade covers. Past classes show the projection from a model that never saw that class. It is for context only: Value still comes from the tier odds, which tracked real dynasty value better in testing.</p>
+  <details class="note"><summary>About this board</summary>
+    <p class="small">Rank is within position across every class. Purple rows are projected 2027 prospects, not yet drafted. Their main grade uses stats pro-rated to a 12-game season; switch to as-is to see them on raw stats through about week 10 (Value always uses the pro-rated version). <b>Class rank</b> is the player's place in his own draft class across all positions, in the board's current order.</p>
+    <p class="small"><b>Proj. PPG:</b> projected PPR points per game over a player's first three NFL seasons, in the games he plays, from the same college inputs as the grade. The chance of making the NFL at all is what the grade covers. Past classes show the projection from a model that never saw that class. It is for context only: Value still comes from the tier odds, which tracked real dynasty value better in testing.</p></details>
   <div class="ctl">
     <label for="fClass">Class<select id="fClass"></select></label>
     <label for="fStatus">Players<select id="fStatus"><option value="all">Drafted + 2027 projected</option><option value="d">Drafted only</option><option value="p">2027 projected only</option></select></label>
@@ -188,7 +194,7 @@ if (LV) D.players.forEach(p=>{ const x = LV.value(p.pos, p.vq, p.ag); if (x!=nul
 const GR = ["A+","A","A-","B+","B","B-","C+","C","C-","D","F"];
 const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const cls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+const cls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":g[0]==="D"?"gD":"gF";
 const chip = g => g ? `<span class="chip ${cls(g)}">${g}</span>` : "";
 const pct = x => x==null ? "" : Math.round(x*100)+"%";
 const f2 = x => x==null ? "" : Number(x).toFixed(2);
@@ -247,14 +253,15 @@ const DR = {}; POS.forEach(p=>{DR[p]=D.players.filter(x=>x.pos===p&&!x.st).map(x
 function posPct(pos, sc){ const a=DR[pos]; let lo=0,hi=a.length; while(lo<hi){const m=(lo+hi)>>1; if(a[m]<=sc) lo=m+1; else hi=m;} return a.length? lo/a.length : 0; }
 const tierHd = (k, pos) => pos==="All" ? (k===0?"P(top tier)":"P(any tier)") : `P(${pos}${TIER[pos][k===0?0:2]})`;
 const tierTip = (k, pos) => `${pos}${TIER[pos][k===0?0:2]} season in years 1-3`;
-let bPos="All", shown=100;
+let bPos="All", shown=100, CR=new Map();
 const fClass=document.getElementById("fClass"), fStatus=document.getElementById("fStatus"), fGrade=document.getElementById("fGrade"), fName=document.getElementById("fName"), fMode=document.getElementById("fMode"), fSort=document.getElementById("fSort");
 // Value: expected dynasty value (100k trade-value scale, default league) -- comparable across positions
 const fv = x => x==null ? "" : Math.round(x).toLocaleString("en-US");
 const VSRC = {post:"post-draft probabilities (draft slot + landing spot)", mock:"post-draft probabilities from the 2027 mock pick", pre:"pre-draft probabilities, recalibrated to drafted players"};
 const vTip = p => p.v==null ? "" : `Expected dynasty value, default league, 100k scale. From ${VSRC[p.vs]||"the model"}.${p.cls<=2026?" Value at draft time in today's league.":""}`;
-fClass.innerHTML = `<option value="">All classes</option>` + Array.from({length:18},(_,i)=>2027-i).map(y=>`<option value="${y}">${y}${y===2027?" (projected)":""}</option>`).join("");
+fClass.innerHTML = `<option value="">All classes (2010-2027)</option>` + Array.from({length:18},(_,i)=>2027-i).map(y=>`<option value="${y}">${y}${y===2027?" (projected)":""}</option>`).join("");
 fGrade.innerHTML += GR.map(g=>`<option>${g}</option>`).join("");
+{ let c = "2027"; try { const v = new URLSearchParams(location.search).get("class"); if (v!=null) c = v==="all" ? "" : v; } catch(e){} fClass.value = c; if (fClass.value!==c) fClass.value = "2027"; }
 function outCls(p){ if(p.st||p.tier==null) return ""; return p.tier===1?"out1":p.tier<=3?"out2":"out4"; }
 function drawBoard(){
   const asis = fMode.value==="as";
@@ -265,11 +272,15 @@ function drawBoard(){
   if(fSort.value==="v") rows.sort((a,b)=>(b.v==null?-1:b.v)-(a.v==null?-1:a.v)||b.sc-a.sc);
   else if(isAll) rows.sort((a,b)=>b.ap-a.ap||b.sc-a.sc); else rows.sort((a,b)=>b.sc-a.sc);
   rows.forEach((p,i)=>p.rank=i+1);
+  // Class rank: place within his draft class across ALL positions, in the board's order (Value, or percentile within position)
+  { const every = D.players.map(p=>{ const q=Object.assign({},p); if(asis&&p.st){q.sc=p.sca;q.g=p.ga;} q.ap=posPct(q.pos,q.sc); return q; });
+    every.sort(fSort.value==="v" ? (a,b)=>(b.v==null?-1:b.v)-(a.v==null?-1:a.v)||b.sc-a.sc : (a,b)=>b.ap-a.ap||b.sc-a.sc);
+    CR = new Map(); const n = {}; every.forEach(p=>{ n[p.cls]=(n[p.cls]||0)+1; CR.set(p.name+"|"+p.pos+"|"+p.cls, n[p.cls]); }); }
   rows = rows.filter(p=>(!fClass.value||p.cls==fClass.value)&&(fStatus.value==="all"||(fStatus.value==="d"?!p.st:p.st))&&(!fGrade.value||p.g===fGrade.value));
   const q=fName.value.trim().toLowerCase(); if(q) rows=rows.filter(p=>(p.name+" "+p.col).toLowerCase().includes(q));
   document.getElementById("boardCount").textContent = `${rows.length} ${isAll?"players":bPos+"s"} match` + (rows.length>shown?`, showing the first ${shown}`:"");
-  document.getElementById("board").innerHTML = `<thead><tr><th class="r">Rank</th>${isAll?'<th>Pos</th><th class="r">Pos rank</th>':""}<th>Class</th><th>Player</th><th>College</th><th class="r">Pick</th><th class="r" title="Expected dynasty value, 100k trade-value scale, default league; comparable across positions">Value</th><th title="Grade = rank within position">Grade</th><th class="r" title="Projected PPR points per game over his first 3 NFL seasons, in the games he plays">Proj. PPG</th><th class="r">Score</th><th class="r">Pctile</th><th class="r">${tierHd(0,bPos)}</th><th class="r">${tierHd(2,bPos)}</th><th>NFL outcome</th><th class="r">PPR pts</th></tr></thead><tbody>` +
-    rows.slice(0,shown).map(p=>`<tr class="${p.st?"proj":""}"><td class="r num">${p.rank}</td>${isAll?`<td>${p.pos}</td><td class="r num">${p.prk}</td>`:""}<td class="num">${p.cls}</td><td><a class="pl" href="../player/?key=${encodeURIComponent("pre:"+p.name+"|"+p.pos+"|"+p.cls)}">${esc(p.name)}</a>${p.st?'<span class="tag">2027 proj</span>':""}${p.fl?'<span class="flag" title="FCS before 2022: only games vs FBS teams are logged">thin data</span>':""}</td><td>${esc(p.col)}</td><td class="r num">${p.pk==null?(p.st?"":"UDFA"):p.pk}</td><td class="r num" title="${vTip(p)}">${fv(p.v)}</td><td>${chip(p.g)}</td><td class="r num">${p.pp==null?"":p.pp.toFixed(1)}</td><td class="r num">${f2(p.sc)}</td><td class="r num">${p.st&&asis?pct(p.ap):pct(p.pct)}</td><td class="r num" title="${tierTip(0,p.pos)}">${pct(p.pt)}</td><td class="r num" title="${tierTip(2,p.pos)}">${pct(p.pa)}</td><td class="${outCls(p)}">${esc(p.out)}</td><td class="r num">${p.pts==null?"":Math.round(p.pts)}</td></tr>`).join("") + "</tbody>";
+  document.getElementById("board").innerHTML = `<thead><tr><th class="r">Rank</th>${isAll?'<th>Pos</th><th class="r">Pos rank</th>':""}<th>Class</th><th class="r" title="Place in his own draft class, all positions, in the current order">Class rank</th><th>Player</th><th>College</th><th class="r">Pick</th><th class="r" title="Value: worth across positions in your league (rookie value from tier odds, 100k scale). See Grade vs Value above the board.">Value</th><th title="Grade: strength relative to his own position">Grade</th><th class="r" title="Projected PPR points per game over his first 3 NFL seasons, in the games he plays">Proj. PPG</th><th class="r">Score</th><th class="r">Pctile</th><th class="r">${tierHd(0,bPos)}</th><th class="r">${tierHd(2,bPos)}</th><th>NFL outcome</th><th class="r">PPR pts</th></tr></thead><tbody>` +
+    rows.slice(0,shown).map(p=>`<tr class="${p.st?"proj":""}"><td class="r num">${p.rank}</td>${isAll?`<td>${p.pos}</td><td class="r num">${p.prk}</td>`:""}<td class="num">${p.cls}</td><td class="r num">${CR.get(p.name+"|"+p.pos+"|"+p.cls)||""}</td><td><a class="pl" href="../player/?key=${encodeURIComponent("pre:"+p.name+"|"+p.pos+"|"+p.cls)}">${esc(p.name)}</a>${p.st?'<span class="tag">2027 proj</span>':""}${p.fl?'<span class="flag" title="FCS before 2022: only games vs FBS teams are logged">thin data</span>':""}</td><td>${esc(p.col)}</td><td class="r num">${p.pk==null?(p.st?"":"UDFA"):p.pk}</td><td class="r num" title="${vTip(p)}">${fv(p.v)}</td><td>${chip(p.g)}</td><td class="r num">${p.pp==null?"":p.pp.toFixed(1)}</td><td class="r num">${f2(p.sc)}</td><td class="r num">${p.st&&asis?pct(p.ap):pct(p.pct)}</td><td class="r num" title="${tierTip(0,p.pos)}">${pct(p.pt)}</td><td class="r num" title="${tierTip(2,p.pos)}">${pct(p.pa)}</td><td class="${outCls(p)}">${esc(p.out)}</td><td class="r num">${p.pts==null?"":Math.round(p.pts)}</td></tr>`).join("") + "</tbody>";
   document.getElementById("more").hidden = rows.length<=shown;
 }
 tabs(document.getElementById("posTabs"), p=>{bPos=p;shown=100;fSort.value=p==="All"?"v":"g";drawBoard();}, "All", ["All",...POS]);

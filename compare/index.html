@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Compare Players | Prospect Actuary</title>
 <meta name="description" content="Put up to four players or prospects side by side: prospect grades, tier odds, NFL results so far, and dynasty and redraft value in your league.">
+<!--share--><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Compare Players | Prospect Actuary"><meta property="og:description" content="Put up to four players or prospects side by side: prospect grades, tier odds, NFL results so far, and dynasty and redraft value in your league."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/compare/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Compare Players | Prospect Actuary"><meta name="twitter:description" content="Put up to four players or prospects side by side: prospect grades, tier odds, NFL results so far, and dynasty and redraft value in your league."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -25,7 +26,7 @@ table.cmp td.best{color:var(--up);font-weight:600}
 @media (max-width:620px){ table.cmp{min-width:0} table.cmp td.lab{white-space:normal;min-width:96px;max-width:112px} table.cmp th.who{min-width:128px} table.cmp td{font-size:.86rem} }
 </style></head>
 <body><div class="wrap">
-<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
 <main>
 <div class="page-head"><div class="eyebrow">Player profiles · Compare</div><h1>Compare players</h1>
 <p class="lede">Up to four players or prospects side by side. Grades rank a player within his own position, so compare grades only between players at the same position; use Value to compare across positions.</p></div>
@@ -51,7 +52,7 @@ const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&
 const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
 const f1 = x => x==null ? "–" : Number(x).toFixed(1);
 const pct = x => x==null ? "–" : Math.round(100*x)+"%";
-const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":g[0]==="D"?"gD":"gF";
 const chip = g => g ? `<span class="chip ${chipCls(g)}">${esc(g)}</span>` : "–";
 const posb = p => `<span class="posb" style="color:var(--${p})">${p}</span>`;
 const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
