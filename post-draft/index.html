@@ -1,5 +1,7 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Post-Draft Player Grades | Prospect Actuary</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prospect Grades After the Draft | Prospect Actuary</title>
+<meta name="description" content="Post-draft and Adjusted prospect grades with draft capital and landing spot, the 2027 class graded from a mock draft, and NFL results for every class since 2010.">
+<!--share--><link rel="canonical" href="https://kylemschyma.github.io/prospect-actuary/post-draft/"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Prospect Grades After the Draft | Prospect Actuary"><meta property="og:description" content="Post-draft and Adjusted prospect grades with draft capital and landing spot, the 2027 class graded from a mock draft, and NFL results for every class since 2010."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/post-draft/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Prospect Grades After the Draft | Prospect Actuary"><meta name="twitter:description" content="Post-draft and Adjusted prospect grades with draft capital and landing spot, the 2027 class graded from a mock draft, and NFL results for every class since 2010."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -18,8 +20,8 @@ a{color:var(--accent)}
 .findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
 .finding{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .finding b{font-family:var(--f-display);font-size:1.6rem;font-weight:700;color:var(--accent);line-height:1}
-.chip{display:inline-block;min-width:2.3em;text-align:center;padding:1px 6px;border-radius:4px;font-family:var(--f-mono);font-weight:500;font-size:.82rem;color:var(--chipfg)}
-.gA{background:var(--gA)} .gB{background:var(--gB)} .gC{background:var(--gC)} .gD{background:var(--gD)}
+.chip{display:inline-block;min-width:2.3em;text-align:center;padding:1px 6px;border-radius:5px;font-family:var(--f-mono);font-weight:600;font-size:.82rem}
+.gA{background:var(--gA-bg);color:var(--gA)} .gB{background:var(--gB-bg);color:var(--gB)} .gC{background:var(--gC-bg);color:var(--gC)} .gD{background:var(--gD-bg);color:var(--gD)} .gF{background:var(--gF-bg);color:var(--gF)}
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
 tr.proj td{background:var(--proj-soft)}
 .tag{font-size:.72rem;font-family:var(--f-mono);padding:1px 5px;border-radius:3px;border:1px solid var(--proj);color:var(--proj);margin-left:6px}
@@ -69,22 +71,26 @@ details.note p{margin-top:6px}
 
 <div class="wrap">
 <header style="display:flex;flex-direction:column;gap:12px">
-  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
-  <div class="eyebrow" id="modelEyebrow">Prospect Lab · mixed model: post-draft model + boost for pre-draft A prospects who slide</div>
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow" id="modelEyebrow">Prospects · Adjusted: after the draft, with extra upside kept for strong college prospects who fall</div>
   <h1>Post-Draft Player Grades</h1>
-  <p class="lede">Every drafted QB, RB, WR and TE from the 2010-2026 classes, scored by the <span id="modelName">mixed model</span>, ranked within position and given a letter grade on one fixed scale. NFL results sit next to every historical player so the grades can be checked. The 2027 class hasn't been drafted yet, so it gets its own section <a href="#mock-2027">graded from a mock draft</a>. Its college-only grades are on the <a href="../pre-draft/">pre-draft player grades</a> page.</p>
-  <p class="small" id="mixedNote"><b>Mixed model.</b> The grades start from the post-draft model, which leans heavily on draft slot. Players with a pre-draft A-range grade who fell below A- after the draft get a boost, because from 2010-2023 those players reached a fantasy tier 40% of the time while the post-draft model expected about 25%. They carry a <span class="tag" style="margin-left:0">mixed</span> tag. <a href="#mixed">How it works</a></p>
-  <p class="small" id="postNote" hidden><b>Post-draft model only.</b> These are the plain post-draft grades: college profile plus draft slot and landing spot, with no mixed boost. Switch to <a href="?model=mixed">Mixed</a> to see the boost for pre-draft A prospects who slid in the draft. The "Does it work?" tables below are for the mixed grades.</p>
-  <div class="switch" role="group" aria-label="Evaluation stage"><span class="lbl">Stage</span><span class="seg"><a href="../pre-draft/">Pre-draft (college only)</a><a href="../post-draft/?model=post" data-model="post">Post-draft (adds draft slot and team)</a><a href="../post-draft/?model=mixed" data-model="mixed">Mixed (post-draft + boost for pre-draft A's who slide)</a></span><span class="small muted">Same 2010-2026 players in every view: switch to see how draft slot, landing spot and the mixed boost changed each grade.</span></div>
+  <p class="lede">Prospect grades once NFL draft capital and landing spot are known, scored by the <span id="modelName">Adjusted model</span>. The board opens on the 2027 class, graded from <a href="#mock-2027">our mock draft</a>; every drafted QB, RB, WR and TE since 2010 is one click away, with NFL results beside each grade.</p>
+  <p class="small" id="mixedNote"><b>Adjusted (the "mixed model" in the methodology).</b> The grades start from the post-draft model, which leans heavily on draft slot. Players with a pre-draft A-range grade who fell below A- after the draft get a boost, because from 2010-2023 those players reached a fantasy tier 40% of the time while the post-draft model expected about 25%. They carry an <span class="tag" style="margin-left:0">adjusted</span> tag. <a href="#mixed">How it works</a></p>
+  <p class="small" id="postNote" hidden><b>Post-draft model only.</b> These are the plain post-draft grades: college profile plus draft slot and landing spot, with no mixed boost. Switch to <a href="?model=mixed">Adjusted</a> to see the boost for pre-draft A prospects who slid in the draft. The "Does it work?" tables below are for the Adjusted grades.</p>
+  <div class="switch" role="group" aria-label="Evaluation stage"><span class="lbl">Stage</span><span class="seg"><a href="../pre-draft/">Before Draft</a><a href="../post-draft/?model=post" data-model="post">After Draft</a><a href="../post-draft/?model=mixed" data-model="mixed">Adjusted</a></span><span class="small muted"><b>Before Draft:</b> college production, age, recruiting, and competition level. <b>After Draft</b> adds NFL draft capital and landing spot. <b>Adjusted</b> preserves extra upside for strong college prospects who fall in the draft.</span></div>
 </header>
 
 <section id="board-sec">
   <h2>Rankings board</h2>
-  <p>Rank is within position across every class from 2010 to 2026, plus the 2027 class graded from the mock draft above (purple rows; the pick shown is the mock pick).</p>
-  <p>The grade is a rank <i>within</i> position: an A QB and an A tight end are both near the top of their own position, not worth the same. To compare across positions, use <b>Value</b>: each player's expected dynasty trade value, on the same 100,000-point scale as the <a href="../trade-values/">trade values</a> page, for your league (default: 12 teams, superflex, PPR, 2 RB / 3 WR / 1 TE, no flex).</p>
-  <details class="note"><summary>How Value is calculated</summary><p class="small">Value = the chance of each fantasy tier from this post-draft model times what past players in that tier scored over their first four seasons, above replacement, discounted and adjusted for age. The All tab is ordered by Value; each position tab by score. For past classes it's the value at draft time in today's league, not what the player is worth now. It follows the league you set on the Trade Values page (teams, scoring, TE premium, superflex, starters, flex, first-down bonus; saved in this browser); with none saved it uses the default league.</p></details>
+  <p>Grade ranks a prospect within his position. Value puts every position on one scale for your league.</p>
+  <details class="note gv" id="gradeValue"><summary>Grade vs Value</summary>
+    <p class="small"><b>Grade:</b> how strong the prospect is relative to players at his position (A+ to F, on one fixed scale since 2010). An A QB and an A TE are both near the top of their own position, not worth the same.</p>
+    <p class="small"><b>Value:</b> how much the prospect is worth across positions in your league: his rookie value from his chances of each fantasy tier, on the same 100,000-point scale as <a href="../trade-values/">Actuarial Trade Values</a>. For past classes it is his value at draft time in today's league; for what an NFL player is worth today, open <a href="../trade-values/">Values</a> or his profile.</p>
+    <p class="small"><b>How Value is calculated:</b> the chance of each fantasy tier from this model times what past players in that tier scored over their first four seasons, above replacement, discounted and adjusted for age. It follows the league saved in this browser; with none saved it uses the default league.</p></details>
   <div class="tabs" id="posTabs" role="group" aria-label="Position"></div>
-  <p class="small"><b>Proj. PPG:</b> projected PPR points per game over a player's first three NFL seasons, in the games he plays, from the same inputs as the post-draft grade (draft slot, landing spot, college profile). The mixed view adds the boost for pre-draft A-range players who slid. Past classes show the projection from a model that never saw that class. It is for context only: Value still comes from the tier odds.</p>
+  <details class="note"><summary>About this board</summary>
+    <p class="small">Rank is within position across every class from 2010 to 2026, plus the 2027 class graded from the mock draft (purple rows; the pick shown is the mock pick). <b>Class rank</b> is the player's place in his own draft class across all positions, in the board's current order.</p>
+    <p class="small"><b>Proj. PPG:</b> projected PPR points per game over a player's first three NFL seasons, in the games he plays, from the same inputs as the post-draft grade (draft slot, landing spot, college profile). The Adjusted view adds the boost for pre-draft A-range players who slid. Past classes show the projection from a model that never saw that class. It is for context only: Value still comes from the tier odds.</p></details>
   <div class="ctl">
     <label for="fClass">Class<select id="fClass"></select></label>
     <label for="fGrade">Grade<select id="fGrade"><option value="">Any</option></select></label>
@@ -190,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function(){
   const post = window.PAModel === "post";
   document.querySelectorAll(".switch a[data-model]").forEach(a => { if (a.dataset.model === window.PAModel) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
-  if (post) { set("modelEyebrow", "Prospect Lab · post-draft model: college profile + draft slot + landing spot"); set("modelName", "post-draft model");
+  if (post) { set("modelEyebrow", "Prospects · After Draft: college profile + draft slot + landing spot"); set("modelName", "After Draft model");
     const a = document.getElementById("mixedNote"), b = document.getElementById("postNote"); if (a) a.hidden = true; if (b) b.hidden = false; }
 });
 </script>
@@ -212,7 +218,7 @@ if (LV) D.players.forEach(p=>{ const x = LV.value(p.pos, p.vq, p.ag); if (x!=nul
 const GR = ["A+","A","A-","B+","B","B-","C+","C","C-","D","F"];
 const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const cls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+const cls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":g[0]==="D"?"gD":"gF";
 const chip = g => g ? `<span class="chip ${cls(g)}">${g}</span>` : "";
 const pct = x => x==null ? "" : Math.round(x*100)+"%";
 const f2 = x => x==null ? "" : Number(x).toFixed(2);
@@ -265,15 +271,16 @@ const DR = {}; POS.forEach(p=>{DR[p]=D.players.filter(x=>x.pos===p&&!x.st).map(x
 function posPct(pos, sc){ const a=DR[pos]; let lo=0,hi=a.length; while(lo<hi){const m=(lo+hi)>>1; if(a[m]<=sc) lo=m+1; else hi=m;} return a.length? lo/a.length : 0; }
 const tierHd = (k, pos) => pos==="All" ? (k===0?"P(top tier)":"P(any tier)") : `P(${pos}${TIER[pos][k===0?0:2]})`;
 const tierTip = (k, pos) => `${pos}${TIER[pos][k===0?0:2]} season in years 1-3`;
-let bPos="All", shown=100;
+let bPos="All", shown=100, CR=new Map();
 // 2027 class: no real draft yet, so its rows come from the mock-draft section (window.MOCK27, defined further down)
 function mockRows(){ window.PAModelSwap(window.MOCK27, "mock"); return (window.MOCK27||[]).map(d=>({pos:d.pos,cls:2027,st:1,name:d.name,col:d.school,pk:d.pick,g:d.post,sc:d.sc,pct:d.pct,pt:d.ptop,p2:d.p2,pa:d.pany,v:(LV && LV.value(d.pos,d.vq,d.ag)!=null ? LV.value(d.pos,d.vq,d.ag) : d.v),team:d.team,mx:d.mx,gd:d.gd,pp:d.pp,out:"not yet drafted (mock pick)"})); }
 const fClass=document.getElementById("fClass"), fGrade=document.getElementById("fGrade"), fName=document.getElementById("fName"), fSort=document.getElementById("fSort");
 // Value: expected dynasty value (100k trade-value scale, default league) -- comparable across positions
 const fv = x => x==null ? "" : Math.round(x).toLocaleString("en-US");
 const vTip = p => p.v==null ? "" : `Expected dynasty value, default league, 100k scale, from post-draft probabilities${p.st?" (2027 mock pick)":". Value at draft time in today's league."}`;
-fClass.innerHTML = `<option value="">All classes</option>` + Array.from({length:18},(_,i)=>2027-i).map(y=>`<option value="${y}">${y}${y===2027?" (mock draft)":""}</option>`).join("");
+fClass.innerHTML = `<option value="">All classes (2010-2027)</option>` + Array.from({length:18},(_,i)=>2027-i).map(y=>`<option value="${y}">${y}${y===2027?" (mock draft)":""}</option>`).join("");
 fGrade.innerHTML += GR.map(g=>`<option>${g}</option>`).join("");
+{ let c = "2027"; try { const v = new URLSearchParams(location.search).get("class"); if (v!=null) c = v==="all" ? "" : v; } catch(e){} fClass.value = c; if (fClass.value!==c) fClass.value = "2027"; }
 function outCls(p){ if(p.st||p.tier==null) return ""; return p.tier===1?"out1":p.tier<=3?"out2":"out4"; }
 function drawBoard(){
   const isAll = bPos==="All";
@@ -283,11 +290,15 @@ function drawBoard(){
   if(fSort.value==="v") rows.sort((a,b)=>(b.v==null?-1:b.v)-(a.v==null?-1:a.v)||b.sc-a.sc);
   else if(isAll) rows.sort((a,b)=>b.ap-a.ap||b.sc-a.sc); else rows.sort((a,b)=>b.sc-a.sc);
   rows.forEach((p,i)=>p.rank=i+1);
+  // Class rank: place within his draft class across ALL positions, in the board's order (Value, or percentile within position)
+  { const every = D.players.concat(mockRows()).map(p=>Object.assign({},p)); every.forEach(p=>p.ap=posPct(p.pos,p.sc));
+    every.sort(fSort.value==="v" ? (a,b)=>(b.v==null?-1:b.v)-(a.v==null?-1:a.v)||b.sc-a.sc : (a,b)=>b.ap-a.ap||b.sc-a.sc);
+    CR = new Map(); const n = {}; every.forEach(p=>{ n[p.cls]=(n[p.cls]||0)+1; CR.set(p.name+"|"+p.pos+"|"+p.cls, n[p.cls]); }); }
   rows = rows.filter(p=>(!fClass.value||p.cls==fClass.value)&&(!fGrade.value||p.g===fGrade.value));
   const q=fName.value.trim().toLowerCase(); if(q) rows=rows.filter(p=>(p.name+" "+(p.col||"")).toLowerCase().includes(q));
   document.getElementById("boardCount").textContent = `${rows.length} ${isAll?"players":bPos+"s"} match` + (rows.length>shown?`, showing the first ${shown}`:"");
-  document.getElementById("board").innerHTML = `<thead><tr><th class="r">Rank</th>${isAll?'<th>Pos</th><th class="r">Pos rank</th>':""}<th>Class</th><th>Player</th><th>College</th><th class="r">Pick</th><th class="r" title="Expected dynasty value, 100k trade-value scale, default league; comparable across positions">Value</th><th title="Grade = rank within position">Grade</th><th class="r" title="Projected PPR points per game over his first 3 NFL seasons, in the games he plays">Proj. PPG</th><th class="r">Score</th><th class="r">Pctile</th><th class="r">${tierHd(0,bPos)}</th><th class="r">${tierHd(2,bPos)}</th><th>NFL outcome</th><th class="r">PPR pts</th></tr></thead><tbody>` +
-    rows.slice(0,shown).map(p=>`<tr class="${p.st?"proj":""}"><td class="r num">${p.rank}</td>${isAll?`<td>${p.pos}</td><td class="r num">${p.prk}</td>`:""}<td class="num">${p.cls}</td><td><a class="pl" href="../player/?key=${encodeURIComponent((p.st?"mock:"+p.name+"|"+p.pos:"post:"+p.name+"|"+p.pos+"|"+p.cls))}">${esc(p.name)}</a>${p.st?`<span class="tag" title="Mock pick ${p.pk}, ${esc(p.team)}">2027 mock</span>`:""}${p.mx?`<span class="tag" title="Pre-draft A-range grade that fell after the draft. Mixed draft model boost; draft-only grade ${esc(p.gd||"")}">mixed</span>`:""}${p.fl?'<span class="flag" title="FCS before 2022: only games vs FBS teams are logged">thin data</span>':""}</td><td>${esc(p.col||"")}</td><td class="r num">${p.pk}</td><td class="r num" title="${vTip(p)}">${fv(p.v)}</td><td>${chip(p.g)}</td><td class="r num">${p.pp==null?"":p.pp.toFixed(1)}</td><td class="r num">${f2(p.sc)}</td><td class="r num">${pct(p.pct)}</td><td class="r num" title="${tierTip(0,p.pos)}">${pct(p.pt)}</td><td class="r num" title="${tierTip(2,p.pos)}">${pct(p.pa)}</td><td class="${outCls(p)}">${esc(p.out||"")}</td><td class="r num">${p.pts==null?"":Math.round(p.pts)}</td></tr>`).join("") + "</tbody>";
+  document.getElementById("board").innerHTML = `<thead><tr><th class="r">Rank</th>${isAll?'<th>Pos</th><th class="r">Pos rank</th>':""}<th>Class</th><th class="r" title="Place in his own draft class, all positions, in the current order">Class rank</th><th>Player</th><th>College</th><th class="r">Pick</th><th class="r" title="Value: worth across positions in your league (rookie value from tier odds, 100k scale). See Grade vs Value above the board.">Value</th><th title="Grade: strength relative to his own position">Grade</th><th class="r" title="Projected PPR points per game over his first 3 NFL seasons, in the games he plays">Proj. PPG</th><th class="r">Score</th><th class="r">Pctile</th><th class="r">${tierHd(0,bPos)}</th><th class="r">${tierHd(2,bPos)}</th><th>NFL outcome</th><th class="r">PPR pts</th></tr></thead><tbody>` +
+    rows.slice(0,shown).map(p=>`<tr class="${p.st?"proj":""}"><td class="r num">${p.rank}</td>${isAll?`<td>${p.pos}</td><td class="r num">${p.prk}</td>`:""}<td class="num">${p.cls}</td><td class="r num">${CR.get(p.name+"|"+p.pos+"|"+p.cls)||""}</td><td><a class="pl" href="../player/?key=${encodeURIComponent((p.st?"mock:"+p.name+"|"+p.pos:"post:"+p.name+"|"+p.pos+"|"+p.cls))}">${esc(p.name)}</a>${p.st?`<span class="tag" title="Mock pick ${p.pk}, ${esc(p.team)}">2027 mock</span>`:""}${p.mx?`<span class="tag" title="Pre-draft A-range grade that fell after the draft. Adjusted (mixed draft model) boost; After Draft grade ${esc(p.gd||"")}">adjusted</span>`:""}${p.fl?'<span class="flag" title="FCS before 2022: only games vs FBS teams are logged">thin data</span>':""}</td><td>${esc(p.col||"")}</td><td class="r num">${p.pk}</td><td class="r num" title="${vTip(p)}">${fv(p.v)}</td><td>${chip(p.g)}</td><td class="r num">${p.pp==null?"":p.pp.toFixed(1)}</td><td class="r num">${f2(p.sc)}</td><td class="r num">${pct(p.pct)}</td><td class="r num" title="${tierTip(0,p.pos)}">${pct(p.pt)}</td><td class="r num" title="${tierTip(2,p.pos)}">${pct(p.pa)}</td><td class="${outCls(p)}">${esc(p.out||"")}</td><td class="r num">${p.pts==null?"":Math.round(p.pts)}</td></tr>`).join("") + "</tbody>";
   document.getElementById("more").hidden = rows.length<=shown;
 }
 tabs(document.getElementById("posTabs"), p=>{bPos=p;shown=100;fSort.value=p==="All"?"v":"g";drawBoard();}, "All", ["All",...POS]);
@@ -321,7 +332,7 @@ window.MOCK27=[{"pick":2,"rd":1,"team":"Los Angeles Chargers","name":"Jeremiah S
   window.PAModelSwap(M, "mock");
   const LVm = (window.PAValue && window.PAValue.ok) ? window.PAValue : null;
   if (LVm) M.forEach(d=>{ const x = LVm.value(d.pos, d.vq, d.ag); if (x!=null) d.v = x; });
-  const cl = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+  const cl = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":g[0]==="D"?"gD":"gF";
   const ch = g => g ? `<span class="chip ${cl(g)}">${g}</span>` : "";
   const pc = x => Math.round(x*100)+"%";
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -337,7 +348,7 @@ window.MOCK27=[{"pick":2,"rd":1,"team":"Los Angeles Chargers","name":"Jeremiah S
     document.getElementById("mockTabs").innerHTML = tabs.map(t=>`<button type="button" aria-pressed="${t===cur}" data-t="${t}">${t}</button>`).join("");
     const r = M.filter(d => cur==="All" || d.pos===cur).sort((a,b)=>a.pick-b.pick);
     document.getElementById("mockTable").innerHTML = `<thead><tr><th class="r" title="Median pick across our mocks (best–worst)">Pick</th><th class="r">Rd</th><th>Player</th><th>Pos</th><th>Team</th><th>Post grade</th><th>Pre grade</th><th class="r">Move</th><th class="r">Top-tier chance</th><th class="r">Any-tier chance</th><th class="r" title="Expected dynasty value, 100k trade-value scale, default league; comparable across positions">Value</th><th>College</th></tr></thead><tbody>` +
-      r.map(d=>`<tr><td class="r num" style="white-space:nowrap">${pickCell(d)}</td><td class="r num">${d.rd}</td><td><a class="pl" href="../player/?key=${encodeURIComponent("mock:"+d.name+"|"+d.pos)}">${esc(d.name)}</a></td><td>${d.pos}</td><td>${esc(d.team)}</td><td>${ch(d.post)}${d.mx?`<span class="tag" title="Pre-draft A-range grade that fell in this mock. Mixed draft model boost; draft-only grade ${esc(d.gd||"")}">mixed</span>`:""}</td><td>${ch(d.pre)}</td><td class="r num">${d.move==null?"":(d.move>0?"+":"")+d.move}</td><td class="r num" title="${d.pos}${T[d.pos][0]} season in years 1-3">${pc(d.ptop)}</td><td class="r num" title="${d.pos}${T[d.pos][1]} season in years 1-3">${pc(d.pany)}</td><td class="r num" style="white-space:nowrap">${valCell(d)}</td><td class="muted">${esc(d.school)}</td></tr>`).join("") + "</tbody>";
+      r.map(d=>`<tr><td class="r num" style="white-space:nowrap">${pickCell(d)}</td><td class="r num">${d.rd}</td><td><a class="pl" href="../player/?key=${encodeURIComponent("mock:"+d.name+"|"+d.pos)}">${esc(d.name)}</a></td><td>${d.pos}</td><td>${esc(d.team)}</td><td>${ch(d.post)}${d.mx?`<span class="tag" title="Pre-draft A-range grade that fell in this mock. Adjusted (mixed draft model) boost; After Draft grade ${esc(d.gd||"")}">adjusted</span>`:""}</td><td>${ch(d.pre)}</td><td class="r num">${d.move==null?"":(d.move>0?"+":"")+d.move}</td><td class="r num" title="${d.pos}${T[d.pos][0]} season in years 1-3">${pc(d.ptop)}</td><td class="r num" title="${d.pos}${T[d.pos][1]} season in years 1-3">${pc(d.pany)}</td><td class="r num" style="white-space:nowrap">${valCell(d)}</td><td class="muted">${esc(d.school)}</td></tr>`).join("") + "</tbody>";
   }
   document.getElementById("mockTabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { cur = b.dataset.t; draw(); } });
   draw();

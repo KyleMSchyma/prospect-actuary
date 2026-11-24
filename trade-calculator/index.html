@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Trade Calculator | Prospect Actuary</title>
 <meta name="description" content="Fantasy football trade calculator: add players and 2027 rookie picks to each side and compare redraft or dynasty trade values set to your league's scoring and lineup. In development.">
+<!--share--><link rel="canonical" href="https://kylemschyma.github.io/prospect-actuary/trade-calculator/"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Trade Calculator | Prospect Actuary"><meta property="og:description" content="Fantasy football trade calculator: add players and 2027 rookie picks to each side and compare redraft or dynasty trade values set to your league's scoring and lineup. In development."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/trade-calculator/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Trade Calculator | Prospect Actuary"><meta name="twitter:description" content="Fantasy football trade calculator: add players and 2027 rookie picks to each side and compare redraft or dynasty trade values set to your league's scoring and lineup. In development."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -63,6 +64,7 @@ details.lgwrap summary .lbl{font-family:var(--f-mono);font-size:.72rem;text-tran
 .verdict{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .verdict .big{font-family:var(--f-display);font-size:1.9rem;font-weight:700;line-height:1.1}
 .cmp{display:flex;flex-direction:column;gap:6px}
+.adjline{border-left:3px solid var(--info);background:var(--panel-2);border-radius:0 6px 6px 0;padding:6px 10px;color:var(--ink-2)}
 .cmprow{display:grid;grid-template-columns:90px 1fr 90px;gap:10px;align-items:center;font-size:.85rem}
 .track{height:14px;background:var(--bg);border:1px solid var(--line);border-radius:3px;overflow:hidden}
 .fill{height:100%}
@@ -89,9 +91,9 @@ details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style></head>
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:14px">
-  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
 
-  <div class="eyebrow">Trade Center · trade calculator · your league's scoring and lineup · players and 2027 rookie picks</div>
+  <div class="eyebrow">Tools · trade calculator · your league's scoring and lineup · players and 2027 rookie picks</div>
   <h1>Trade Calculator</h1>
   <p class="small muted st-legend">Status tags: <span class="st">IR</span> reserve list (injured reserve, PUP, suspended) · <span class="st">Out</span> / <span class="st">Doubtful</span> / <span class="st">Q</span> last game's injury report · <span class="st">Backup</span> not first on the team's depth chart. Values already account for the status.</p>
   <p>Add the players (and, in dynasty, 2027 rookie picks) each side would give up. The calculator adds up each side's <a href="../trade-values/">trade values</a> for your league and shows who comes out ahead.</p>
@@ -143,6 +145,7 @@ details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   <div class="verdict" aria-live="polite">
     <div class="big" id="vBig">Add players to both sides</div>
     <p class="small muted" id="vSub">Type a name in either box. Values update the moment you change the league or switch between redraft and dynasty.</p>
+    <p class="small adjline" id="adj" hidden></p>
     <div class="cmp" id="cmp"></div>
     <div class="sugg2" id="fill" hidden></div>
     <div class="actions">
@@ -159,7 +162,8 @@ details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   <ul class="notes">
     <li><b>Values add.</b> Every player is on one 100,000-point scale built from fantasy points per game over replacement, so two players together are worth the sum of their values. A trade is fair when the totals are close.</li>
     <li><b>Too close to call.</b> The values are estimates, not exact prices. When the two totals are within 10% of each other, the calculator does not name a winner. The 10% band is a rule of thumb taken from how far the values have missed in backtests.</li>
-    <li>There is no "consolidation" bonus for the side getting the single best player. Roster spots matter in deep leagues, so if you are giving up depth you can't replace, lean a little toward the side with the best player.</li>
+    <li id="adjHow"><b>Adjusted for trade type.</b> For trades with three or more players (dynasty), a second line shows how real trades of that shape usually settle: one of 1-for-2, 2-for-1, 2-for-2, 1-for-3, 2-for-3, 3-for-1, 3-for-2 or 3-for-3, plus the gap between each side's best player. It is fitted on 68,903 Dynasty Daddy trades (Sep-Nov 2026, superflex, players only) and leaves 1-for-1 trades alone. It mostly reflects where the market's prices differ from ours, so it is a market view, not a correction to our values: the totals and the verdict above stay on our additive values. Small throw-ins (under a quarter of the best player's value) count as a fraction of a piece, so a bench add can't flip it.</li>
+    <li>Our values have no "consolidation" bonus for the side getting the single best player. Roster spots matter in deep leagues, so if you are giving up depth you can't replace, lean a little toward the side with the best player.</li>
     <li><b>Redraft</b> counts the rest of the 2026 season only. <b>Dynasty</b> adds 2027-2031 with draft-slot potential, aging and the chance of staying in the league. Rookie picks only count in dynasty.</li>
     <li>A value of 0 means the player is not expected to beat a replacement-level starter in your league over that window.</li>
     <li>2027 rookie picks: players in our 2027 mock draft use the <a href="../post-draft/">post-draft model</a> with the mock pick as draft capital, everyone else the <a href="../pre-draft/">pre-draft model</a>. Pick 1.01 is worth the best 2027 prospect for your league, 1.02 the second best, and so on. How every value is built is in <a href="../guide/#redraft">the guide</a>.</li>
@@ -172,6 +176,7 @@ details.rost .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 <script src="../trade-values/data/tv.js"></script>
 <script src="../shared/league.js"></script>
 <script src="../shared/engine.js"></script>
+<script src="../shared/trade-adjust.js"></script>
 <script src="../shared/sleeper.js"></script>
 <script>
 (function(){
@@ -284,14 +289,30 @@ function render(){
     if (mx===0) { big.textContent = "Both sides are worth 0"; sub.textContent = `Nobody here is expected to beat replacement in your league (${w}).`; }
     else if (pct < 0.10) { big.textContent = "Too close to call"; sub.textContent = `The totals are within 10% of each other (about ${fmt(Math.abs(d))} apart on the ${w} scale, leaning ${d>0?"your way":"the other way"}). The values are estimates, and a gap this small is inside their normal error. Let team needs decide.`; }
     else { big.innerHTML = d>0 ? `You win by <span class="num">${fmt(d)}</span>` : `You lose by <span class="num">${fmt(-d)}</span>`;
-      sub.textContent = `${d>0?"You get":"You give"} ${Math.round(100*pct)}% more ${w} value. To even it up, the ${d>0?"other side would need to add":"you would need to get back"} about ${fmt(Math.abs(d))} in value.`; }
+      // percent more = bigger side over smaller side (100k vs 71k is 41% more); pct (gap / bigger side) stays the 10% rule
+      const more = Math.min(ta, tb) > 0 ? Math.round(100*(Math.max(ta, tb)/Math.min(ta, tb) - 1)) : null;
+      sub.textContent = `${d>0?"You get":"You give"} ${more==null ? "all of the" : more+"% more"} ${w} value${more==null ? "" : d>0 ? " than you give" : " than you get"}. To even it up, ${d>0 ? "you could add" : "you would need to get back"} about ${fmt(Math.abs(d))} in value${d>0 ? " to what you give" : ""}.`; }
   }
+  drawAdj(ta, tb);
   $("mSum").hidden = !A.length && !B.length;
   $("mSum").innerHTML = `<span class="t"><span>You give</span><b style="color:var(--sideA)">${fmt(ta)}</b></span><span class="t"><span>You get</span><b style="color:var(--sideB)">${fmt(tb)}</b></span><span class="v">${big.innerHTML}</span>`;
   const scale = Math.max(ta, tb, 1);
   cmp.innerHTML = [["You give", ta, "--sideA"], ["You get", tb, "--sideB"]].map(([l,v,c])=>`<div class="cmprow"><span class="small">${l}</span><div class="track"><div class="fill" style="width:${(100*v/scale).toFixed(1)}%;background:var(${c})"></div></div><span class="num small" style="text-align:right">${fmt(v)}</span></div>`).join("");
   drawFill(ta, tb); drawRosters();
   saveState(); boxes.forEach(b=>b.refresh());
+}
+// ---------- trade-type adjustment (shared/trade-adjust.js): a second, market-style read; our values and the verdict above are unchanged ----------
+function drawAdj(ta, tb){
+  const el = $("adj"), X = window.PATradeAdjust; if (!el) return;
+  if (!X || !A.length || !B.length || A.length + B.length < 3 || MODE!=="d") { el.hidden = true; return; }
+  const va = A.map(id=>asset(id)), vb = B.map(id=>asset(id));
+  if (va.concat(vb).some(a=>a.p==="PICK")) { el.hidden = false; el.innerHTML = `<b>Trade-type adjustment:</b> not shown for trades with picks (the real trades it was fitted on were players only).`; return; }
+  const R = X.read(va.map(a=>a.v), vb.map(a=>a.v));
+  if (!R || R.skip) { el.hidden = !R; if (R) el.innerHTML = `<b>Trade-type adjustment:</b> not shown (${esc(R.skip)}).`; return; }
+  if (R.type==="1v1") { el.hidden = true; return; }
+  const youGet = !R.aAhead, p = Math.round(100*R.pct);
+  el.hidden = false;
+  el.innerHTML = `<b>Adjusted for trade type (${R.type.replace("v"," for ")}):</b> ${R.even ? "about even" : `${youGet ? "you get" : "you give"} about ${p}% more`} the way real dynasty trades of this shape settle. <a href="#adjHow">How this works</a>`;
 }
 // ---------- uneven trade: suggest assets close to the gap ----------
 // The side getting less needs more. If you get more, the suggestions come from your roster (add to "You give");
@@ -364,7 +385,7 @@ $("mSum").addEventListener("click", ()=>document.querySelector(".verdict").scrol
 // ---------- state: league shared with /trade-values/; trade kept in the address so it can be shared ----------
 const playerIdx = {}; D.players.forEach((pl,i)=>playerIdx[norm(pl.n)+"|"+pl.p]=i);
 const enc = id => id.startsWith("s:") ? "spick-"+id.slice(2) : isPick(id) ? "pick-"+id.slice(2) : (()=>{ const pl = D.players[+id.slice(2)]; return pl.n+"|"+pl.p; })();
-function dec(s){ const m = /^pick-([123])\.(\d\d)$/.exec(s); if (m) return `k:${m[1]}.${m[2]}`;
+function dec(s){ const m = /^pick-([1-4])\.(\d\d)$/.exec(s); if (m) return `k:${m[1]}.${m[2]}`;
   const sp = /^spick-(\d{4}\.\d{1,2}\.\d{1,3})$/.exec(s); if (sp) return "s:"+sp[1];
   const [n,p] = s.split("|"), i = playerIdx[norm(n||"")+"|"+(p||"")]; return i==null ? null : "p:"+i; }
 function saveState(){

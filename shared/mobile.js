@@ -2,7 +2,7 @@
  *
  * Only presentation changes here. Every number on a phone comes from the same page code, data files and shared engine
  * as on desktop: this file re-arranges what the page already drew. At 760px wide or less it:
- *   - adds the bottom bar (Dashboard, Prospect Lab, Player Values, Trade Center, Research) with the current section in orange
+ *   - adds the bottom bar (Values, Usage, Prospects, Tools, Research; the logo is home) with the current section in teal
  *   - folds each page's long introduction into one "About this page" line, so the tool comes first
  *   - shows wide tables as cards: the main columns on the card, every other column one tap away under "More"
  *     (a tap on the card opens the player's profile, as the name link does)
@@ -31,7 +31,8 @@
     values:   '<path d="M3 17.5 8.5 11l4 3.5L19 6.5M14.5 6.5H19V11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
     trade:    '<path d="M4 8h13l-3.5-3.5M18 14H5l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
     research: '<path d="M5 3.5h9.5L18 7v11.5H5zM14 3.5V7.5h4M8 11h7M8 14.5h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>'};
-  const BAR = [["dash","Dashboard",""],["lab","Prospect Lab","pre-draft/"],["values","Player Values","trade-values/"],["trade","Trade Center","trade-calculator/"],["research","Research","research/"]];
+  ICO.usage = '<path d="M3 18.5h16M5.5 15V11M10 15V7M14.5 15v-5.5M19 4l-4 3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>';
+  const BAR = [["values","Values","trade-values/"],["usage","Usage","buy-sell/"],["lab","Prospects","pre-draft/"],["trade","Tools","trade-calculator/"],["research","Research","research/"]];
   const bnav = document.createElement("nav");
   bnav.className = "pa-bnav"; bnav.setAttribute("aria-label", "Sections");
   bnav.innerHTML = BAR.map(([id,l,p])=>`<a href="${root}${p}"${id===sec?' aria-current="page"':""}><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">${ICO[id]}</svg><span>${l}</span></a>`).join("");
@@ -39,7 +40,7 @@
 
   // a league button in the top bar on phones (the wide league badge does not fit); it does exactly what the badge does
   const right = document.querySelector(".pa-top .right"), badge = document.getElementById("paLg");
-  if (right && badge) {
+  if (right && badge && badge.tagName === "BUTTON") {
     const b = document.createElement("button");
     b.type = "button"; b.className = "m-lg m-only"; b.setAttribute("aria-label", "League settings"); b.title = "League settings";
     b.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 5h7M14 5h1M3 13h1M8 13h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="6" cy="13" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';

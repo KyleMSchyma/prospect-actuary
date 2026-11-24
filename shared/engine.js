@@ -5,7 +5,7 @@
  *   replacement lines  fill every team's lineup (position slots, then FLEX, then SUPERFLEX) by expected PPG   (dv_10 rep_lines)
  *   redraft value      (credible PPG - replacement) x expected games left                                      (dv_10)
  *   dynasty value      rest of 2026 + sum_t v^t x games_t x E[(PPG_t - replacement)+]  (stop-loss, normal)     (dv_11 / dv_13)
- *   2027 picks         sum over tiers P(tier) x sum_k v^k x games x E[(tier PPG + age adj - replacement)+]       (dv_13)
+ *   2027 picks (1.01-4.NN) sum over tiers P(tier) x sum_k v^k x games x E[(tier PPG + age adj - replacement)+]       (dv_13)
  *   100,000 scale      the top player on each sheet = 100,000; values add.
  * It replaces the four copies that lived in Trade Values, the Trade Calculator, Market Check and league-value.js.
  * The weekly gate 6b (rf_03_gates.R) checks the Trade Values page, which calls this file, against R in 5 leagues.
@@ -66,7 +66,9 @@
       // 2027 rookie picks: each prospect's value for this league, sorted; pick 1.01 = best value, 1.02 = second ...
       const pvx = D.picks ? D.picks.pros.map((pr,j)=>({j, v:tierValue(S, RD, pr.p, pr.P, pr.d[kp(pr.p)]) || 0})).sort((a,b)=>b.v-a.v) : [], pv = pvx.map(x=>x.v);
       const pickRows = [];
-      for (let s=0; s<3*S.teams && s<pv.length; s++){ const rd = Math.floor(s/S.teams)+1, pk = s%S.teams+1, lab = `${rd}.${String(pk).padStart(2,"0")}`;
+      // 2027 picks 1.01 through round 4 (4.12 in a 12-team league; Kyle 2026-11-24, was 3 rounds)
+      for (let s=0; s<4*S.teams && s<pv.length; s++){
+        const rd = Math.floor(s/S.teams)+1, pk = s%S.teams+1, lab = `${rd}.${String(pk).padStart(2,"0")}`;
         pickRows.push({id:"k:"+lab, slot:lab, n:`2027 Pick ${lab}`, p:"PICK", pick:true, raw:pv[s], src:pvx[s].j}); }   // src: index in D.picks.pros of the prospect this slot is priced as
       const topR = Math.max(...red.map(r=>r.raw)), topD = Math.max(...dyn.map(r=>r.raw));
       red.forEach(r=>r.v = 1e5*r.raw/topR); dyn.forEach(r=>r.v = 1e5*r.raw/topD); pickRows.forEach(r=>r.v = 1e5*r.raw/topD);

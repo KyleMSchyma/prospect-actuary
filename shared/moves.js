@@ -47,7 +47,7 @@
     return out;
   }
   // ---------- a Sleeper league (shared/sleeper.js, after PASleeper.price): every team's tradeable assets ----------
-  // Players we value, plus 2027 picks rounds 1-3 (exact slot once the league sets the order, else the round's average).
+  // Players we value, plus 2027 picks rounds 1-4 (exact slot once the league sets the order, else the round's average).
   function league(M, C, S, SL){
     const F = byIndex(C);
     M.teams.forEach(t=>{

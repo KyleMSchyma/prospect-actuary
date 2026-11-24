@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Contending and Rebuild Moves | Prospect Actuary</title>
 <meta name="description" content="Fair one-for-one dynasty swaps that move value toward this season (Contending Moves) or toward the future (Rebuild Moves), priced with Prospect Actuary dynasty and redraft values for your league.">
+<!--share--><link rel="canonical" href="https://kylemschyma.github.io/prospect-actuary/moves/"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Contending and Rebuild Moves | Prospect Actuary"><meta property="og:description" content="Fair one-for-one dynasty swaps that move value toward this season (Contending Moves) or toward the future (Rebuild Moves), priced with Prospect Actuary dynasty and redraft values for your league."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/moves/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Contending and Rebuild Moves | Prospect Actuary"><meta name="twitter:description" content="Fair one-for-one dynasty swaps that move value toward this season (Contending Moves) or toward the future (Rebuild Moves), priced with Prospect Actuary dynasty and redraft values for your league."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -19,8 +20,8 @@ section{display:flex;flex-direction:column;gap:14px;min-width:0}
 </style></head>
 <body><div class="wrap">
 <header class="page-head">
-  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
-  <div class="eyebrow">Trade Center · Contending and rebuild moves</div>
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">Tools · Contending and rebuild moves</div>
   <h1>Contending and rebuild moves</h1>
   <p class="lede">Fair one-for-one swaps that keep your dynasty value level and move it to when you need it. <b>Contending moves</b> trade for players worth more this season. <b>Rebuild moves</b> trade for players and picks worth more in 2027 and later.</p>
   <div class="dev" role="note"><b>HOW A MOVE QUALIFIES</b><span>The two dynasty values are within 10% of each other, so the trade is too close to call and a fair ask. The side you get is worth more than 10% more in redraft value (contending) or future value (rebuild). Values are estimates, so smaller gains are left out.</span></div>
@@ -85,7 +86,7 @@ let KIND = qs.get("kind")==="rebuild" ? "r" : qs.get("kind")==="contend" ? "c" :
 let CHOSEN = !!KIND;
 if (!KIND) { let k = null; try { k = localStorage.getItem("pa-moves-kind"); } catch(e){} CHOSEN = !!k; KIND = k==="r" ? "r" : "c"; }
 
-// the board: every player worth at least 1,000 in dynasty, plus the 2027 picks 1.01-3.xx
+// the board: every player worth at least 1,000 in dynasty, plus the 2027 picks 1.01-4.xx
 const players = D.players.map((pl,i)=>MV.player(C, F, i, {n:pl.n, p:pl.p, key:pl.n+"|"+pl.p, tm:pl.tm, a:pl.a})).filter(a=>a.d>=MV.MIN_D);
 const picks = C.picks.map(k=>MV.pick(k.v, {n:k.n, p:"PICK", slot:k.slot}));
 const nameHtml = a => a.p==="PICK" ? esc(a.n) : `<a href="../player/?key=${encodeURIComponent("tv:"+a.n+"|"+a.p)}">${esc(a.n)}</a>${a.tm ? ` <span class="st">${esc(a.tm)}</span>` : ""}`;
@@ -135,7 +136,7 @@ async function loadSleeper(){
     ME = old.me || null; VIEW = ME || M.teams[0].rid;
     $("team").innerHTML = [...M.teams].sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<option value="${t.rid}">${esc(t.name)}${t.rid===ME ? " (you)" : ""}</option>`).join("");
     $("team").value = VIEW;
-    $("slpStatus").textContent = `${M.name}: other teams' players and 2027 picks (rounds 1-3), priced for the league saved in this browser.`;
+    $("slpStatus").textContent = `${M.name}: other teams' players and 2027 picks (rounds 1-4), priced for the league saved in this browser.`;
     if (!CHOSEN) { const me = M.byRid[ME]; if (me && me.label==="Rebuilder") KIND = "r"; }
     draw();
   } catch(e){ $("slpStatus").textContent = "Couldn't load your Sleeper league. Try again on the league page."; }

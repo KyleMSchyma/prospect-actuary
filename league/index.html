@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sleeper League | Prospect Actuary</title>
 <meta name="description" content="Load your Sleeper league: settings filled in for you, every roster and draft pick priced with Prospect Actuary dynasty and redraft values, team rankings, and one-tap trades with any team.">
+<!--share--><link rel="canonical" href="https://kylemschyma.github.io/prospect-actuary/league/"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Sleeper League | Prospect Actuary"><meta property="og:description" content="Load your Sleeper league: settings filled in for you, every roster and draft pick priced with Prospect Actuary dynasty and redraft values, team rankings, and one-tap trades with any team."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/league/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Sleeper League | Prospect Actuary"><meta name="twitter:description" content="Load your Sleeper league: settings filled in for you, every roster and draft pick priced with Prospect Actuary dynasty and redraft values, team rankings, and one-tap trades with any team."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -43,11 +44,11 @@ td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
 </style></head>
 <body><div class="wrap">
 <header class="page-head">
-  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
-  <div class="eyebrow">Trade Center · Sleeper league</div>
+  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <div class="eyebrow">Tools · Sleeper league</div>
   <h1>Your Sleeper league</h1>
   <p class="lede">Type your Sleeper username or paste a league ID. We fill in your league's settings, price every roster and draft pick with our values, rank the teams, and let you open a trade with any team in one tap.</p>
-  <div class="dev" role="note"><b>HOW IT WORKS</b><span>This page reads Sleeper's public, read-only API straight from your browser. No login, nothing sent to us, and nothing can change in Sleeper. Kickers, defenses and IDP are left out. 2027 rookie picks are valued (rounds 1-3); 2028 and later picks are listed but not valued yet.</span></div>
+  <div class="dev" role="note"><b>HOW IT WORKS</b><span>This page reads Sleeper's public, read-only API straight from your browser. No login, nothing sent to us, and nothing can change in Sleeper. Kickers, defenses and IDP are left out. 2027 rookie picks are valued (rounds 1-4); 2028 and later picks are listed but not valued yet.</span></div>
 </header>
 
 <section aria-label="Load a league">
@@ -111,7 +112,7 @@ td.Need{background:var(--down-soft)} td.Strength{background:var(--up-soft)}
     <li><b>Total value</b> adds every player's value and, in dynasty, every valued draft pick. Values are on our 100,000-point scale, so they add up.</li>
     <li><b>Starters now</b> is the redraft value of the team's best possible starting lineup this week, using your league's lineup. Taxi-squad players are left out of it.</li>
     <li><b>Outlook:</b> the top third of teams on Starters now are <b>Contenders</b>, the bottom third <b>Rebuilders</b>, everyone else <b>Middle</b>. A rebuilder with a big dynasty total is set up for later.</li>
-    <li><b>Draft picks:</b> a 2027 pick is valued at its exact slot once your league sets the 2027 draft order. Until then it gets the average value of its round. Our values cover rounds 1 to 3.</li>
+    <li><b>Draft picks:</b> a 2027 pick is valued at its exact slot once your league sets the 2027 draft order. Until then it gets the average value of its round. Our values cover rounds 1 to 4.</li>
     <li><b>Needs</b> compare each team's starters at a position with the rest of the league, in the mode you picked. Two ways to measure: <b>Starters</b> counts a team's best players for the starting spots an average team uses at that position, flex and superflex included; <b>Whole group</b> counts every valued player there, depth included. Bottom third = need, top third = strength. Trade partners are teams strong where you're weak, ranked higher when they're weak where you're strong.</li>
     <li><b>Contending and rebuild moves</b> are one-for-one swaps with another team in the league where both dynasty values are within 10% (too close to call, so a fair ask). A contending move gets back more than 10% more redraft value, a rebuild move more than 10% more future value (the 2027-2031 part of dynasty value; a 2027 pick is all future). Contenders see contending moves and rebuilders see rebuild moves until you pick one. <a href="../moves/">See every move</a>.</li>
     <li>Players we don't value yet (very deep backups, a few new signings) show a value of 0 and are counted on the roster as "not valued".</li>

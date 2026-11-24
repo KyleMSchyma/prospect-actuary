@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Market Check | Prospect Actuary</title>
 <meta name="description" content="How Prospect Actuary's trade values compare with the market: overall and positional rank gaps against Dynasty Daddy (dynasty and redraft), DynastyProcess and values implied by real dynasty trades, 12-team superflex 0.5 PPR.">
+<!--share--><link rel="canonical" href="https://kylemschyma.github.io/prospect-actuary/value-research/"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="Market Check | Prospect Actuary"><meta property="og:description" content="How Prospect Actuary's trade values compare with the market: overall and positional rank gaps against Dynasty Daddy (dynasty and redraft), DynastyProcess and values implied by real dynasty trades, 12-team superflex 0.5 PPR."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/value-research/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Market Check | Prospect Actuary"><meta name="twitter:description" content="How Prospect Actuary's trade values compare with the market: overall and positional rank gaps against Dynasty Daddy (dynasty and redraft), DynastyProcess and values implied by real dynasty trades, 12-team superflex 0.5 PPR."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
@@ -52,11 +53,12 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 </style></head>
 <body><div class="wrap">
 <header style="display:flex;flex-direction:column;gap:14px">
-  <nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../">Dashboard</a> · <a href="../pre-draft/">Prospect Lab</a> · <a href="../trade-values/">Player Values</a> · <a href="../trade-calculator/">Trade Center</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+  <nav class="pa-brand" data-root="../" data-fixed-league="12-team · SF · half PPR"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
   <div class="dev" role="note"><b>KNOWN LIMITS</b><span>Our values are estimates and so are the market's. A gap in rank is a reason to look closer, not proof that either side is wrong. Not valued yet on our side: Jayden Higgins, Travis Hunter and Brandon Aiyuk.</span></div>
-  <div class="eyebrow" id="eyebrow">Market check · 12-team superflex · 0.5 PPR</div>
+  <div class="eyebrow" id="eyebrow">Tools · Market check · fixed league: 12-team superflex, half PPR</div>
   <h1>Market Check</h1>
-  <p>How do our trade values line up with the market? This page ranks every player by our model and by a market source, all in superflex, and shows where the two disagree, overall and within each position. Pick the source: <a href="https://dynasty-daddy.com" target="_blank" rel="noopener">Dynasty Daddy</a> (dynasty and redraft trade values from its public API), <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> (open dynasty values built from expert consensus rankings), or the <b>Trade market</b> (dynasty values implied by over a million real trades from the <a href="https://dynasty-daddy.com/trade-database" target="_blank" rel="noopener">Dynasty Daddy Trade Database</a>, put on our value curve).</p>
+  <p>How do our trade values line up with the market? This page ranks every player by our model and by a market source, all in superflex, and shows where the two disagree, overall and within each position. Pick the source: <a href="https://dynasty-daddy.com" target="_blank" rel="noopener">Dynasty Daddy</a> (dynasty and redraft trade values from its public API), <a href="https://github.com/dynastyprocess/data" target="_blank" rel="noopener">DynastyProcess</a> (open dynasty values built from expert consensus rankings), or the <b>Trade market</b> (dynasty values implied by over a million real trades from the <a href="https://dynasty-daddy.com/trade-database" target="_blank" rel="noopener">Dynasty Daddy Trade Database</a>, ranked the same way).</p>
+  <p class="small"><b>Fixed league: 12 teams, superflex, half PPR (0.5), 4-point passing TDs, 2 RB / 3 WR / 1 TE, no flex.</b> This page always uses it, whatever league you saved elsewhere, so every source is measured the same way.</p>
   <p class="small muted" id="asof">Loading…</p>
 </header>
 
@@ -74,7 +76,8 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
       <li><span style="font-weight:600">Straight-up swaps between close players:</span> managers trade players as closer in value than this curve spaces them, so small gaps are often an even swap in practice.</li>
       <li><span style="font-weight:600">League settings:</span> traders barely adjust for TE premium, PPR or league size, and price superflex about half as strongly as our model. Pass TD and first-down bonuses aren't in the trade data.</li>
       <li><span style="font-weight:600">Recent news:</span> trades from the last week or so count most, so values react quickly to news and hype.</li>
-      <li><span style="font-weight:600">Rarely traded players</span> (under 25 trades) aren't valued on their own and don't appear. Dynasty only; picks are left out like the other sources.</li>
+      <li><span style="font-weight:600">Rarely traded players</span> (under 25 trades) aren't valued on their own and don't appear. Dynasty only. 2027 picks have one generic price per round until the draft order is set (see the picks table).</li>
+      <li><span style="font-weight:600">Compared by rank:</span> because of all this, the page uses only the market's order. Each player is compared by overall and positional rank, and 2-for-1 moves give each player our value at his market rank.</li>
     </ul></span></div>
 </section>
 
@@ -101,6 +104,13 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
     <div class="box"><h3>We're higher than the market</h3><ol id="hi"></ol></div>
     <div class="box"><h3>The market is higher than us</h3><ol id="lo"></ol></div>
   </div>
+</section>
+
+<section id="picks27">
+  <h2>2027 rookie picks, rounds 1-4</h2>
+  <p class="small muted">Where each round's pick would rank among players (overall), market vs ours. Ours uses our slots in that round for this page's 12-team league. A positive gap means we rank the pick higher than the market does.</p>
+  <div class="tblwrap"><table id="pkTbl" aria-label="2027 rookie picks, market rank vs ours"></table></div>
+  <p class="small muted" id="pkNote"></p>
 </section>
 
 <section>
@@ -130,9 +140,9 @@ td.num,td .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
     <li><b>Our side</b> is the <a href="../trade-values/">Trade Values</a> page set to a 12-team superflex league with 0.5 PPR, 4-point passing TDs, and 2 RB, 3 WR, 1 TE starters, no flex. Dynasty projects fantasy points per game over replacement for the rest of 2026 through 2030; redraft covers the rest of 2026 only.</li>
     <li><b>Dynasty Daddy</b> values come from its public values API (superflex trade values, dynasty and redraft), saved with the site and refreshed each week rather than pulled on every visit.</li>
     <li><b>DynastyProcess</b> values are its superflex value (<span class="num">value_2qb</span>), which turns FantasyPros expert consensus dynasty rankings into trade values.</li>
-    <li><b>Trade market</b> values are solved so that real trades balance, with recent trades counting most (half-life about a week) and adjustments for league size, superflex, PPR, TE premium and starters, set here to this page's league. They're then raised to one power so their value curve matches ours (top player 100,000), so a market value and ours read on the same scale. Used with permission from Dynasty Daddy's owner; only trade counts and fitted values are published, never individual trades or leagues.</li>
+    <li><b>Trade market</b> values are solved so that real trades balance, with recent trades counting most (half-life about a week) and adjustments for league size, superflex, PPR, TE premium and starters, set here to this page's league. Only their order is used: players are compared by rank, like the other sources. Used with permission from Dynasty Daddy's owner; only trade counts and fitted values are published, never individual trades or leagues.</li>
     <li>Dynasty Daddy and DynastyProcess don't change with your scoring settings, so small gaps can come from scoring alone.</li>
-    <li>Rookie picks are left out, since our pick values come from the pre-draft model and theirs from a different scale.</li>
+    <li><b>2027 rookie picks</b> (rounds 1-4) have their own table. The market prices a generic pick per round (DynastyProcess: early, mid and late) until the draft order is set, so each round is ranked among the market's players and compared with our slots in that round, ranked among ours. The player tables leave picks out.</li>
     <li>A big gap isn't a mistake on either side. It flags a player worth a closer look: our model may see production the market hasn't priced in, or the market may know something (role change, injury news, draft pedigree) the numbers don't capture yet.</li>
   </ul>
 </section>
@@ -183,29 +193,23 @@ function parseCSV(t){
     for (let i=0;i<l.length;i++){ const c = l[i]; if (q){ if (c==='"'){ if (l[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
       else if (c==='"') q = true; else if (c===','){ out.push(cur); cur=""; } else cur+=c; } out.push(cur); return out; };
   const h = split(lines[0]), ix = k => h.indexOf(k);
-  const iN = ix("player"), iP = ix("pos"), iT = ix("team"), iV = ix("value_2qb"), iD = ix("scrape_date");
+  const iN = ix("player"), iP = ix("pos"), iT = ix("team"), iV = ix("value_2qb"), iD = ix("scrape_date"), iE = ix("ecr_2qb");
   if ([iN,iP,iV].some(i=>i<0)) return null;
-  let asof = null; const rows = [];
+  let asof = null; const rows = [], ecr = [];
   lines.slice(1).forEach(l=>{ const c = split(l); if (!POS.includes(c[iP])) return; const v = Number(c[iV]); if (!isFinite(v)) return;
-    rows.push([c[iN], c[iP], c[iT], v]); if (iD>=0 && c[iD]) asof = c[iD]; });
-  return rows.length > 100 ? {asof, rows} : null;
+    rows.push([c[iN], c[iP], c[iT], v]); if (iD>=0 && c[iD]) asof = c[iD]; if (iE>=0 && isFinite(Number(c[iE])) && c[iE]!=="") ecr.push(Number(c[iE])); });
+  return rows.length > 100 ? {asof, rows, ecr: ecr.length > 100 ? ecr : null} : null;
 }
 
-let GOAL = "v", ROWS = [], FILTER = "ALL", SORT = {k:"avg", dir:1}, SRC = "dd", MODE = "d", DPDATA = null, DPLIVE = false;
+let CURVE = [], GOAL = "v", ROWS = [], FILTER = "ALL", SORT = {k:"avg", dir:1}, SRC = "dd", MODE = "d", DPDATA = null, DPLIVE = false;
 const OURS = ours();
 const SRCNAME = {dp:"DynastyProcess", dd:"Dynasty Daddy", tm:"Trade market"};
-// Trade market: log 1:1 values from real trades (tm.js). One power p is fitted so the market's top-150 value curve
-// matches ours (same 100k top), then values = 100k * exp(p * (lv - max lv)).
+// Trade market: log 1:1 values from real trades (tm.js), used only for their ORDER (Kyle 2026-11-24, Nov 28 batch):
+// like Dynasty Daddy and DynastyProcess, each player then gets our value at the same overall rank (rank-matched).
+// The old curve fit (one power) and the 2:1 package power are gone, so the market's consolidation premium no longer enters.
 function tmRows(){
   const d = window.TM; if (!d) return null;
-  const ourCurve = OURS.d.map(x=>x.v).filter(v=>v>0).sort((a,b)=>b-a).slice(0,150);
-  const lv = d.rows.map(r=>r[2]), top = Math.max(...lv);
-  const curve = p => lv.map(l=>1e5*Math.exp(p*(l-top))).sort((a,b)=>b-a).slice(0, ourCurve.length);
-  const loss = p => { const c = curve(p); let e = 0; for (let i=0;i<c.length;i++) e += (Math.log(c[i])-Math.log(ourCurve[i]))**2; return e; };
-  let a = 0.5, b = 5; const g = (Math.sqrt(5)-1)/2;
-  for (let i=0;i<60;i++){ const c1 = b-g*(b-a), c2 = a+g*(b-a); if (loss(c1) < loss(c2)) b = c2; else a = c1; }
-  const p = (a+b)/2;
-  return {asof: d.asof, p, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:"", v:1e5*Math.exp(p*(r[2]-top)), l:r[2]-top, k:norm(r[0])+"|"+r[1]}))};
+  return {asof: d.asof, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:"", v:Math.exp(r[2]), k:norm(r[0])+"|"+r[1]}))};
 }
 // Dynasty Daddy ids are the name in lowercase letters plus the position (e.g. "kennethwalkerrb")
 const ddKey = (n, p) => norm(n).replace(/ /g,"") + p.toLowerCase();
@@ -213,7 +217,7 @@ const ddKeyRaw = (n, p) => String(n).toLowerCase().normalize("NFD").replace(/[^a
 // Same player, different first name in the two sources (nicknames). Key: Dynasty Daddy id, value: our name.
 const ALIAS = {chigoziemokonkwote:"Chig Okonkwo", zonovanknightrb:"Bam Knight", kennethgainwellrb:"Kenny Gainwell"};
 function market(){
-  if (SRC === "tm") { const t = tmRows(); return t && {asof: t.asof, live: false, rows: t.rows, p: t.p}; }
+  if (SRC === "tm") { const t = tmRows(); return t && {asof: t.asof, live: false, rows: t.rows}; }
   if (SRC === "dp") { const d = DPDATA || window.DP; if (!d) return null;
     return {asof: d.asof, live: DPDATA ? DPLIVE : false, rows: d.rows.map(r=>({n:r[0], p:r[1], tm:r[2], v:r[3], k:norm(r[0])+"|"+r[1]}))}; }
   const d = window.DD; if (!d) return null;
@@ -229,36 +233,34 @@ function build(){
   const used = new Set(), rows = [];
   us.forEach(u=>{ const t = find(u); if (t) used.add(t);
     if (!u.ro && !(t && t.ro)) return;
-    rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp, uv:u.v>0?u.v:null, tv:t&&t.v, tl:t?t.l:null}); });
+    rows.push({n:u.n, p:u.p, tm:u.tm||(t&&t.tm)||"FA", a:u.a, uo:u.ro, up:u.rp, to:t&&t.ro, tp:t&&t.rp, uv:u.v>0?u.v:null, tv:t&&t.v, tl:null}); });
   them.forEach(t=>{ if (!used.has(t) && t.ro) rows.push({n:t.n, p:t.p, tm:t.tm||"FA", a:null, uo:null, up:null, to:t.ro, tp:t.rp, uv:null, tv:t.v, miss:1}); });
   rows.forEach(r=>{ const e = OURS.ex[r.n+"|"+r.p]; r.fs = e ? e.f : 1; });
   rows.forEach(r=>{ r.d = (r.uo && r.to) ? r.to - r.uo : null; r.dp = (r.up && r.tp) ? r.tp - r.up : null;
     r.avg = r.uo && r.to ? (r.uo+r.to)/2 : (r.uo||r.to) + 400; });
-  // market value used for moves: trade market = its own log 1:1 value; Dynasty Daddy / DynastyProcess values are on a
-  // different scale, so each player gets OUR value at the same overall rank (rank-matched)
-  if (SRC !== "tm") { const curve = us.filter(x=>x.ro).map(x=>x.v).sort((a,b)=>b-a);
+  // market value used for moves, every source: each player gets OUR value at his overall rank in the market's list
+  // (rank-matched), so packages add up on our scale and only the market's ORDER is used
+  { const curve = us.filter(x=>x.ro).map(x=>x.v).sort((a,b)=>b-a); CURVE = curve;
     rows.forEach(r=>{ r.tl = r.to && curve[r.to-1] > 0 ? Math.log(curve[r.to-1]/curve[0]) : null; }); }
   ROWS = rows;
   const miss = rows.filter(r=>r.miss && r.to<=150).length;
   $("missNote").textContent = miss ? `${miss} of the market's top 150 aren't in our trade values yet (marked "not in our values"), so they count as disagreements above.` : "";
   $("asof").textContent = SRC==="tm"
-    ? `${D.asof} Market values: ${window.TM.trades.toLocaleString("en-US")} real dynasty trades (${window.TM.first} to ${m.asof}) from the Dynasty Daddy Trade Database, on our value curve (power ${m.p.toFixed(2)}).`
+    ? `${D.asof} Market order: ${window.TM.trades.toLocaleString("en-US")} real dynasty trades (${window.TM.first} to ${m.asof}) from the Dynasty Daddy Trade Database, compared by rank.`
     : `${D.asof} Market values: ${SRCNAME[SRC]} ${MODE==="r"?"redraft":"dynasty"} superflex values, pulled ${m.asof || "recently"}${SRC==="dp" && !m.live ? " (saved copy)" : ""}.`;
   $("tmNotes").hidden = SRC !== "tm";
-  $("eyebrow").textContent = `Trade Center · Market check · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · 12-team superflex · 0.5 PPR`;
+  $("eyebrow").textContent = `Tools · Market check · ${MODE==="r" ? "redraft" : "dynasty"} · ${SRCNAME[SRC]} · fixed league: 12-team superflex, half PPR`;
   $("src").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.v===SRC));
   $("mode").querySelectorAll("button").forEach(x=>{ x.setAttribute("aria-pressed", x.dataset.v===MODE); if (x.dataset.v==="r") x.disabled = SRC!=="dd"; });
   $("modeNote").textContent = SRC==="dp" ? "DynastyProcess only publishes dynasty values, so redraft is available with Dynasty Daddy."
     : SRC==="tm" ? "The trade market is dynasty only for now." : "";
   try { localStorage.setItem("pa-vr", SRC+"|"+MODE); } catch(e){}
-  $("mvIntro").textContent = SRC==="tm"
-    ? "Trades the market treats as fair that gain the most on our values. Fair is judged on the market's own prices: straight-up (1:1) prices for 1-for-1 swaps, package (2:1) prices for 2-for-1 deals, where the two pieces add up to what managers pay for the single player. Listed when the market prices both sides within 10% and our values gain more than 10% (and at least 1,000). Players in either list's top 200."
-    : `Trades ${SRCNAME[SRC]} treats as fair that gain the most on our values. ${SRCNAME[SRC]} values aren't on our scale, so each player gets our value at the same overall rank in ${SRCNAME[SRC]}'s list (rank-matched), and packages add up on that scale. Listed when both sides are within 10% on that scale and our values gain more than 10% (and at least 1,000). Players in either list's top 200.`;
-  summary(); table(); moves();
+  $("mvIntro").textContent = `Trades ${SRCNAME[SRC]} treats as fair that our values rate higher. Every source is compared by rank: each player gets our value at his overall rank in ${SRCNAME[SRC]}'s list (rank-matched), so 2-for-1 packages add up on one scale. A trade is listed when both sides are within 10% on that rank-matched scale and our values gain more than 10%. Each player shows his overall and positional rank, market → ours. Players in either list's top 200.`;
+  summary(); table(); moves(); picks();
 }
 
 // ---------- best market moves (trade market only) ----------
-// Pivot: market 1:1 prices (exp(l)) within 10%; uptier/downtier: market 2:1 prices (exp(s_pkg*l), additive) within 10%.
+// Every source is rank-matched: each player gets our value at his market overall rank. Pivot: those values within 10%; uptier/downtier: two pieces add up within 10%.
 // Listed when our dynasty values gain more than 10% of the larger side and at least 1,000.
 const BAND = 0.10;
 const fair = (a, b) => Math.min(a, b) >= (1-BAND)*Math.max(a, b);
@@ -270,8 +272,7 @@ function moves(){
     : GOAL==="c" ? "Contending: the same fair market trades and shapes, and our dynasty values stay about equal (within 10%). The market doesn't split value into now and future, so each player's market value is split using our own ratio for that player (pseudo values): the now part is the share of our dynasty value from the rest of 2026. The side you get carries over half of the trade's now value and more than 10% more than you give, and you give up more future value. Ranked by market now value gained."
     : GOAL==="r" ? "Rebuild: the same fair market trades and shapes, and our dynasty values stay about equal (within 10%). The market doesn't split value into now and future, so each player's market value is split using our own ratio for that player (pseudo values): the future part is the share of our dynasty value from 2027 to 2031. The side you get carries over half of the trade's future value and more than 10% more than you give, and you give up more now value. Ranked by market future value gained."
     : "Best value: trades that gain the most on our dynasty values.";
-  const sp = SRC==="tm" ? window.TM.s_pkg : 1, q = norm($("mvQ").value), L1 = SRC==="tm" ? "market 1:1" : "rank-matched", L2 = SRC==="tm" ? "market 2:1" : "rank-matched";
-  const v1v = i => SRC==="tm" ? fmt(P[i].tv) : k(1e5*v1[i]);
+  const sp = 1, q = norm($("mvQ").value);
   const P = ROWS.filter(r=>r.uv && r.tl!=null && !r.miss && (r.uo<=200 || r.to<=200));
   const n = P.length, v1 = P.map(r=>Math.exp(r.tl)), w = P.map(r=>Math.exp(sp*r.tl)), wTop = Math.max(...w);
   const hit = (...ix) => !q || ix.some(i=>norm(P[i].n).includes(q));
@@ -288,11 +289,10 @@ function moves(){
     if (!fair(sum(get,uv), sum(give,uv))) return null;
     const ng = sum(get,need) - sum(give,need);
     return ok(ng, Math.max(sum(get,need), sum(give,need))) && sum(give,oth) > sum(get,oth) ? ng : null; };
-  const LBL = {c:"market now", r:"market future"}[G];
-  const ourTxt = (give, get, g) => G==="v"
-    ? `ours ${k(sum(give,uv))} → ${k(sum(get,uv))} (<span class="up">+${fmt(g)}</span>)`
-    : `${LBL} ${k(sum(give,need))} → ${k(sum(get,need))} (<span class="up">+${fmt(g)}</span>) · ours ${k(sum(give,uv))} → ${k(sum(get,uv))}`;
-  const tag = i => `<b>${nm(P[i])}</b> <span class="pos" style="color:var(--${P[i].p})">${P[i].p}</span>`;
+  // ranks, market → ours: "22 (WR8) → 9 (WR3)"
+  const rk = i => { const r = P[i], d = r.to - r.uo; return `<span class="d">market #${r.to} (${r.p}${r.tp}), ours #${r.uo} (${r.p}${r.up})${d ? ` <span class="${d>0?"up":"down"}">${d>0?"▲":"▼"}${Math.abs(d)}</span>` : ""}</span>`; };
+  const tag = i => `<b>${nm(P[i])}</b> <span class="pos" style="color:var(--${P[i].p})">${P[i].p}</span> ${rk(i)}`;
+  const why = G==="v" ? "" : G==="c" ? ` <span class="d">· more of the value is now (2026)</span>` : ` <span class="d">· more of the value is 2027-2031</span>`;
   // pivots: best target per player given
   const piv = [];
   for (let a=0;a<n;a++){ let best = null;
@@ -300,7 +300,7 @@ function moves(){
       if (g!=null && hit(a,b) && (!best || g > best.g)) best = {a, b, g}; }
     if (best) piv.push(best); }
   const seen = new Set(), pv = piv.sort((x,y)=>y.g-x.g).filter(m=>!seen.has(m.b) && seen.add(m.b)).slice(0, 15);
-  $("mvPivot").innerHTML = pv.length ? pv.map(m=>`<li>Give ${tag(m.a)} → get ${tag(m.b)} <span class="d">${L1} ${v1v(m.a)} vs ${v1v(m.b)} · ${ourTxt([m.a],[m.b],m.g)}</span></li>`).join("")
+  $("mvPivot").innerHTML = pv.length ? pv.map(m=>`<li>Give ${tag(m.a)} → get ${tag(m.b)}${why}</li>`).join("")
     : `<li class="muted">No pivot passes the rule${q?" for this player":""}.</li>`;
   // 2-for-1: best pair per single player, both directions (package prices, scaled so the top player = 100k)
   MV = w.map(x=>x/wTop);
@@ -317,12 +317,43 @@ function moves(){
         if (gd!=null && (!bd || gd > bd.g)) bd = {x, a: lead, b: oth, g:gd}; } }
     if (bu) up.push(bu); if (bd) down.push(bd); }
   const li2 = (m, give) => give
-    ? `<li>Give ${tag(m.a)} + ${tag(m.b)} → get ${tag(m.x)} <span class="d">${L2} ${k(1e5*(w[m.a]+w[m.b])/wTop)} vs ${k(1e5*w[m.x]/wTop)} · ${ourTxt([m.a,m.b],[m.x],m.g)}</span></li>`
-    : `<li>Give ${tag(m.x)} → get ${tag(m.a)} + ${tag(m.b)} <span class="d">${L2} ${k(1e5*w[m.x]/wTop)} vs ${k(1e5*(w[m.a]+w[m.b])/wTop)} · ${ourTxt([m.x],[m.a,m.b],m.g)}</span></li>`;
+    ? `<li>Give ${tag(m.a)} + ${tag(m.b)} → get ${tag(m.x)}${why}</li>`
+    : `<li>Give ${tag(m.x)} → get ${tag(m.a)} + ${tag(m.b)}${why}</li>`;
   const top = (L, give) => { const used = new Set(); return L.sort((x,y)=>y.g-x.g).filter(m=>{ const ids = [m.x, m.a, m.b];
       if (!q && ids.some(i=>used.has(i))) return false; ids.forEach(i=>used.add(i)); return true; }).slice(0, 10).map(m=>li2(m, give)).join(""); };
   $("mvUp").innerHTML = top(up, true) || `<li class="muted">No uptier passes the rule${q?" for this player":""}.</li>`;
   $("mvDown").innerHTML = top(down, false) || `<li class="muted">No downtier passes the rule${q?" for this player":""}.</li>`;
+}
+
+// ---------- 2027 rookie picks: where a pick would rank among players, market vs ours ----------
+// like-rank = 1 + number of ranked players worth more (in that list). Ours: the engine's slot values for this page's league.
+let DPPICKS = null;   // DynastyProcess picks (live file only): {label: ecr_2qb}; with players' ecr_2qb in DPDATA.ecr
+function picks(){
+  const C = window.PAEngine(D).compute(S), our = OURS[MODE].filter(x=>x.v>0).map(x=>x.v).sort((a,b)=>b-a);
+  const likeOurs = v => 1 + our.filter(x=>x>v).length;
+  const slots = rd => C.picks.filter(p=>p.slot.startsWith(rd+"."));
+  const RN = ["1st","2nd","3rd","4th"], rows = [];
+  if (MODE !== "d") { $("pkTbl").innerHTML = ""; $("pkNote").textContent = "Picks are compared in dynasty only."; return; }
+  let mk = null, note = "";
+  if (SRC === "tm") { const T = window.TM; const pl = T.rows.map(r=>r[2]);
+    if (T.picks && T.picks.length) mk = T.picks.map(p=>({rd:p[1], lab:"2027 mid "+RN[p[1]-1], part:null, like:1+pl.filter(x=>x>p[2]).length, n:p[3]}));
+    note = "Trade market: one generic (mid) price per round from real trades; the slot is unknown until the draft order is set, and early picks usually trade above a generic 1st."; }
+  else if (SRC === "dd") { const d = window.DD, pl = d.dynasty.map(r=>r[3]);
+    if (d.picks && d.picks.length) mk = d.picks.map(p=>{ const m = String(p[0]).toLowerCase().match(/^2027(early|mid|late)?(1st|2nd|3rd|4th)/); return m && {rd:RN.indexOf(m[2])+1, lab:"2027 "+(m[1]?m[1]+" ":"")+m[2], part:m[1]||null, like:1+pl.filter(x=>x>p[2]).length}; }).filter(Boolean);
+    note = mk ? "Dynasty Daddy: its saved values for 2027 picks." : "Dynasty Daddy picks arrive with the next weekly refresh (the saved copy has players only)."; }
+  else { if (DPPICKS && DPDATA && DPDATA.ecr) { const pl = DPDATA.ecr;
+      mk = Object.entries(DPPICKS).map(([lab,e])=>{ const m = lab.toLowerCase().match(/^2027 (early|mid|late) (1st|2nd|3rd|4th)$/); return m && {rd:RN.indexOf(m[2])+1, lab, part:m[1], like:1+pl.filter(x=>x<e).length}; }).filter(Boolean); }
+    note = mk ? "DynastyProcess: expert consensus rank of early, mid and late 2027 picks, compared with our slots 1-4, 5-8 and 9-12." : "DynastyProcess picks load from its live file; the saved copy has players only."; }
+  const part = {early:[0,4], mid:[4,8], late:[8,12]};
+  for (let rd=1; rd<=4; rd++){ const sl = slots(rd); if (!sl.length) continue;
+    const ms = (mk||[]).filter(x=>x.rd===rd).sort((a,b)=>({early:0,mid:1,late:2}[a.part]??1)-({early:0,mid:1,late:2}[b.part]??1));
+    const lo = likeOurs(sl[0].v), hi = likeOurs(sl[sl.length-1].v);
+    if (!ms.length) rows.push(`<tr><td>Round ${rd}</td><td class="num">–</td><td class="num">${lo}-${hi}</td><td class="num">–</td></tr>`);
+    ms.forEach(x=>{ const [a,b] = x.part ? part[x.part] : [0, sl.length], sub = sl.slice(a, Math.min(b, sl.length)); if (!sub.length) return;
+      const mid = sub.reduce((t,p)=>t+p.v,0)/sub.length, ours = likeOurs(mid), g = x.like - ours;
+      rows.push(`<tr><td>${esc(x.lab)}${x.part?` <span class="meta">vs our ${rd}.${String(a+1).padStart(2,"0")}-${rd}.${String(Math.min(b,sl.length)).padStart(2,"0")}</span>`:` <span class="meta">vs our round ${rd} average</span>`}</td><td class="num">${x.like}</td><td class="num">${ours} <span class="meta">(range ${likeOurs(sub[0].v)}-${likeOurs(sub[sub.length-1].v)})</span></td><td class="num"><span class="${g>0?"up":g<0?"down":""}">${g>0?"+":""}${g}</span></td></tr>`); }); }
+  $("pkTbl").innerHTML = `<thead><tr><th>Pick</th><th>Market: ranks like player #</th><th>Ours: ranks like player #</th><th>Gap</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+  $("pkNote").textContent = note;
 }
 
 function spearman(pairs){ const n = pairs.length; if (n<3) return null;
@@ -358,7 +389,7 @@ function summary(){
 const COLS0 = [["n","Player"],["uo","Our rank"],["to","Market rank"],["d","Gap"],["up","Our pos rank"],["tp","Market pos rank"],["dp","Pos gap"]];
 let COLS = COLS0;
 function table(){
-  COLS = SRC==="tm" ? [...COLS0.slice(0,4), ["uv","Our value"], ["tv","Market value"], ...COLS0.slice(4)] : COLS0;
+  COLS = COLS0;   // ranks only, every source (Kyle 2026-11-24: values don't line up from one source to another)
   const vv = x => x==null ? "–" : fmt(x);
   const q = norm($("q").value), topOnly = $("top").checked;
   let rows = ROWS.filter(r=>(FILTER==="ALL"||r.p===FILTER) && (!q || norm(r.n).includes(q)) && (!topOnly || r.uo<=200 || r.to<=200));
@@ -369,7 +400,7 @@ function table(){
   const gapC = d => d==null ? "–" : `<span class="${d>0?"up":d<0?"down":""}">${d>0?"+":""}${d}</span>`;
   const rk = (r,p) => r==null ? "–" : (p ? p+r : r);
   $("tbl").innerHTML = `<thead><tr>${COLS.map(([c,l])=>`<th><button type="button" data-k="${c}"${SORT.k===c?` aria-sort="${dir>0?"ascending":"descending"}"`:""}>${l}${SORT.k===c?(dir>0?" ▲":" ▼"):""}</button></th>`).join("")}</tr></thead><tbody>` +
-    (rows.length ? rows.map(r=>`<tr><td><b>${nm(r)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span><div class="meta">${esc(r.tm)}${r.a!=null?" · age "+Number(r.a).toFixed(1):""}${r.miss?" · not in our values":""}</div></td><td class="num">${rk(r.uo)}</td><td class="num">${rk(r.to)}</td><td class="num">${gapC(r.d)}</td>${SRC==="tm" ? `<td class="num">${vv(r.uv)}</td><td class="num">${vv(r.tv)}</td>` : ""}<td class="num">${rk(r.up,r.p)}</td><td class="num">${rk(r.tp,r.p)}</td><td class="num">${gapC(r.dp)}</td></tr>`).join("")
+    (rows.length ? rows.map(r=>`<tr><td><b>${nm(r)}</b> <span class="pos" style="color:var(--${r.p})">${r.p}</span><div class="meta">${esc(r.tm)}${r.a!=null?" · age "+Number(r.a).toFixed(1):""}${r.miss?" · not in our values":""}</div></td><td class="num">${rk(r.uo)}</td><td class="num">${rk(r.to)}</td><td class="num">${gapC(r.d)}</td><td class="num">${rk(r.up,r.p)}</td><td class="num">${rk(r.tp,r.p)}</td><td class="num">${gapC(r.dp)}</td></tr>`).join("")
       : `<tr><td colspan="${COLS.length}" class="muted">No players match.</td></tr>`) + `</tbody>`;
 }
 $("tbl").addEventListener("click", e=>{ const b = e.target.closest("button[data-k]"); if (!b) return; const k = b.dataset.k;
@@ -389,6 +420,11 @@ build();
 // DynastyProcess: try the live file (updated weekly); the saved copy is used until it arrives or if it fails.
 fetch("https://raw.githubusercontent.com/dynastyprocess/data/master/files/values-players.csv", {cache:"no-cache"})
   .then(r=>r.ok ? r.text() : Promise.reject()).then(t=>{ const dp = parseCSV(t); if (dp) { DPDATA = dp; DPLIVE = true; build(); } }).catch(()=>{});
+// DynastyProcess 2027 picks (expert consensus rank on the same superflex list as its players), live file only
+fetch("https://raw.githubusercontent.com/dynastyprocess/data/master/files/values-picks.csv", {cache:"no-cache"})
+  .then(r=>r.ok ? r.text() : Promise.reject()).then(t=>{ const L = t.trim().split(/\r?\n/), h = L[0].split(",").map(x=>x.replace(/"/g,"")), iN = h.indexOf("player"), iE = h.indexOf("ecr_2qb");
+    const o = {}; L.slice(1).forEach(l=>{ const c = l.split(",").map(x=>x.replace(/"/g,"")); if (/^2027 (Early|Mid|Late) (1st|2nd|3rd|4th)$/.test(c[iN]) && isFinite(Number(c[iE]))) o[c[iN]] = Number(c[iE]); });
+    if (Object.keys(o).length) { DPPICKS = o; if (SRC==="dp") picks(); } }).catch(()=>{});
 })();
 </script>
 </body></html>

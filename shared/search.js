@@ -12,7 +12,7 @@
   if (window.PASearch) return;
   const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const fmt = x => (Math.round(x/100)*100).toLocaleString("en-US");
-  const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":"gD";
+  const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":g[0]==="D"?"gD":"gF";
   const chip = g => g ? `<span class="chip ${chipCls(g)}">${esc(g)}</span>` : "";
   const posb = p => `<span class="posb" style="color:var(--${p})">${p==="PICK"?"PICK":p}</span>`;
   const loadScript = src => new Promise((ok, bad)=>{ const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = bad; document.head.appendChild(s); });
@@ -59,7 +59,7 @@
   // rookie picks for the site search: only when the query looks like a pick ("1.01", "pick 3", "rookie picks", "2027 1st")
   function pickRows(DB, q, S, root){
     if (!DB.E) return [];
-    const raw = String(q).toLowerCase().trim(), m = raw.match(/\b([1-5])\.(\d{1,2})\b/), word = /\b(picks?|rookie|1st|2nd|3rd|round)\b/.test(raw);
+    const raw = String(q).toLowerCase().trim(), m = raw.match(/\b([1-5])\.(\d{1,2})\b/), word = /\b(picks?|rookie|1st|2nd|3rd|4th|round)\b/.test(raw);
     if (!m && !word) return [];
     const C = DB.E.compute(S), lg = window.PALeague.param(S), amp = lg ? "&"+lg : "";
     let P = C.picks;
