@@ -1,5 +1,5 @@
 {
- "built": "2026-11-24T14:34Z",
+ "built": "2026-11-25T04:20Z",
  "values": {
   "asof": "2026 stats through week 11. Updated November 24, 2026.",
   "players": 588,
@@ -31,19 +31,19 @@
  },
  "files": {
   "pre-draft/data/pd_player_grades.csv": {
-   "sha": "a3b33ac407",
-   "bytes": 251102,
-   "updated": "2026-11-23"
+   "sha": "ecda508eeb",
+   "bytes": 250408,
+   "updated": "2026-11-25"
   },
   "post-draft/data/pd_post_player_grades.csv": {
-   "sha": "5af2c9879c",
-   "bytes": 286296,
-   "updated": "2026-11-17"
+   "sha": "3a427d8d74",
+   "bytes": 284219,
+   "updated": "2026-11-25"
   },
   "post-draft/data/pd_post_2027_mock_grades.csv": {
-   "sha": "09d3796cdd",
-   "bytes": 47286,
-   "updated": "2026-11-23"
+   "sha": "65f9363652",
+   "bytes": 46938,
+   "updated": "2026-11-25"
   },
   "pre-draft/data/rookie_board_values.csv": {
    "sha": "5873c82830",
