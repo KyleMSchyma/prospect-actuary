@@ -64,7 +64,7 @@ const chipCls = g => !g ? "" : g[0]==="A"?"gA":g[0]==="B"?"gB":g[0]==="C"?"gC":g
 const chip = g => g ? `<span class="chip ${chipCls(g)}">${esc(g)}</span>` : "–";
 const posb = p => `<span class="posb" style="color:var(--${p})">${p}</span>`;
 const TIER = {QB:[8,16,24],RB:[8,16,24],WR:[12,24,36],TE:[6,12,18]};
-const GR = ["A+","A","A-","B+","B","B-","C+","C","C-","D","F"];
+const GR = ["A+","A","B","C","D"];   // five-grade scale (2026-11): A+ top 5%, A 85-95, B 65-85, C 25-65, D bottom 25%
 const S = L.load(), lgp = L.param(S), amp = lgp ? "&"+lgp : "";
 const DB = await PAData.load("../");
 const qs = new URLSearchParams(location.search);
