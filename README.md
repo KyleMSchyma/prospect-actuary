@@ -25,7 +25,7 @@ Five sections share one menu (`shared/nav.js`). Folder URLs did not change when 
 | Prospect Lab | `pre-draft/`, `post-draft/` (two stages of the same 2010-2026 players, plus the 2027 class) |
 | Player Values | `trade-values/` (dynasty default, redraft, rookie picks, league settings) |
 | Trade Center | `trade-calculator/`, `league/` (Sleeper league), `value-research/` (Market Check), `buy-sell/`, `moves/` (Contending and rebuild moves) |
-| Research | `research/` (hub, with the Data status table), `guide/`, `track-record/`, `about/` |
+| Research | `research/` (hub, with the Data status table), `guide/`, `track-record/`, `about/`, `use/` (Use and credit) |
 | Player profiles | `player/?id=` (one page per person), `compare/?ids=a,b` (up to four side by side) |
 
 Shared code in `shared/`: `theme.css` (the one design), `nav.js` (menu), `search.js` (site-wide player search),
@@ -46,6 +46,22 @@ by hand, and commits only real changes. `data/manifest.json` (same build) feeds 
 
 How the models work, in plain English: the [Guide page](https://kylemschyma.github.io/prospect-actuary/guide/)
 (also in this repo as [GUIDE.md](GUIDE.md)).
+
+## License and credit
+
+Prospect Actuary is open. Everything it makes (grades, model scores, tier odds, trade values, rankings, charts,
+images, text and the CSV tables) is licensed under [Creative Commons Attribution 4.0](LICENSE) (CC BY 4.0): anyone,
+including AI tools, may use, share, change and build on it, commercially too, **as long as they give credit**:
+
+> Source: Prospect Actuary (kylemschyma.github.io/prospect-actuary), CC BY 4.0
+
+The site's code (HTML, CSS, JavaScript, Python scripts) is under the [MIT license](LICENSE-CODE). Third-party data
+keeps its own terms and is not relicensed here (see Data sources below; Dynasty Daddy values in
+`value-research/data/dd.js` and `tm.js` are not covered, see [NOTICE](value-research/data/NOTICE.md)). How to credit,
+citation formats and how to ask for anything else: the [Use and credit page](https://kylemschyma.github.io/prospect-actuary/use/).
+Machine-readable: [CITATION.cff](CITATION.cff), [llms.txt](llms.txt), [robots.txt](robots.txt) (nothing blocked) and
+schema.org license metadata in every page head. `shared/nav.js` adds the footer license line and a "Source: Prospect
+Actuary" line under every data table, chart and large image, so the weekly refresh can never drop them.
 
 Prospect Actuary is free to use. If it helped you, you can
 [buy me a coffee](https://buymeacoffee.com/kylemschyma). A dollar is plenty.

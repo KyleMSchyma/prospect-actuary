@@ -35,9 +35,9 @@
     ["usage",    "Usage",     "buy-sell/",         [["buy-sell/","Breakout Watch"],["team-analytics/","Team usage and offense"]]],
     ["lab",      "Prospects", "pre-draft/",        [["pre-draft/","Pre-draft grades"],["post-draft/","Post-draft grades"],["pre-draft/#class-2027","2027 class"],["post-draft/#mock-2027","2027 mock draft"],["rookie-rankings/","2027 top 24 rookies"],["rookie-rankings-3-4/","2027 rookies, rounds 3-4"],["pick-pockets/","2027 pick pockets"],["compare/?for=prospects","Prospect comparison"],["pre-draft/#does-it-work","Model validation"]]],
     ["trade",    "Tools",     "trade-calculator/", [["trade-calculator/","Trade calculator"],["value-research/","Market check"],["moves/","Contending and rebuild moves"],["league/","Sleeper league"],["compare/","Player comparison"]]],
-    ["research", "Research",  "research/",         [["research/","Overview"],["guide/","How the models work"],["track-record/","Track record"],["value-history/#track-record","Value track record"],["research/#data-status","Data and limitations"],["research/#methodology","Methodology"],["about/","About"]]]];
+    ["research", "Research",  "research/",         [["research/","Overview"],["guide/","How the models work"],["track-record/","Track record"],["value-history/#track-record","Value track record"],["research/#data-status","Data and limitations"],["research/#methodology","Methodology"],["about/","About"],["use/","Use and credit"]]]];
   const FOLDER = {"":"","pre-draft":"lab","post-draft":"lab","pick-pockets":"lab","rookie-rankings":"lab","rookie-rankings-3-4":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"usage","league":"trade","moves":"trade",
-                  "research":"research","team-analytics":"usage","guide":"research","track-record":"research","about":"research","compare":"values","value-history":"values","player":""};
+                  "research":"research","team-analytics":"usage","guide":"research","track-record":"research","about":"research","use":"research","compare":"values","value-history":"values","player":""};
   const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";
   const sec = here==="compare" && /[?&]for=prospects/.test(location.search) ? "lab" : FOLDER[here] != null ? FOLDER[here] : "";
   const LEAGUE_PAGE = here === "trade-values" || here === "trade-calculator";
@@ -154,4 +154,75 @@
 
   // ---------- phone layout: shared/mobile.js (bottom bar, cards, sheets). It changes nothing above 760px wide. ----------
   if (!window.PAMobile) { const m = document.createElement("script"); m.src = root + "shared/mobile.js"; document.head.appendChild(m); }
+})();
+
+/* ---------- Credit and license (2026-11-26, Kyle: "open source it, I just want credit") ----------
+ * Everything Prospect Actuary makes is CC BY 4.0 (code MIT); see use/ (Use and credit). Done here because every page,
+ * including the weekly-refresh and Wednesday-rebuilt pages, loads nav.js, so no refresh can drop it:
+ *   1. a license line at the end of the page footer (a footer is added if the page has none),
+ *   2. a small "Source: Prospect Actuary, kylemschyma.github.io/prospect-actuary" line at the end of every section that
+ *      holds a data table (5+ rows), a chart or a large image, so screenshots carry the credit,
+ *   3. license metadata (ImageObject JSON-LD) for the large images, for image search "Licensable" labels.
+ * Page-level JSON-LD and <link rel="license"> are static in each page's <!--share--> block. No log-ins, no bot blocking. */
+(function(){
+  const root = (window.PANav && window.PANav.root != null) ? window.PANav.root : "../";
+  const HOME = "https://kylemschyma.github.io/prospect-actuary/", LIC = "https://creativecommons.org/licenses/by/4.0/";
+  const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";
+  const MARKET = here === "value-research" || here === "player" || here === "league";
+  const css = document.createElement("style");
+  css.textContent = ".pa-credit{grid-column:1/-1;flex-basis:100%;margin:6px 0 0;font-size:.72rem;line-height:1.4;color:var(--muted);font-family:var(--f-body);text-align:left}" +
+    ".pa-credit a,.pa-lic a{color:inherit;text-decoration:underline;text-decoration-color:var(--line-2)}.pa-credit a:hover,.pa-lic a:hover{color:var(--accent)}" +
+    ".pa-lic{margin:10px 0 0;font-size:.78rem;color:var(--muted)}";
+  document.head.appendChild(css);
+  const creditHTML = `Source: Prospect Actuary, <a href="${HOME}">kylemschyma.github.io/prospect-actuary</a> · <a href="${root}use/">Free to use with credit</a>` +
+    (MARKET ? " · market values belong to their sources" : "");
+  // 1. footer license line
+  function footer(){
+    if (document.querySelector(".pa-lic")) return;
+    let f = Array.from(document.querySelectorAll("footer")).filter(x => !x.closest(".pa-top")).pop();
+    if (!f) { f = document.createElement("footer"); f.style.cssText = "border-top:1px solid var(--line);padding-top:16px;font-size:.85rem;color:var(--muted);max-width:72ch;margin-top:28px";
+      f.textContent = "Grades, values and models by Prospect Actuary. Not affiliated with the NFL or any team.";
+      (document.querySelector(".wrap") || document.body).appendChild(f); }
+    const p = document.createElement("p"); p.className = "pa-lic";
+    p.innerHTML = `© 2026 Prospect Actuary. Free to use, share and build on, by people and AI tools, with credit: <a rel="license" href="${LIC}">CC BY 4.0</a> (code MIT). <a href="${root}use/">Use and credit</a> · <a href="${root}use/#cite-this">Cite this</a>`;
+    f.appendChild(p);
+  }
+  // 2. per-section credit lines
+  const SKIPIN = ".pa-top,footer,.pa-lgpop,.pa-results,dialog,[role=dialog],button,a,.chip,.pa-credit,#citeBox";
+  const big = el => {
+    if (el.closest(SKIPIN)) return false;
+    if (el.tagName === "TABLE") return (el.tBodies[0] ? el.tBodies[0].rows.length : el.rows.length) >= 5;
+    if (el.tagName === "IMG") return (+el.getAttribute("width") || el.naturalWidth || 0) >= 400;
+    if (el.tagName === "CANVAS") return el.width >= 200;
+    const vb = (el.getAttribute("viewBox") || "").split(/[\s,]+/);   // svg: charts, not icons
+    return Math.max(+el.getAttribute("width") || 0, +vb[2] || 0) >= 200;
+  };
+  function credits(){
+    if (here === "use") return;
+    document.querySelectorAll("table, svg, img, canvas").forEach(el => {
+      if (!big(el)) return;
+      const box = el.closest("section, details, article") || el.parentElement;
+      if (!box || box.closest(SKIPIN) || box.querySelector(":scope > .pa-credit")) return;
+      const p = document.createElement("p"); p.className = "pa-credit"; p.innerHTML = creditHTML; box.appendChild(p);
+    });
+    // lists that are not tables (home "What changed this week") opt in with data-pa-credit
+    document.querySelectorAll("[data-pa-credit]").forEach(box => { if (!box.querySelector(":scope > .pa-credit")) {
+      const p = document.createElement("p"); p.className = "pa-credit"; p.innerHTML = creditHTML; box.appendChild(p); } });
+  }
+  // 3. image license metadata
+  function images(){
+    const imgs = Array.from(document.querySelectorAll("img")).filter(big);
+    if (!imgs.length || document.getElementById("paImgLd")) return;
+    const ld = {"@context":"https://schema.org","@graph": imgs.map(i => ({"@type":"ImageObject","contentUrl":new URL(i.getAttribute("src"), location.href).href,
+      "name":i.getAttribute("alt") || document.title,"license":LIC,"acquireLicensePage":HOME + "use/",
+      "creditText":"Source: Prospect Actuary (kylemschyma.github.io/prospect-actuary)","copyrightNotice":"© 2026 Prospect Actuary, CC BY 4.0",
+      "creator":{"@type":"Organization","name":"Prospect Actuary","url":HOME}}))};
+    const s = document.createElement("script"); s.type = "application/ld+json"; s.id = "paImgLd"; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+  }
+  let t = 0;
+  const run = () => { t = 0; try { footer(); credits(); images(); } catch(e){} };
+  const later = () => { if (!t) t = setTimeout(run, 250); };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else run();
+  // tables are redrawn by page code and the weekly data, so the lines are re-added when a section is rebuilt
+  new MutationObserver(later).observe(document.documentElement, {childList: true, subtree: true});
 })();

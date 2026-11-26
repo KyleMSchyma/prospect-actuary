@@ -1,0 +1,9 @@
+# Prospect Actuary welcomes all crawlers, including AI crawlers. Nothing is blocked.
+# Content is free to use with credit (CC BY 4.0): "Source: Prospect Actuary (kylemschyma.github.io/prospect-actuary)".
+# How to cite and what is covered: https://kylemschyma.github.io/prospect-actuary/use/
+# Summary for AI tools: https://kylemschyma.github.io/prospect-actuary/llms.txt
+# Please cache; the CSV data files are on GitHub: https://github.com/KyleMSchyma/prospect-actuary
+User-agent: *
+Allow: /
+
+Sitemap: https://kylemschyma.github.io/prospect-actuary/sitemap.xml
