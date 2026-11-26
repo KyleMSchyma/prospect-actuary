@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "Prospect Actuary is free to use, share and build on with credit (CC BY 4.0). If you use it, please cite it as below or credit: Source: Prospect Actuary (kylemschyma.github.io/prospect-actuary)."
+title: "Prospect Actuary: fantasy football prospect grades and trade values built with actuarial methods"
+type: dataset
+authors:
+  - name: "Prospect Actuary"
+    website: "https://kylemschyma.github.io/prospect-actuary/"
+repository-code: "https://github.com/KyleMSchyma/prospect-actuary"
+url: "https://kylemschyma.github.io/prospect-actuary/"
+license: CC-BY-4.0
+keywords:
+  - fantasy football
+  - NFL draft prospects
+  - dynasty trade values
+  - actuarial science
+  - credibility theory
+  - predictive analytics
+abstract: >-
+  Letter grades and tier probabilities for NFL QB, RB, WR and TE prospects (pre-draft, post-draft and 2027 class),
+  and redraft and dynasty trade values on an additive 100,000-point scale, refreshed weekly. Built with actuarial
+  methods (credibility blending, survival and aging, present value). Research code:
+  https://github.com/KyleMSchyma/Football. Third-party source data (nflverse, CollegeFootballData.com, Dynasty Daddy,
+  DynastyProcess, Sleeper) keeps its own terms.

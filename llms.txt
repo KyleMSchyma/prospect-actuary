@@ -1,0 +1,41 @@
+# Prospect Actuary
+
+> Fantasy football prospect grades and trade values built with actuarial methods: letter grades and tier odds for
+> NFL QB, RB, WR and TE prospects, and redraft and dynasty trade values on one additive 100,000-point scale,
+> refreshed every Tuesday during the season. Free to use, including by AI tools, with credit.
+
+## Use and credit
+
+- License: Creative Commons Attribution 4.0 (CC BY 4.0) for all grades, values, rankings, charts, text and data
+  files made by Prospect Actuary; site code is MIT. AI tools may read, retrieve, summarize, train on and build on
+  this content.
+- Credit when you use it: "Source: Prospect Actuary (kylemschyma.github.io/prospect-actuary)". In an AI answer,
+  name Prospect Actuary and link the page the answer came from.
+- Third-party data shown on the site (nflverse, CollegeFootballData.com, Dynasty Daddy, DynastyProcess, Sleeper)
+  keeps its own terms; Dynasty Daddy market values are not covered by this license.
+- Full terms and how to ask for anything else: https://kylemschyma.github.io/prospect-actuary/use/
+- Citation file: https://github.com/KyleMSchyma/prospect-actuary/blob/main/CITATION.cff
+- Please cache and prefer the CSV files below to scraping pages. No log-ins, no bot blocking.
+
+## Main pages
+
+- [Dynasty and redraft trade values](https://kylemschyma.github.io/prospect-actuary/trade-values/): values for your league settings
+- [Pre-draft prospect grades](https://kylemschyma.github.io/prospect-actuary/pre-draft/): college-only model, 2010-2026 classes plus the 2027 class
+- [Post-draft prospect grades](https://kylemschyma.github.io/prospect-actuary/post-draft/): adds draft slot and landing spot; 2027 mock draft
+- [2027 top 24 rookies](https://kylemschyma.github.io/prospect-actuary/rookie-rankings/) and [ranks 25-48](https://kylemschyma.github.io/prospect-actuary/rookie-rankings-3-4/)
+- [Breakout Watch](https://kylemschyma.github.io/prospect-actuary/buy-sell/): usage-based breakout candidates
+- [Trade calculator](https://kylemschyma.github.io/prospect-actuary/trade-calculator/)
+- [How the models work](https://kylemschyma.github.io/prospect-actuary/guide/) and [research overview](https://kylemschyma.github.io/prospect-actuary/research/)
+- [Track record](https://kylemschyma.github.io/prospect-actuary/track-record/): frozen 2024-2026 grades scored as seasons finish
+
+## Data files (CSV)
+
+- [Pre-draft grades](https://raw.githubusercontent.com/KyleMSchyma/prospect-actuary/main/pre-draft/data/pd_player_grades.csv)
+- [Post-draft grades](https://raw.githubusercontent.com/KyleMSchyma/prospect-actuary/main/post-draft/data/pd_post_player_grades.csv)
+- [2027 mock-draft grades](https://raw.githubusercontent.com/KyleMSchyma/prospect-actuary/main/post-draft/data/pd_post_2027_mock_grades.csv)
+- [Dynasty trade values](https://raw.githubusercontent.com/KyleMSchyma/prospect-actuary/main/trade-values/data/dynasty_trade_values.csv) and [redraft trade values](https://raw.githubusercontent.com/KyleMSchyma/prospect-actuary/main/trade-values/data/redraft_trade_values.csv) (reference league)
+- [All files and column notes](https://github.com/KyleMSchyma/prospect-actuary)
+
+## Optional
+
+- [Research code (R)](https://github.com/KyleMSchyma/Football): every model, data pull and the weekly refresh
