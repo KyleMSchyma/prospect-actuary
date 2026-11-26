@@ -33,10 +33,10 @@
   const SECTIONS = [
     ["values",   "Values",    "trade-values/",     [["trade-values/?mode=dynasty","Dynasty"],["trade-values/?mode=redraft","Redraft"],["trade-values/?mode=dynasty&pos=PICK","Rookie-pick values"],["value-history/","Value history"],["compare/","Player comparison"],["trade-values/?open=league","League settings"]]],
     ["usage",    "Usage",     "buy-sell/",         [["buy-sell/","Breakout Watch"],["team-analytics/","Team usage and offense"]]],
-    ["lab",      "Prospects", "pre-draft/",        [["pre-draft/","Pre-draft grades"],["post-draft/","Post-draft grades"],["pre-draft/#class-2027","2027 class"],["post-draft/#mock-2027","2027 mock draft"],["compare/?for=prospects","Prospect comparison"],["pre-draft/#does-it-work","Model validation"]]],
+    ["lab",      "Prospects", "pre-draft/",        [["pre-draft/","Pre-draft grades"],["post-draft/","Post-draft grades"],["pre-draft/#class-2027","2027 class"],["post-draft/#mock-2027","2027 mock draft"],["pick-pockets/","2027 pick pockets"],["compare/?for=prospects","Prospect comparison"],["pre-draft/#does-it-work","Model validation"]]],
     ["trade",    "Tools",     "trade-calculator/", [["trade-calculator/","Trade calculator"],["value-research/","Market check"],["moves/","Contending and rebuild moves"],["league/","Sleeper league"],["compare/","Player comparison"]]],
     ["research", "Research",  "research/",         [["research/","Overview"],["guide/","How the models work"],["track-record/","Track record"],["value-history/#track-record","Value track record"],["research/#data-status","Data and limitations"],["research/#methodology","Methodology"],["about/","About"]]]];
-  const FOLDER = {"":"","pre-draft":"lab","post-draft":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"usage","league":"trade","moves":"trade",
+  const FOLDER = {"":"","pre-draft":"lab","post-draft":"lab","pick-pockets":"lab","trade-values":"values","trade-calculator":"trade","value-research":"trade","buy-sell":"usage","league":"trade","moves":"trade",
                   "research":"research","team-analytics":"usage","guide":"research","track-record":"research","about":"research","compare":"values","value-history":"values","player":""};
   const here = (location.pathname.match(/([^\/]+)\/(index\.html)?$/) || [])[1] || "";
   const sec = here==="compare" && /[?&]for=prospects/.test(location.search) ? "lab" : FOLDER[here] != null ? FOLDER[here] : "";

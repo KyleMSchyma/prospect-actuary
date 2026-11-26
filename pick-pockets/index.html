@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2027 Pick Pockets | Prospect Actuary</title>
+<meta name="description" content="How the 2027 rookie class looks by rookie-draft pick range, against every class since 2010 and head to head with the 2024, 2025 and 2026 classes.">
+<!--share--><link rel="canonical" href="https://kylemschyma.github.io/prospect-actuary/pick-pockets/"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../shared/icon-180.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prospect Actuary"><meta property="og:title" content="2027 Pick Pockets | Prospect Actuary"><meta property="og:description" content="How the 2027 rookie class looks by rookie-draft pick range, against every class since 2010 and head to head with the 2024, 2025 and 2026 classes."><meta property="og:url" content="https://kylemschyma.github.io/prospect-actuary/pick-pockets/"><meta property="og:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prospect Actuary: fantasy values built like actuarial models"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="2027 Pick Pockets | Prospect Actuary"><meta name="twitter:description" content="How the 2027 rookie class looks by rookie-draft pick range, against every class since 2010 and head to head with the 2024, 2025 and 2026 classes."><meta name="twitter:image" content="https://kylemschyma.github.io/prospect-actuary/shared/og-card.png"><meta name="theme-color" content="#17324d"><!--/share-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+.wrap{max-width:980px}
+.shot{display:flex;flex-direction:column;gap:10px}
+.shot img{width:100%;max-width:820px;height:auto;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-1);background:#fff}
+.shot .cap{max-width:820px}
+</style></head>
+<body><div class="wrap">
+<nav class="pa-brand" data-root="../"><a href="../">Prospect Actuary</a> · <a href="../trade-values/">Values</a> · <a href="../buy-sell/">Usage</a> · <a href="../pre-draft/">Prospects</a> · <a href="../trade-calculator/">Tools</a> · <a href="../research/">Research</a></nav><script src="../shared/nav.js"></script>
+
+<header class="page-head">
+  <div class="eyebrow">Prospects · 2027 class</div>
+  <h1>2027 rookie picks by pocket</h1>
+  <p class="lede">Where the value sits in the 2027 rookie class, one pick range at a time: against every class since 2010, and head to head with the last three classes.</p>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Choose a graphic">
+  <button type="button" id="t-all" data-k="all" aria-pressed="true">Since 2010</button>
+  <button type="button" id="t-2026" data-k="2026" aria-pressed="false">vs 2026</button>
+  <button type="button" id="t-2025" data-k="2025" aria-pressed="false">vs 2025</button>
+  <button type="button" id="t-2024" data-k="2024" aria-pressed="false">vs 2024</button>
+</div>
+
+<section class="shot" id="s-all"><img src="img/2027_pick_pockets.png" width="1200" height="1500" alt="2027 rookie picks by pocket, ranked against every rookie class since 2010"><p class="small muted cap">Strong 1.01, below-average early first, average from 1.09 to 2.06, and the deepest late rounds since 2010. <a href="img/2027_pick_pockets.png">Full size</a></p></section>
+<section class="shot" id="s-2026" hidden><img src="img/2027_vs_2026.png" loading="lazy" width="1200" height="1500" alt="2027 vs 2026 rookie class by pocket"><p class="small muted cap">2027 wins 6 of 8 pockets and has 29% more total value; 2026 had the better early first. <a href="img/2027_vs_2026.png">Full size</a></p></section>
+<section class="shot" id="s-2025" hidden><img src="img/2027_vs_2025.png" loading="lazy" width="1200" height="1500" alt="2027 vs 2025 rookie class by pocket"><p class="small muted cap">About even overall: 2025 was stronger from 1.02 to 2.06, 2027 wins from 2.07 on. <a href="img/2027_vs_2025.png">Full size</a></p></section>
+<section class="shot" id="s-2024" hidden><img src="img/2027_vs_2024.png" loading="lazy" width="1200" height="1500" alt="2027 vs 2024 rookie class by pocket"><p class="small muted cap">2024 was stronger from 1.02 to 2.06; 2027 has the better 1.01 and wins rounds 3 and 4. <a href="img/2027_vs_2024.png">Full size</a></p></section>
+
+<p class="small muted" style="max-width:76ch">Snapshot from November 25, 2026 (mixed draft model, 12 teams, superflex, PPR, 2 FLEX). Past classes are priced at their real NFL draft spot before any games, so the comparisons show how each class looked on draft day, not how it turned out. 2027 uses our mock drafts for draft capital. These images do not update with the weekly refresh. Pick values for your league are on the <a href="../trade-values/">Trade values</a> page.</p>
+</div>
+<script>
+(function(){
+  const keys=["all","2026","2025","2024"];
+  function show(k){ if(!keys.includes(k)) k="all";
+    keys.forEach(x=>{ document.getElementById("s-"+x).hidden = x!==k; document.getElementById("t-"+x).setAttribute("aria-pressed", x===k?"true":"false"); }); }
+  document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ const k=b.dataset.k; show(k); try{ history.replaceState(null,"",k==="all"?location.pathname:"#vs-"+k); }catch(e){} }));
+  show((location.hash.match(/^#vs-(\d{4})$/)||[])[1]||"all");
+})();
+</script>
+</body></html>
